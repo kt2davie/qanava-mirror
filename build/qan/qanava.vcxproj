@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{B831AD41-F818-3F16-9848-2EFC6F888F41}</ProjectGuid>
+    <RootNamespace>qanava</RootNamespace>
+    <Keyword>Qt4VSv1.0</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;" Label="Configuration">
+    <OutputDirectory>..\</OutputDirectory>
+    <ATLMinimizesCRunTimeLibraryUsage>false</ATLMinimizesCRunTimeLibraryUsage>
+    <CharacterSet>NotSet</CharacterSet>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <IntermediateDirectory>debug\</IntermediateDirectory>
+    <PrimaryOutput>qanavad</PrimaryOutput>
+  </PropertyGroup>
+  <PropertyGroup Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;" Label="Configuration">
+    <OutputDirectory>..\</OutputDirectory>
+    <ATLMinimizesCRunTimeLibraryUsage>false</ATLMinimizesCRunTimeLibraryUsage>
+    <CharacterSet>NotSet</CharacterSet>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <IntermediateDirectory>release\</IntermediateDirectory>
+    <PrimaryOutput>qanava</PrimaryOutput>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists(&apos;$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props&apos;)" />
+  </ImportGroup>
+  <ImportGroup Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists(&apos;$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props&apos;)" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <OutDir Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">..\</OutDir>
+    <IntDir Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">debug\</IntDir>
+    <TargetName Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">qanavad</TargetName>
+    <IgnoreImportLibrary Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">true</IgnoreImportLibrary>
+    <OutDir Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">..\</OutDir>
+    <IntDir Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">release\</IntDir>
+    <TargetName Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">qanava</TargetName>
+    <IgnoreImportLibrary Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">true</IgnoreImportLibrary>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">
+    <ClCompile>
+      <AdditionalIncludeDirectories>&quot;$(PROPERTYBROWSER)&quot;;&quot;..\..\..\..\Qt53\5.3\msvc2010_opengl\include&quot;;&quot;..\..\..\..\Qt53\5.3\msvc2010_opengl\include\QtWidgets&quot;;&quot;..\..\..\..\Qt53\5.3\msvc2010_opengl\include\QtXml&quot;;&quot;..\..\..\..\Qt53\5.3\msvc2010_opengl\include\QtGui&quot;;&quot;..\..\..\..\Qt53\5.3\msvc2010_opengl\include\QtCore&quot;;&quot;debug&quot;;..\..\..\..\Qt53\5.3\msvc2010_opengl\mkspecs\win32-msvc2010;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>-Zm200 -w34100 -w34189 %(AdditionalOptions)</AdditionalOptions>
+      <AssemblerListingLocation>debug\</AssemblerListingLocation>
+      <BrowseInformation>false</BrowseInformation>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ObjectFileName>debug\</ObjectFileName>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_WINDOWS;UNICODE;WIN32;QANAVA;QT_WIDGETS_LIB;QT_XML_LIB;QT_GUI_LIB;QT_CORE_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessToFile>false</PreprocessToFile>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <WarningLevel>Level3</WarningLevel>
+    </ClCompile>
+    <Link>
+      <IgnoreImportLibrary>true</IgnoreImportLibrary>
+    </Link>
+    <Midl>
+      <DefaultCharType>Unsigned</DefaultCharType>
+      <EnableErrorChecks>None</EnableErrorChecks>
+      <WarningLevel>0</WarningLevel>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_WINDOWS;UNICODE;WIN32;QANAVA;QT_WIDGETS_LIB;QT_XML_LIB;QT_GUI_LIB;QT_CORE_LIB;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ResourceOutputFileName>$(OutDir)\$(InputName).res</ResourceOutputFileName>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">
+    <ClCompile>
+      <AdditionalIncludeDirectories>&quot;$(PROPERTYBROWSER)&quot;;&quot;..\..\..\..\Qt53\5.3\msvc2010_opengl\include&quot;;&quot;..\..\..\..\Qt53\5.3\msvc2010_opengl\include\QtWidgets&quot;;&quot;..\..\..\..\Qt53\5.3\msvc2010_opengl\include\QtXml&quot;;&quot;..\..\..\..\Qt53\5.3\msvc2010_opengl\include\QtGui&quot;;&quot;..\..\..\..\Qt53\5.3\msvc2010_opengl\include\QtCore&quot;;&quot;release&quot;;..\..\..\..\Qt53\5.3\msvc2010_opengl\mkspecs\win32-msvc2010;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>-Zm200 -w34100 -w34189 %(AdditionalOptions)</AdditionalOptions>
+      <AssemblerListingLocation>release\</AssemblerListingLocation>
+      <BrowseInformation>false</BrowseInformation>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ObjectFileName>release\</ObjectFileName>
+      <Optimization>MaxSpeed</Optimization>
+      <PreprocessorDefinitions>_WINDOWS;UNICODE;WIN32;QANAVA;QT_NO_DEBUG;QT_WIDGETS_LIB;QT_XML_LIB;QT_GUI_LIB;QT_CORE_LIB;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessToFile>false</PreprocessToFile>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <WarningLevel>Level3</WarningLevel>
+    </ClCompile>
+    <Link>
+      <IgnoreImportLibrary>true</IgnoreImportLibrary>
+    </Link>
+    <Midl>
+      <DefaultCharType>Unsigned</DefaultCharType>
+      <EnableErrorChecks>None</EnableErrorChecks>
+      <WarningLevel>0</WarningLevel>
+    </Midl>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_WINDOWS;UNICODE;WIN32;QANAVA;QT_NO_DEBUG;QT_WIDGETS_LIB;QT_XML_LIB;QT_GUI_LIB;QT_CORE_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ResourceOutputFileName>$(OutDir)\$(InputName).res</ResourceOutputFileName>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\qanContainerGraphicsItem.cpp" />
+    <ClCompile Include="..\..\src\qanController.cpp" />
+    <ClCompile Include="..\..\src\qanEdge.cpp" />
+    <ClCompile Include="..\..\src\qanEdgeItem.cpp" />
+    <ClCompile Include="..\..\src\qanGraph.cpp" />
+    <ClCompile Include="..\..\src\qanGraphItem.cpp" />
+    <ClCompile Include="..\..\src\qanGraphModel.cpp" />
+    <ClCompile Include="..\..\src\qanGraphScene.cpp" />
+    <ClCompile Include="..\..\src\qanGraphView.cpp" />
+    <ClCompile Include="..\..\src\qanGridItem.cpp" />
+    <ClCompile Include="..\..\src\qanLayout.cpp" />
+    <ClCompile Include="..\..\src\qanNode.cpp" />
+    <ClCompile Include="..\..\src\qanNodeGroup.cpp" />
+    <ClCompile Include="..\..\src\qanNodeItem.cpp" />
+    <ClCompile Include="..\..\src\qanProperties.cpp" />
+    <ClCompile Include="..\..\src\qanSimpleLayout.cpp" />
+    <ClCompile Include="..\..\src\qanStyleManager.cpp" />
+    <ClCompile Include="..\..\src\qanTreeLayout.cpp" />
+    <ClCompile Include="..\..\src\ui\uiNodeGroupFilterWidget.cpp" />
+    <ClCompile Include="..\..\src\ui\uiNodesItemModel.cpp" />
+    <ClCompile Include="..\..\src\ui\uiStyleBrowserWidget.cpp" />
+    <ClCompile Include="..\..\src\ui\uiStyleEditorWidget.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\qanConfig.h" />
+    <CustomBuild Include="..\..\src\qanContainerGraphicsItem.h">
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">..\..\src\qanContainerGraphicsItem.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">C:\Qt53\5.3\msvc2010_opengl\bin\moc.exe  -DUNICODE -DWIN32 -DQANAVA -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1600 -D_WIN32 -IC:/Qt53/5.3/msvc2010_opengl/mkspecs/win32-msvc2010 -IC:/projects/qanava-0.9.1/build/qan -I&quot;C:/projects/qanava-0.9.1/build/qan/$(PROPERTYBROWSER)&quot; -IC:/Qt53/5.3/msvc2010_opengl/include -IC:/Qt53/5.3/msvc2010_opengl/include/QtWidgets -IC:/Qt53/5.3/msvc2010_opengl/include/QtXml -IC:/Qt53/5.3/msvc2010_opengl/include/QtGui -IC:/Qt53/5.3/msvc2010_opengl/include/QtCore ..\..\src\qanContainerGraphicsItem.h -o debug\moc_qanContainerGraphicsItem.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">MOC ..\..\src\qanContainerGraphicsItem.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">debug\moc_qanContainerGraphicsItem.cpp;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">..\..\src\qanContainerGraphicsItem.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">C:\Qt53\5.3\msvc2010_opengl\bin\moc.exe  -DUNICODE -DWIN32 -DQANAVA -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1600 -D_WIN32 -IC:/Qt53/5.3/msvc2010_opengl/mkspecs/win32-msvc2010 -IC:/projects/qanava-0.9.1/build/qan -I&quot;C:/projects/qanava-0.9.1/build/qan/$(PROPERTYBROWSER)&quot; -IC:/Qt53/5.3/msvc2010_opengl/include -IC:/Qt53/5.3/msvc2010_opengl/include/QtWidgets -IC:/Qt53/5.3/msvc2010_opengl/include/QtXml -IC:/Qt53/5.3/msvc2010_opengl/include/QtGui -IC:/Qt53/5.3/msvc2010_opengl/include/QtCore ..\..\src\qanContainerGraphicsItem.h -o release\moc_qanContainerGraphicsItem.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">MOC ..\..\src\qanContainerGraphicsItem.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">release\moc_qanContainerGraphicsItem.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\qanController.h">
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">..\..\src\qanController.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">C:\Qt53\5.3\msvc2010_opengl\bin\moc.exe  -DUNICODE -DWIN32 -DQANAVA -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1600 -D_WIN32 -IC:/Qt53/5.3/msvc2010_opengl/mkspecs/win32-msvc2010 -IC:/projects/qanava-0.9.1/build/qan -I&quot;C:/projects/qanava-0.9.1/build/qan/$(PROPERTYBROWSER)&quot; -IC:/Qt53/5.3/msvc2010_opengl/include -IC:/Qt53/5.3/msvc2010_opengl/include/QtWidgets -IC:/Qt53/5.3/msvc2010_opengl/include/QtXml -IC:/Qt53/5.3/msvc2010_opengl/include/QtGui -IC:/Qt53/5.3/msvc2010_opengl/include/QtCore ..\..\src\qanController.h -o debug\moc_qanController.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">MOC ..\..\src\qanController.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">debug\moc_qanController.cpp;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">..\..\src\qanController.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">C:\Qt53\5.3\msvc2010_opengl\bin\moc.exe  -DUNICODE -DWIN32 -DQANAVA -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1600 -D_WIN32 -IC:/Qt53/5.3/msvc2010_opengl/mkspecs/win32-msvc2010 -IC:/projects/qanava-0.9.1/build/qan -I&quot;C:/projects/qanava-0.9.1/build/qan/$(PROPERTYBROWSER)&quot; -IC:/Qt53/5.3/msvc2010_opengl/include -IC:/Qt53/5.3/msvc2010_opengl/include/QtWidgets -IC:/Qt53/5.3/msvc2010_opengl/include/QtXml -IC:/Qt53/5.3/msvc2010_opengl/include/QtGui -IC:/Qt53/5.3/msvc2010_opengl/include/QtCore ..\..\src\qanController.h -o release\moc_qanController.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">MOC ..\..\src\qanController.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">release\moc_qanController.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\qanEdge.h">
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">..\..\src\qanEdge.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">C:\Qt53\5.3\msvc2010_opengl\bin\moc.exe  -DUNICODE -DWIN32 -DQANAVA -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1600 -D_WIN32 -IC:/Qt53/5.3/msvc2010_opengl/mkspecs/win32-msvc2010 -IC:/projects/qanava-0.9.1/build/qan -I&quot;C:/projects/qanava-0.9.1/build/qan/$(PROPERTYBROWSER)&quot; -IC:/Qt53/5.3/msvc2010_opengl/include -IC:/Qt53/5.3/msvc2010_opengl/include/QtWidgets -IC:/Qt53/5.3/msvc2010_opengl/include/QtXml -IC:/Qt53/5.3/msvc2010_opengl/include/QtGui -IC:/Qt53/5.3/msvc2010_opengl/include/QtCore ..\..\src\qanEdge.h -o debug\moc_qanEdge.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">MOC ..\..\src\qanEdge.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">debug\moc_qanEdge.cpp;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">..\..\src\qanEdge.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">C:\Qt53\5.3\msvc2010_opengl\bin\moc.exe  -DUNICODE -DWIN32 -DQANAVA -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1600 -D_WIN32 -IC:/Qt53/5.3/msvc2010_opengl/mkspecs/win32-msvc2010 -IC:/projects/qanava-0.9.1/build/qan -I&quot;C:/projects/qanava-0.9.1/build/qan/$(PROPERTYBROWSER)&quot; -IC:/Qt53/5.3/msvc2010_opengl/include -IC:/Qt53/5.3/msvc2010_opengl/include/QtWidgets -IC:/Qt53/5.3/msvc2010_opengl/include/QtXml -IC:/Qt53/5.3/msvc2010_opengl/include/QtGui -IC:/Qt53/5.3/msvc2010_opengl/include/QtCore ..\..\src\qanEdge.h -o release\moc_qanEdge.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">MOC ..\..\src\qanEdge.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">release\moc_qanEdge.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\qanEdgeItem.h">
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">..\..\src\qanEdgeItem.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">C:\Qt53\5.3\msvc2010_opengl\bin\moc.exe  -DUNICODE -DWIN32 -DQANAVA -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1600 -D_WIN32 -IC:/Qt53/5.3/msvc2010_opengl/mkspecs/win32-msvc2010 -IC:/projects/qanava-0.9.1/build/qan -I&quot;C:/projects/qanava-0.9.1/build/qan/$(PROPERTYBROWSER)&quot; -IC:/Qt53/5.3/msvc2010_opengl/include -IC:/Qt53/5.3/msvc2010_opengl/include/QtWidgets -IC:/Qt53/5.3/msvc2010_opengl/include/QtXml -IC:/Qt53/5.3/msvc2010_opengl/include/QtGui -IC:/Qt53/5.3/msvc2010_opengl/include/QtCore ..\..\src\qanEdgeItem.h -o debug\moc_qanEdgeItem.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">MOC ..\..\src\qanEdgeItem.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">debug\moc_qanEdgeItem.cpp;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">..\..\src\qanEdgeItem.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">C:\Qt53\5.3\msvc2010_opengl\bin\moc.exe  -DUNICODE -DWIN32 -DQANAVA -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1600 -D_WIN32 -IC:/Qt53/5.3/msvc2010_opengl/mkspecs/win32-msvc2010 -IC:/projects/qanava-0.9.1/build/qan -I&quot;C:/projects/qanava-0.9.1/build/qan/$(PROPERTYBROWSER)&quot; -IC:/Qt53/5.3/msvc2010_opengl/include -IC:/Qt53/5.3/msvc2010_opengl/include/QtWidgets -IC:/Qt53/5.3/msvc2010_opengl/include/QtXml -IC:/Qt53/5.3/msvc2010_opengl/include/QtGui -IC:/Qt53/5.3/msvc2010_opengl/include/QtCore ..\..\src\qanEdgeItem.h -o release\moc_qanEdgeItem.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">MOC ..\..\src\qanEdgeItem.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">release\moc_qanEdgeItem.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\qanGraph.h">
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">..\..\src\qanGraph.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">C:\Qt53\5.3\msvc2010_opengl\bin\moc.exe  -DUNICODE -DWIN32 -DQANAVA -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1600 -D_WIN32 -IC:/Qt53/5.3/msvc2010_opengl/mkspecs/win32-msvc2010 -IC:/projects/qanava-0.9.1/build/qan -I&quot;C:/projects/qanava-0.9.1/build/qan/$(PROPERTYBROWSER)&quot; -IC:/Qt53/5.3/msvc2010_opengl/include -IC:/Qt53/5.3/msvc2010_opengl/include/QtWidgets -IC:/Qt53/5.3/msvc2010_opengl/include/QtXml -IC:/Qt53/5.3/msvc2010_opengl/include/QtGui -IC:/Qt53/5.3/msvc2010_opengl/include/QtCore ..\..\src\qanGraph.h -o debug\moc_qanGraph.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">MOC ..\..\src\qanGraph.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">debug\moc_qanGraph.cpp;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">..\..\src\qanGraph.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">C:\Qt53\5.3\msvc2010_opengl\bin\moc.exe  -DUNICODE -DWIN32 -DQANAVA -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1600 -D_WIN32 -IC:/Qt53/5.3/msvc2010_opengl/mkspecs/win32-msvc2010 -IC:/projects/qanava-0.9.1/build/qan -I&quot;C:/projects/qanava-0.9.1/build/qan/$(PROPERTYBROWSER)&quot; -IC:/Qt53/5.3/msvc2010_opengl/include -IC:/Qt53/5.3/msvc2010_opengl/include/QtWidgets -IC:/Qt53/5.3/msvc2010_opengl/include/QtXml -IC:/Qt53/5.3/msvc2010_opengl/include/QtGui -IC:/Qt53/5.3/msvc2010_opengl/include/QtCore ..\..\src\qanGraph.h -o release\moc_qanGraph.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">MOC ..\..\src\qanGraph.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">release\moc_qanGraph.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\qanGraphItem.h">
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">..\..\src\qanGraphItem.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">C:\Qt53\5.3\msvc2010_opengl\bin\moc.exe  -DUNICODE -DWIN32 -DQANAVA -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1600 -D_WIN32 -IC:/Qt53/5.3/msvc2010_opengl/mkspecs/win32-msvc2010 -IC:/projects/qanava-0.9.1/build/qan -I&quot;C:/projects/qanava-0.9.1/build/qan/$(PROPERTYBROWSER)&quot; -IC:/Qt53/5.3/msvc2010_opengl/include -IC:/Qt53/5.3/msvc2010_opengl/include/QtWidgets -IC:/Qt53/5.3/msvc2010_opengl/include/QtXml -IC:/Qt53/5.3/msvc2010_opengl/include/QtGui -IC:/Qt53/5.3/msvc2010_opengl/include/QtCore ..\..\src\qanGraphItem.h -o debug\moc_qanGraphItem.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">MOC ..\..\src\qanGraphItem.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">debug\moc_qanGraphItem.cpp;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">..\..\src\qanGraphItem.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">C:\Qt53\5.3\msvc2010_opengl\bin\moc.exe  -DUNICODE -DWIN32 -DQANAVA -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1600 -D_WIN32 -IC:/Qt53/5.3/msvc2010_opengl/mkspecs/win32-msvc2010 -IC:/projects/qanava-0.9.1/build/qan -I&quot;C:/projects/qanava-0.9.1/build/qan/$(PROPERTYBROWSER)&quot; -IC:/Qt53/5.3/msvc2010_opengl/include -IC:/Qt53/5.3/msvc2010_opengl/include/QtWidgets -IC:/Qt53/5.3/msvc2010_opengl/include/QtXml -IC:/Qt53/5.3/msvc2010_opengl/include/QtGui -IC:/Qt53/5.3/msvc2010_opengl/include/QtCore ..\..\src\qanGraphItem.h -o release\moc_qanGraphItem.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">MOC ..\..\src\qanGraphItem.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">release\moc_qanGraphItem.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <ClInclude Include="..\..\src\qanGraphModel.h" />
+    <CustomBuild Include="..\..\src\qanGraphScene.h">
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">..\..\src\qanGraphScene.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">C:\Qt53\5.3\msvc2010_opengl\bin\moc.exe  -DUNICODE -DWIN32 -DQANAVA -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1600 -D_WIN32 -IC:/Qt53/5.3/msvc2010_opengl/mkspecs/win32-msvc2010 -IC:/projects/qanava-0.9.1/build/qan -I&quot;C:/projects/qanava-0.9.1/build/qan/$(PROPERTYBROWSER)&quot; -IC:/Qt53/5.3/msvc2010_opengl/include -IC:/Qt53/5.3/msvc2010_opengl/include/QtWidgets -IC:/Qt53/5.3/msvc2010_opengl/include/QtXml -IC:/Qt53/5.3/msvc2010_opengl/include/QtGui -IC:/Qt53/5.3/msvc2010_opengl/include/QtCore ..\..\src\qanGraphScene.h -o debug\moc_qanGraphScene.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">MOC ..\..\src\qanGraphScene.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">debug\moc_qanGraphScene.cpp;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">..\..\src\qanGraphScene.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">C:\Qt53\5.3\msvc2010_opengl\bin\moc.exe  -DUNICODE -DWIN32 -DQANAVA -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1600 -D_WIN32 -IC:/Qt53/5.3/msvc2010_opengl/mkspecs/win32-msvc2010 -IC:/projects/qanava-0.9.1/build/qan -I&quot;C:/projects/qanava-0.9.1/build/qan/$(PROPERTYBROWSER)&quot; -IC:/Qt53/5.3/msvc2010_opengl/include -IC:/Qt53/5.3/msvc2010_opengl/include/QtWidgets -IC:/Qt53/5.3/msvc2010_opengl/include/QtXml -IC:/Qt53/5.3/msvc2010_opengl/include/QtGui -IC:/Qt53/5.3/msvc2010_opengl/include/QtCore ..\..\src\qanGraphScene.h -o release\moc_qanGraphScene.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">MOC ..\..\src\qanGraphScene.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">release\moc_qanGraphScene.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\qanGraphView.h">
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">..\..\src\qanGraphView.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">C:\Qt53\5.3\msvc2010_opengl\bin\moc.exe  -DUNICODE -DWIN32 -DQANAVA -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1600 -D_WIN32 -IC:/Qt53/5.3/msvc2010_opengl/mkspecs/win32-msvc2010 -IC:/projects/qanava-0.9.1/build/qan -I&quot;C:/projects/qanava-0.9.1/build/qan/$(PROPERTYBROWSER)&quot; -IC:/Qt53/5.3/msvc2010_opengl/include -IC:/Qt53/5.3/msvc2010_opengl/include/QtWidgets -IC:/Qt53/5.3/msvc2010_opengl/include/QtXml -IC:/Qt53/5.3/msvc2010_opengl/include/QtGui -IC:/Qt53/5.3/msvc2010_opengl/include/QtCore ..\..\src\qanGraphView.h -o debug\moc_qanGraphView.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">MOC ..\..\src\qanGraphView.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">debug\moc_qanGraphView.cpp;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">..\..\src\qanGraphView.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">C:\Qt53\5.3\msvc2010_opengl\bin\moc.exe  -DUNICODE -DWIN32 -DQANAVA -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1600 -D_WIN32 -IC:/Qt53/5.3/msvc2010_opengl/mkspecs/win32-msvc2010 -IC:/projects/qanava-0.9.1/build/qan -I&quot;C:/projects/qanava-0.9.1/build/qan/$(PROPERTYBROWSER)&quot; -IC:/Qt53/5.3/msvc2010_opengl/include -IC:/Qt53/5.3/msvc2010_opengl/include/QtWidgets -IC:/Qt53/5.3/msvc2010_opengl/include/QtXml -IC:/Qt53/5.3/msvc2010_opengl/include/QtGui -IC:/Qt53/5.3/msvc2010_opengl/include/QtCore ..\..\src\qanGraphView.h -o release\moc_qanGraphView.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">MOC ..\..\src\qanGraphView.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">release\moc_qanGraphView.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <ClInclude Include="..\..\src\qanGrid.h" />
+    <CustomBuild Include="..\..\src\qanGridItem.h">
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">..\..\src\qanGridItem.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">C:\Qt53\5.3\msvc2010_opengl\bin\moc.exe  -DUNICODE -DWIN32 -DQANAVA -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1600 -D_WIN32 -IC:/Qt53/5.3/msvc2010_opengl/mkspecs/win32-msvc2010 -IC:/projects/qanava-0.9.1/build/qan -I&quot;C:/projects/qanava-0.9.1/build/qan/$(PROPERTYBROWSER)&quot; -IC:/Qt53/5.3/msvc2010_opengl/include -IC:/Qt53/5.3/msvc2010_opengl/include/QtWidgets -IC:/Qt53/5.3/msvc2010_opengl/include/QtXml -IC:/Qt53/5.3/msvc2010_opengl/include/QtGui -IC:/Qt53/5.3/msvc2010_opengl/include/QtCore ..\..\src\qanGridItem.h -o debug\moc_qanGridItem.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">MOC ..\..\src\qanGridItem.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">debug\moc_qanGridItem.cpp;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">..\..\src\qanGridItem.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">C:\Qt53\5.3\msvc2010_opengl\bin\moc.exe  -DUNICODE -DWIN32 -DQANAVA -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1600 -D_WIN32 -IC:/Qt53/5.3/msvc2010_opengl/mkspecs/win32-msvc2010 -IC:/projects/qanava-0.9.1/build/qan -I&quot;C:/projects/qanava-0.9.1/build/qan/$(PROPERTYBROWSER)&quot; -IC:/Qt53/5.3/msvc2010_opengl/include -IC:/Qt53/5.3/msvc2010_opengl/include/QtWidgets -IC:/Qt53/5.3/msvc2010_opengl/include/QtXml -IC:/Qt53/5.3/msvc2010_opengl/include/QtGui -IC:/Qt53/5.3/msvc2010_opengl/include/QtCore ..\..\src\qanGridItem.h -o release\moc_qanGridItem.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">MOC ..\..\src\qanGridItem.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">release\moc_qanGridItem.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\qanLayout.h">
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">..\..\src\qanLayout.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">C:\Qt53\5.3\msvc2010_opengl\bin\moc.exe  -DUNICODE -DWIN32 -DQANAVA -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1600 -D_WIN32 -IC:/Qt53/5.3/msvc2010_opengl/mkspecs/win32-msvc2010 -IC:/projects/qanava-0.9.1/build/qan -I&quot;C:/projects/qanava-0.9.1/build/qan/$(PROPERTYBROWSER)&quot; -IC:/Qt53/5.3/msvc2010_opengl/include -IC:/Qt53/5.3/msvc2010_opengl/include/QtWidgets -IC:/Qt53/5.3/msvc2010_opengl/include/QtXml -IC:/Qt53/5.3/msvc2010_opengl/include/QtGui -IC:/Qt53/5.3/msvc2010_opengl/include/QtCore ..\..\src\qanLayout.h -o debug\moc_qanLayout.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">MOC ..\..\src\qanLayout.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">debug\moc_qanLayout.cpp;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">..\..\src\qanLayout.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">C:\Qt53\5.3\msvc2010_opengl\bin\moc.exe  -DUNICODE -DWIN32 -DQANAVA -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1600 -D_WIN32 -IC:/Qt53/5.3/msvc2010_opengl/mkspecs/win32-msvc2010 -IC:/projects/qanava-0.9.1/build/qan -I&quot;C:/projects/qanava-0.9.1/build/qan/$(PROPERTYBROWSER)&quot; -IC:/Qt53/5.3/msvc2010_opengl/include -IC:/Qt53/5.3/msvc2010_opengl/include/QtWidgets -IC:/Qt53/5.3/msvc2010_opengl/include/QtXml -IC:/Qt53/5.3/msvc2010_opengl/include/QtGui -IC:/Qt53/5.3/msvc2010_opengl/include/QtCore ..\..\src\qanLayout.h -o release\moc_qanLayout.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">MOC ..\..\src\qanLayout.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">release\moc_qanLayout.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\qanNode.h">
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">..\..\src\qanNode.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">C:\Qt53\5.3\msvc2010_opengl\bin\moc.exe  -DUNICODE -DWIN32 -DQANAVA -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1600 -D_WIN32 -IC:/Qt53/5.3/msvc2010_opengl/mkspecs/win32-msvc2010 -IC:/projects/qanava-0.9.1/build/qan -I&quot;C:/projects/qanava-0.9.1/build/qan/$(PROPERTYBROWSER)&quot; -IC:/Qt53/5.3/msvc2010_opengl/include -IC:/Qt53/5.3/msvc2010_opengl/include/QtWidgets -IC:/Qt53/5.3/msvc2010_opengl/include/QtXml -IC:/Qt53/5.3/msvc2010_opengl/include/QtGui -IC:/Qt53/5.3/msvc2010_opengl/include/QtCore ..\..\src\qanNode.h -o debug\moc_qanNode.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">MOC ..\..\src\qanNode.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">debug\moc_qanNode.cpp;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">..\..\src\qanNode.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">C:\Qt53\5.3\msvc2010_opengl\bin\moc.exe  -DUNICODE -DWIN32 -DQANAVA -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1600 -D_WIN32 -IC:/Qt53/5.3/msvc2010_opengl/mkspecs/win32-msvc2010 -IC:/projects/qanava-0.9.1/build/qan -I&quot;C:/projects/qanava-0.9.1/build/qan/$(PROPERTYBROWSER)&quot; -IC:/Qt53/5.3/msvc2010_opengl/include -IC:/Qt53/5.3/msvc2010_opengl/include/QtWidgets -IC:/Qt53/5.3/msvc2010_opengl/include/QtXml -IC:/Qt53/5.3/msvc2010_opengl/include/QtGui -IC:/Qt53/5.3/msvc2010_opengl/include/QtCore ..\..\src\qanNode.h -o release\moc_qanNode.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">MOC ..\..\src\qanNode.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">release\moc_qanNode.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\qanNodeGroup.h">
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">..\..\src\qanNodeGroup.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">C:\Qt53\5.3\msvc2010_opengl\bin\moc.exe  -DUNICODE -DWIN32 -DQANAVA -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1600 -D_WIN32 -IC:/Qt53/5.3/msvc2010_opengl/mkspecs/win32-msvc2010 -IC:/projects/qanava-0.9.1/build/qan -I&quot;C:/projects/qanava-0.9.1/build/qan/$(PROPERTYBROWSER)&quot; -IC:/Qt53/5.3/msvc2010_opengl/include -IC:/Qt53/5.3/msvc2010_opengl/include/QtWidgets -IC:/Qt53/5.3/msvc2010_opengl/include/QtXml -IC:/Qt53/5.3/msvc2010_opengl/include/QtGui -IC:/Qt53/5.3/msvc2010_opengl/include/QtCore ..\..\src\qanNodeGroup.h -o debug\moc_qanNodeGroup.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">MOC ..\..\src\qanNodeGroup.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">debug\moc_qanNodeGroup.cpp;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">..\..\src\qanNodeGroup.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">C:\Qt53\5.3\msvc2010_opengl\bin\moc.exe  -DUNICODE -DWIN32 -DQANAVA -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1600 -D_WIN32 -IC:/Qt53/5.3/msvc2010_opengl/mkspecs/win32-msvc2010 -IC:/projects/qanava-0.9.1/build/qan -I&quot;C:/projects/qanava-0.9.1/build/qan/$(PROPERTYBROWSER)&quot; -IC:/Qt53/5.3/msvc2010_opengl/include -IC:/Qt53/5.3/msvc2010_opengl/include/QtWidgets -IC:/Qt53/5.3/msvc2010_opengl/include/QtXml -IC:/Qt53/5.3/msvc2010_opengl/include/QtGui -IC:/Qt53/5.3/msvc2010_opengl/include/QtCore ..\..\src\qanNodeGroup.h -o release\moc_qanNodeGroup.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">MOC ..\..\src\qanNodeGroup.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">release\moc_qanNodeGroup.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\qanNodeItem.h">
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">..\..\src\qanNodeItem.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">C:\Qt53\5.3\msvc2010_opengl\bin\moc.exe  -DUNICODE -DWIN32 -DQANAVA -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1600 -D_WIN32 -IC:/Qt53/5.3/msvc2010_opengl/mkspecs/win32-msvc2010 -IC:/projects/qanava-0.9.1/build/qan -I&quot;C:/projects/qanava-0.9.1/build/qan/$(PROPERTYBROWSER)&quot; -IC:/Qt53/5.3/msvc2010_opengl/include -IC:/Qt53/5.3/msvc2010_opengl/include/QtWidgets -IC:/Qt53/5.3/msvc2010_opengl/include/QtXml -IC:/Qt53/5.3/msvc2010_opengl/include/QtGui -IC:/Qt53/5.3/msvc2010_opengl/include/QtCore ..\..\src\qanNodeItem.h -o debug\moc_qanNodeItem.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">MOC ..\..\src\qanNodeItem.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">debug\moc_qanNodeItem.cpp;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">..\..\src\qanNodeItem.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">C:\Qt53\5.3\msvc2010_opengl\bin\moc.exe  -DUNICODE -DWIN32 -DQANAVA -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1600 -D_WIN32 -IC:/Qt53/5.3/msvc2010_opengl/mkspecs/win32-msvc2010 -IC:/projects/qanava-0.9.1/build/qan -I&quot;C:/projects/qanava-0.9.1/build/qan/$(PROPERTYBROWSER)&quot; -IC:/Qt53/5.3/msvc2010_opengl/include -IC:/Qt53/5.3/msvc2010_opengl/include/QtWidgets -IC:/Qt53/5.3/msvc2010_opengl/include/QtXml -IC:/Qt53/5.3/msvc2010_opengl/include/QtGui -IC:/Qt53/5.3/msvc2010_opengl/include/QtCore ..\..\src\qanNodeItem.h -o release\moc_qanNodeItem.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">MOC ..\..\src\qanNodeItem.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">release\moc_qanNodeItem.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\qanProperties.h">
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">..\..\src\qanProperties.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">C:\Qt53\5.3\msvc2010_opengl\bin\moc.exe  -DUNICODE -DWIN32 -DQANAVA -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1600 -D_WIN32 -IC:/Qt53/5.3/msvc2010_opengl/mkspecs/win32-msvc2010 -IC:/projects/qanava-0.9.1/build/qan -I&quot;C:/projects/qanava-0.9.1/build/qan/$(PROPERTYBROWSER)&quot; -IC:/Qt53/5.3/msvc2010_opengl/include -IC:/Qt53/5.3/msvc2010_opengl/include/QtWidgets -IC:/Qt53/5.3/msvc2010_opengl/include/QtXml -IC:/Qt53/5.3/msvc2010_opengl/include/QtGui -IC:/Qt53/5.3/msvc2010_opengl/include/QtCore ..\..\src\qanProperties.h -o debug\moc_qanProperties.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">MOC ..\..\src\qanProperties.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">debug\moc_qanProperties.cpp;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">..\..\src\qanProperties.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">C:\Qt53\5.3\msvc2010_opengl\bin\moc.exe  -DUNICODE -DWIN32 -DQANAVA -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1600 -D_WIN32 -IC:/Qt53/5.3/msvc2010_opengl/mkspecs/win32-msvc2010 -IC:/projects/qanava-0.9.1/build/qan -I&quot;C:/projects/qanava-0.9.1/build/qan/$(PROPERTYBROWSER)&quot; -IC:/Qt53/5.3/msvc2010_opengl/include -IC:/Qt53/5.3/msvc2010_opengl/include/QtWidgets -IC:/Qt53/5.3/msvc2010_opengl/include/QtXml -IC:/Qt53/5.3/msvc2010_opengl/include/QtGui -IC:/Qt53/5.3/msvc2010_opengl/include/QtCore ..\..\src\qanProperties.h -o release\moc_qanProperties.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">MOC ..\..\src\qanProperties.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">release\moc_qanProperties.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <ClInclude Include="..\..\src\qanSimpleLayout.h" />
+    <CustomBuild Include="..\..\src\qanStyleManager.h">
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">..\..\src\qanStyleManager.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">C:\Qt53\5.3\msvc2010_opengl\bin\moc.exe  -DUNICODE -DWIN32 -DQANAVA -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1600 -D_WIN32 -IC:/Qt53/5.3/msvc2010_opengl/mkspecs/win32-msvc2010 -IC:/projects/qanava-0.9.1/build/qan -I&quot;C:/projects/qanava-0.9.1/build/qan/$(PROPERTYBROWSER)&quot; -IC:/Qt53/5.3/msvc2010_opengl/include -IC:/Qt53/5.3/msvc2010_opengl/include/QtWidgets -IC:/Qt53/5.3/msvc2010_opengl/include/QtXml -IC:/Qt53/5.3/msvc2010_opengl/include/QtGui -IC:/Qt53/5.3/msvc2010_opengl/include/QtCore ..\..\src\qanStyleManager.h -o debug\moc_qanStyleManager.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">MOC ..\..\src\qanStyleManager.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">debug\moc_qanStyleManager.cpp;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">..\..\src\qanStyleManager.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">C:\Qt53\5.3\msvc2010_opengl\bin\moc.exe  -DUNICODE -DWIN32 -DQANAVA -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1600 -D_WIN32 -IC:/Qt53/5.3/msvc2010_opengl/mkspecs/win32-msvc2010 -IC:/projects/qanava-0.9.1/build/qan -I&quot;C:/projects/qanava-0.9.1/build/qan/$(PROPERTYBROWSER)&quot; -IC:/Qt53/5.3/msvc2010_opengl/include -IC:/Qt53/5.3/msvc2010_opengl/include/QtWidgets -IC:/Qt53/5.3/msvc2010_opengl/include/QtXml -IC:/Qt53/5.3/msvc2010_opengl/include/QtGui -IC:/Qt53/5.3/msvc2010_opengl/include/QtCore ..\..\src\qanStyleManager.h -o release\moc_qanStyleManager.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">MOC ..\..\src\qanStyleManager.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">release\moc_qanStyleManager.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <ClInclude Include="..\..\src\qanTreeLayout.h" />
+    <CustomBuild Include="..\..\src\ui\uiNodeGroupFilterWidget.h">
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">..\..\src\ui\uiNodeGroupFilterWidget.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">C:\Qt53\5.3\msvc2010_opengl\bin\moc.exe  -DUNICODE -DWIN32 -DQANAVA -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1600 -D_WIN32 -IC:/Qt53/5.3/msvc2010_opengl/mkspecs/win32-msvc2010 -IC:/projects/qanava-0.9.1/build/qan -I&quot;C:/projects/qanava-0.9.1/build/qan/$(PROPERTYBROWSER)&quot; -IC:/Qt53/5.3/msvc2010_opengl/include -IC:/Qt53/5.3/msvc2010_opengl/include/QtWidgets -IC:/Qt53/5.3/msvc2010_opengl/include/QtXml -IC:/Qt53/5.3/msvc2010_opengl/include/QtGui -IC:/Qt53/5.3/msvc2010_opengl/include/QtCore ..\..\src\ui\uiNodeGroupFilterWidget.h -o debug\moc_uiNodeGroupFilterWidget.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">MOC ..\..\src\ui\uiNodeGroupFilterWidget.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">debug\moc_uiNodeGroupFilterWidget.cpp;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">..\..\src\ui\uiNodeGroupFilterWidget.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">C:\Qt53\5.3\msvc2010_opengl\bin\moc.exe  -DUNICODE -DWIN32 -DQANAVA -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1600 -D_WIN32 -IC:/Qt53/5.3/msvc2010_opengl/mkspecs/win32-msvc2010 -IC:/projects/qanava-0.9.1/build/qan -I&quot;C:/projects/qanava-0.9.1/build/qan/$(PROPERTYBROWSER)&quot; -IC:/Qt53/5.3/msvc2010_opengl/include -IC:/Qt53/5.3/msvc2010_opengl/include/QtWidgets -IC:/Qt53/5.3/msvc2010_opengl/include/QtXml -IC:/Qt53/5.3/msvc2010_opengl/include/QtGui -IC:/Qt53/5.3/msvc2010_opengl/include/QtCore ..\..\src\ui\uiNodeGroupFilterWidget.h -o release\moc_uiNodeGroupFilterWidget.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">MOC ..\..\src\ui\uiNodeGroupFilterWidget.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">release\moc_uiNodeGroupFilterWidget.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\ui\uiNodesItemModel.h">
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">..\..\src\ui\uiNodesItemModel.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">C:\Qt53\5.3\msvc2010_opengl\bin\moc.exe  -DUNICODE -DWIN32 -DQANAVA -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1600 -D_WIN32 -IC:/Qt53/5.3/msvc2010_opengl/mkspecs/win32-msvc2010 -IC:/projects/qanava-0.9.1/build/qan -I&quot;C:/projects/qanava-0.9.1/build/qan/$(PROPERTYBROWSER)&quot; -IC:/Qt53/5.3/msvc2010_opengl/include -IC:/Qt53/5.3/msvc2010_opengl/include/QtWidgets -IC:/Qt53/5.3/msvc2010_opengl/include/QtXml -IC:/Qt53/5.3/msvc2010_opengl/include/QtGui -IC:/Qt53/5.3/msvc2010_opengl/include/QtCore ..\..\src\ui\uiNodesItemModel.h -o debug\moc_uiNodesItemModel.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">MOC ..\..\src\ui\uiNodesItemModel.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">debug\moc_uiNodesItemModel.cpp;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">..\..\src\ui\uiNodesItemModel.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">C:\Qt53\5.3\msvc2010_opengl\bin\moc.exe  -DUNICODE -DWIN32 -DQANAVA -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1600 -D_WIN32 -IC:/Qt53/5.3/msvc2010_opengl/mkspecs/win32-msvc2010 -IC:/projects/qanava-0.9.1/build/qan -I&quot;C:/projects/qanava-0.9.1/build/qan/$(PROPERTYBROWSER)&quot; -IC:/Qt53/5.3/msvc2010_opengl/include -IC:/Qt53/5.3/msvc2010_opengl/include/QtWidgets -IC:/Qt53/5.3/msvc2010_opengl/include/QtXml -IC:/Qt53/5.3/msvc2010_opengl/include/QtGui -IC:/Qt53/5.3/msvc2010_opengl/include/QtCore ..\..\src\ui\uiNodesItemModel.h -o release\moc_uiNodesItemModel.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">MOC ..\..\src\ui\uiNodesItemModel.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">release\moc_uiNodesItemModel.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\ui\uiStyleBrowserWidget.h">
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">..\..\src\ui\uiStyleBrowserWidget.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">C:\Qt53\5.3\msvc2010_opengl\bin\moc.exe  -DUNICODE -DWIN32 -DQANAVA -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1600 -D_WIN32 -IC:/Qt53/5.3/msvc2010_opengl/mkspecs/win32-msvc2010 -IC:/projects/qanava-0.9.1/build/qan -I&quot;C:/projects/qanava-0.9.1/build/qan/$(PROPERTYBROWSER)&quot; -IC:/Qt53/5.3/msvc2010_opengl/include -IC:/Qt53/5.3/msvc2010_opengl/include/QtWidgets -IC:/Qt53/5.3/msvc2010_opengl/include/QtXml -IC:/Qt53/5.3/msvc2010_opengl/include/QtGui -IC:/Qt53/5.3/msvc2010_opengl/include/QtCore ..\..\src\ui\uiStyleBrowserWidget.h -o debug\moc_uiStyleBrowserWidget.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">MOC ..\..\src\ui\uiStyleBrowserWidget.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">debug\moc_uiStyleBrowserWidget.cpp;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">..\..\src\ui\uiStyleBrowserWidget.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">C:\Qt53\5.3\msvc2010_opengl\bin\moc.exe  -DUNICODE -DWIN32 -DQANAVA -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1600 -D_WIN32 -IC:/Qt53/5.3/msvc2010_opengl/mkspecs/win32-msvc2010 -IC:/projects/qanava-0.9.1/build/qan -I&quot;C:/projects/qanava-0.9.1/build/qan/$(PROPERTYBROWSER)&quot; -IC:/Qt53/5.3/msvc2010_opengl/include -IC:/Qt53/5.3/msvc2010_opengl/include/QtWidgets -IC:/Qt53/5.3/msvc2010_opengl/include/QtXml -IC:/Qt53/5.3/msvc2010_opengl/include/QtGui -IC:/Qt53/5.3/msvc2010_opengl/include/QtCore ..\..\src\ui\uiStyleBrowserWidget.h -o release\moc_uiStyleBrowserWidget.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">MOC ..\..\src\ui\uiStyleBrowserWidget.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">release\moc_uiStyleBrowserWidget.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="..\..\src\ui\uiStyleEditorWidget.h">
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">..\..\src\ui\uiStyleEditorWidget.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">C:\Qt53\5.3\msvc2010_opengl\bin\moc.exe  -DUNICODE -DWIN32 -DQANAVA -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1600 -D_WIN32 -IC:/Qt53/5.3/msvc2010_opengl/mkspecs/win32-msvc2010 -IC:/projects/qanava-0.9.1/build/qan -I&quot;C:/projects/qanava-0.9.1/build/qan/$(PROPERTYBROWSER)&quot; -IC:/Qt53/5.3/msvc2010_opengl/include -IC:/Qt53/5.3/msvc2010_opengl/include/QtWidgets -IC:/Qt53/5.3/msvc2010_opengl/include/QtXml -IC:/Qt53/5.3/msvc2010_opengl/include/QtGui -IC:/Qt53/5.3/msvc2010_opengl/include/QtCore ..\..\src\ui\uiStyleEditorWidget.h -o debug\moc_uiStyleEditorWidget.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">MOC ..\..\src\ui\uiStyleEditorWidget.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">debug\moc_uiStyleEditorWidget.cpp;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">..\..\src\ui\uiStyleEditorWidget.h;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">C:\Qt53\5.3\msvc2010_opengl\bin\moc.exe  -DUNICODE -DWIN32 -DQANAVA -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB -D_MSC_VER=1600 -D_WIN32 -IC:/Qt53/5.3/msvc2010_opengl/mkspecs/win32-msvc2010 -IC:/projects/qanava-0.9.1/build/qan -I&quot;C:/projects/qanava-0.9.1/build/qan/$(PROPERTYBROWSER)&quot; -IC:/Qt53/5.3/msvc2010_opengl/include -IC:/Qt53/5.3/msvc2010_opengl/include/QtWidgets -IC:/Qt53/5.3/msvc2010_opengl/include/QtXml -IC:/Qt53/5.3/msvc2010_opengl/include/QtGui -IC:/Qt53/5.3/msvc2010_opengl/include/QtCore ..\..\src\ui\uiStyleEditorWidget.h -o release\moc_uiStyleEditorWidget.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">MOC ..\..\src\ui\uiStyleEditorWidget.h</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">release\moc_uiStyleEditorWidget.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
+    <ClInclude Include="..\..\src\ui\uiUtil.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="debug\moc_qanContainerGraphicsItem.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="release\moc_qanContainerGraphicsItem.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="debug\moc_qanController.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="release\moc_qanController.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="debug\moc_qanEdge.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="release\moc_qanEdge.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="debug\moc_qanEdgeItem.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="release\moc_qanEdgeItem.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="debug\moc_qanGraph.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="release\moc_qanGraph.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="debug\moc_qanGraphItem.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="release\moc_qanGraphItem.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="debug\moc_qanGraphScene.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="release\moc_qanGraphScene.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="debug\moc_qanGraphView.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="release\moc_qanGraphView.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="debug\moc_qanGridItem.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="release\moc_qanGridItem.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="debug\moc_qanLayout.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="release\moc_qanLayout.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="debug\moc_qanNode.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="release\moc_qanNode.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="debug\moc_qanNodeGroup.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="release\moc_qanNodeGroup.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="debug\moc_qanNodeItem.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="release\moc_qanNodeItem.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="debug\moc_qanProperties.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="release\moc_qanProperties.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="debug\moc_qanStyleManager.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="release\moc_qanStyleManager.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="debug\moc_uiNodeGroupFilterWidget.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="release\moc_uiNodeGroupFilterWidget.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="debug\moc_uiNodesItemModel.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="release\moc_uiNodesItemModel.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="debug\moc_uiStyleBrowserWidget.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="release\moc_uiStyleBrowserWidget.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="debug\moc_uiStyleEditorWidget.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="release\moc_uiStyleEditorWidget.cpp">
+      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">true</ExcludedFromBuild>
+    </ClCompile>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets" />
+</Project>
