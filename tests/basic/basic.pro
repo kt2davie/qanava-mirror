@@ -4,10 +4,10 @@ FORMS		= qanMainWindow.ui
 CONFIG		+= qt warn_on debug
 DEFINES		+= QANAVA  
 LANGUAGE	= C++
-QT			+= widgets core gui
+QT		+= widgets core gui
 INCLUDEPATH += ../../src $(PROPERTYBROWSER)
   
-SOURCES	+=  qanApp.cpp \
+SOURCES	+=  qanApp.cpp          \
             qanMainWindow.cpp
 HEADERS	+=  qanMainWindow.h
 

@@ -156,7 +156,7 @@ MainWindow::MainWindow( QApplication* application, QWidget* parent ) :
 	_graph->getM( ).addItem( container2 );
 	container2->init( );
 	
-	QGraphicsWidget* proxy = _graph->getM( ).addWidget( new PixmapWidget( QPixmap( "test.png" ) ) );
+    QGraphicsWidget* proxy = _graph->getM( ).addWidget( new PixmapWidget( QPixmap( ":/test.png" ) ) );
 	container2->setChild( proxy );
 	container2->setPos( 450, 150 );
 	container2->setTitle( "Graphics view inside a container inside a graphics view!" );
