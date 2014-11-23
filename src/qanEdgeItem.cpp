@@ -69,11 +69,12 @@ EdgeItem::EdgeItem( GraphScene& scene, Edge& edge, QGraphicsItem* parent ) :
 
 	qan::Style* style = _styleManager.getStyle( edge );
 	if ( style == 0 )
-	{
-		style = _styleManager.getTargetStyle( "qan::Edge" );
-		if ( style != 0 )
-			_styleManager.styleEdge( _edge, style->getName( ), false );	// doNotUpdateItem = false to avoid infinite recursion
-	}
+    {
+        style = _styleManager.getTargetStyle( "qan::Edge" );
+        if ( style != 0 )
+            _styleManager.styleEdge( _edge, style->getName( ), false );	// doNotUpdateItem = false to avoid infinite recursion
+    }
+    updateItemStyle( );
 
 	// Inititalize edge label item
 	_labelItem = new QGraphicsSimpleTextItem( this );
@@ -93,11 +94,18 @@ void	EdgeItem::updateItem( )
 	Q_ASSERT( srcGraphicsItem != 0 );
 	Q_ASSERT( dstGraphicsItem != 0 );
 
-	QRectF srcBr = srcGraphicsItem->sceneBoundingRect( );
+    QPolygonF srcBp = srcGraphicsItem->shape( ).toFillPolygon( QTransform( ).translate( srcGraphicsItem->scenePos( ).x( ),
+                                                                                        srcGraphicsItem->scenePos( ).y( ) ) );
+    QPolygonF dstBp = dstGraphicsItem->shape( ).toFillPolygon( QTransform( ).translate( dstGraphicsItem->scenePos( ).x( ),
+                                                                                        dstGraphicsItem->scenePos( ).y( ) ) );
+    QRectF srcBr = srcGraphicsItem->sceneBoundingRect( );
 	QRectF dstBr = dstGraphicsItem->sceneBoundingRect( );
-	_line = QLineF( srcBr.center( ), dstBr.center( ) ), 
-	_line = getLineIntersection( _line, srcBr, dstBr );
-	if ( qFuzzyCompare( 1 + _line.length( ) , 1 + 1.0e-200 ) ) 
+    _line = QLineF( srcBr.center( ), dstBr.center( ) ),
+
+    //_line = getLineIntersection( _line, srcBr, dstBr );
+    _line = getPolyLineIntersection( _line, srcBp, dstBp );
+
+    if ( qFuzzyCompare( 1 + _line.length( ) , 1 + 1.0e-200 ) )
 		return;
 
 	// Computing a bounding rect
@@ -247,6 +255,30 @@ QLineF	EdgeItem::getLineIntersection( QLineF line, QRectF srcBr, QRectF dstBr )
 
 	return QLineF( source, destination );
 }
+
+QLineF	EdgeItem::getPolyLineIntersection( QLineF line, QPolygonF srcBp, QPolygonF dstBp )
+{
+    QPointF source = line.p1( );
+    for ( int p = 0; p < srcBp.length( ) - 1 ; p++ )
+    {
+        QLineF polyLine( srcBp[ p ], srcBp[ p + 1 ] );
+        QPointF intersection;
+        if ( line.intersect( polyLine, &intersection ) == QLineF::BoundedIntersection )
+            source = intersection;
+    }
+
+    QPointF destination = line.p2( );
+    for ( int p = 0; p < dstBp.length( ) - 1 ; p++ )
+    {
+        QLineF polyLine( dstBp[ p ], dstBp[ p + 1 ] );
+        QPointF intersection;
+        if ( line.intersect( polyLine, &intersection ) == QLineF::BoundedIntersection )
+            destination = intersection;
+    }
+
+    return QLineF( source, destination );
+}
+
 
 /*! \note Arrow is drawn at line second point.
  */

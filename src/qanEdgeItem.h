@@ -123,6 +123,8 @@ namespace qan { // ::qan
 
 		static QLineF	getLineIntersection( QLineF line, QRectF srcBr, QRectF dstBr );
 
+        static QLineF	getPolyLineIntersection( QLineF line, QPolygonF srcBp, QPolygonF dstBp );
+
 		static void		drawArrow( QPainter* painter, QLineF line, QColor color, float arrowSize = 4. );
 		//@}
 		//---------------------------------------------------------------------

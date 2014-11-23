@@ -165,19 +165,19 @@ namespace qan { // ::qan
 
 		QList< QGraphicsItem* >		getDropTargets( ) { return _dropTargets; }
 
-		void						emitItemDragMove( qan::NodeItem* nodeItem, QGraphicsItem* target ) { emit itemDragMove( nodeItem, target ); }
+        void						emitItemDragMove( qan::SimpleNodeItem* nodeItem, QGraphicsItem* target ) { emit itemDragMove( nodeItem, target ); }
 
-		void						emitItemDragLeave( qan::NodeItem* nodeItem, QGraphicsItem* target ) { emit itemDragLeave( nodeItem, target ); }
+        void						emitItemDragLeave( qan::SimpleNodeItem* nodeItem, QGraphicsItem* target ) { emit itemDragLeave( nodeItem, target ); }
 
-		void						emitItemDropped( qan::NodeItem* nodeItem, QGraphicsItem* target ) { emit itemDropped( nodeItem, target ); }
+        void						emitItemDropped( qan::SimpleNodeItem* nodeItem, QGraphicsItem* target ) { emit itemDropped( nodeItem, target ); }
 
 	signals:
 
-		void						itemDragMove( qan::NodeItem* nodeItem, QGraphicsItem* target );
+        void						itemDragMove( qan::SimpleNodeItem* nodeItem, QGraphicsItem* target );
 
-		void						itemDragLeave( qan::NodeItem* nodeItem, QGraphicsItem* target );
+        void						itemDragLeave( qan::SimpleNodeItem* nodeItem, QGraphicsItem* target );
 
-		void						itemDropped( qan::NodeItem* nodeItem, QGraphicsItem* target );
+        void						itemDropped( qan::SimpleNodeItem* nodeItem, QGraphicsItem* target );
 
 	protected:
 

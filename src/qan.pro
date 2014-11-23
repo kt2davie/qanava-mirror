@@ -17,7 +17,8 @@ HEADERS +=	./qanConfig.h \
 			./qanTreeLayout.h \
 			./qanNode.h \
 			./qanController.h \
-			./qanNodeItem.h \
+                        ./qanSimpleNodeItem.h \
+                        ./qanNodeItem.h \
 			./qanEdgeItem.h \
 			./qanGraphItem.h \
 			./qanProperties.h \
@@ -41,7 +42,8 @@ SOURCES += 	./qanEdge.cpp \
 			./qanTreeLayout.cpp \
 			./qanNode.cpp \
 			./qanController.cpp \
-			./qanNodeItem.cpp \
+                        ./qanSimpleNodeItem.cpp \
+                        ./qanNodeItem.cpp \
 			./qanEdgeItem.cpp \
 			./qanProperties.cpp \
 			./qanStyleManager.cpp \

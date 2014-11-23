@@ -22,24 +22,22 @@
 //
 // \file	canApp.cpp
 // \author	benoit@qanava.org
-// \date	2014 10 19
+// \date	2014 11 22
 //-----------------------------------------------------------------------------
-
-
-// Qanava headers
-#include "qanMainWindow.h"
 
 // QT headers
 #include <qapplication.h>
 #include <qsplashscreen.h>
 
+// Qanava headers
+#include "qanMainWindow.h"
 
 int	main( int argc, char** argv )
 {
 	QApplication app( argc, argv );
 
-    MainWindow mainWindow( &app );
-	mainWindow.show( );
+    MainWindow mainWindow;
+    mainWindow.show( );
 	app.connect( &app, SIGNAL( lastWindowClosed( ) ), &app, SLOT( quit( ) ) );
 
 	return app.exec( );

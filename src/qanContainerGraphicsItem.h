@@ -45,7 +45,7 @@ namespace qan { // ::qan
 
 	class ContainerGraphicsItem;
 
-	//! Model a mysire graphics view proprietary window decoration.
+    //! Model a qanava graphics view proprietary window decoration.
 	class ContainerGraphicsDecoration : public QObject, public QGraphicsItem
 	{
 		Q_OBJECT
@@ -96,7 +96,7 @@ namespace qan { // ::qan
 	};
 
 
-	//! Model a mysire graphics view proprietary window (ie a window without a proxy window widget).
+    //! Model a qanava graphics view proprietary window (ie a window without a proxy window widget).
 	class ContainerGraphicsItem : public QGraphicsObject
 	{
 		Q_OBJECT

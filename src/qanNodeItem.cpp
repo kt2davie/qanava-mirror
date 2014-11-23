@@ -106,51 +106,31 @@ void	LabelEditorItem::mousePressEvent( QGraphicsSceneMouseEvent* e )
 //-----------------------------------------------------------------------------
 
 
+
 /* NodeItem Constructor/Destructor *///----------------------------------------
 /*!
-	The following style options are supported:
-	<ul>
-	<li> <b>'backcolor':</b> Background color, when there is no background image defined.
-	<li> <b>'bordercolor':</b> Color of the item border.
-	<li> <b>'backimage':</b> Background image (scaled to fit the item size).
-	<li> <b>'maximumwidth':</b> Maximum width of the item, content is cropped to fit this with limit.
-	<li> <b>'maximumheight':</b> Maximum height of the item, content is cropped to fit this height limit.
-	<li> <b>'fontsize':</b> Base size for the font used to display the item label.
-	<li> <b>'icon':</b> Display an icon centered in the left of the item.
-	<li> <b>'hasshadow':</b> Set this value to false to supress the node shadow.
-	</ul>
-	
-	An item with an empty style is transparent with no background and border.
+    The following style options are supported:
+    <ul>
+    <li> <b>'backcolor':</b> Background color, when there is no background image defined.
+    <li> <b>'bordercolor':</b> Color of the item border.
+    <li> <b>'backimage':</b> Background image (scaled to fit the item size).
+    <li> <b>'maximumwidth':</b> Maximum width of the item, content is cropped to fit this with limit.
+    <li> <b>'maximumheight':</b> Maximum height of the item, content is cropped to fit this height limit.
+    <li> <b>'fontsize':</b> Base size for the font used to display the item label.
+    <li> <b>'icon':</b> Display an icon centered in the left of the item.
+    <li> <b>'hasshadow':</b> Set this value to false to supress the node shadow.
+    </ul>
+
+    An item with an empty style is transparent with no background and border.
  */
-NodeItem::NodeItem( GraphScene& scene, Node& node, QGraphicsItem* parent, bool isMovable, bool showPropertiesWidget ) : 
-	GraphItem( scene, parent ),
-	_node( node ),
-	_scene( scene ),
-	_dimension( 170.0, 45.0 ),
-	_shadowColor( ),
-	_shadowOffset( QPointF( 4., 4. ) ),
-	_shadowEffect( 0 ),
-    _mousePos( -1. , -1. ),
-    _mousePressed( false ),
-	_isMovable( isMovable ),
-	_isDraggable( true ),
-	_dragMove( false ),
-    _dragOverItem( 0 ),
-    _shapeItem( 0 ),
+NodeItem::NodeItem( GraphScene& scene, Node& node, QGraphicsItem* parent, bool isMovable, bool showPropertiesWidget ) :
+    SimpleNodeItem( scene, node, parent, isMovable, showPropertiesWidget ),
     _pixmapItem( 0 ),
     _labelItem( 0 ),
     _leftItem( 0 ),
     _bottomItem( 0 )
 {
-	setFlag( QGraphicsItem::ItemSendsGeometryChanges );
-	setFlag( QGraphicsItem::ItemSendsScenePositionChanges );	// Catch position changes from node child of a qan::NodeGroup
-	setZValue( 2.0 );
-	setAcceptDrops( false );
-
-	if ( showPropertiesWidget )
-		activatePropertiesPopup( node.getProperties( ), 500, true );
-
-	setLabelItem( getNode( ).getLabel( ) );
+    setLabelItem( getNode( ).getLabel( ) );
 }
 
 NodeItem::~NodeItem( ) { }
@@ -158,233 +138,57 @@ NodeItem::~NodeItem( ) { }
 
 
 /* NodeItem Associed Graphics Item Management *///-----------------------------
-QRectF	NodeItem::boundingRect( ) const
-{
-	QRectF br( 0., 0., _dimension.x( ), _dimension.y( ) );
-	if ( _shapeItem != 0 )
-		br = br.united( mapFromItem( _shapeItem, _shapeItem->boundingRect( ) ).boundingRect( ) );
-	return br;
-}
-
-QPainterPath	NodeItem::shape( ) const
-{
-	QPainterPath qpp;
-	qpp.addRect( boundingRect( ) );
-	return qpp;
-}
-
 void	NodeItem::updateItem( )
 {
-	qan::Style* style = _styleManager.getStyle( getNode( ) );
-	if ( style == 0 )
-	{
-		style = _styleManager.getTargetStyle( "qan::Node" );
-		if ( style != 0 )
-			_styleManager.styleNode( _node, style->getName( ) );
-	}
-	QBrush b;
-	if ( _shapeItem != 0 )
-		b = _shapeItem->brush( );
-	QColor backColor = QColor( 255, 255, 255 );
-	if ( style != 0 && style->has( "Back Color" ) )
-	{
-		backColor = style->getColor( "Back Color" );
-		b.setStyle( Qt::SolidPattern );
-		b.setColor( backColor );
-	}
-	if ( style != 0 && style->has( "No Background" ) && style->get( "No Background" ).toBool( ) )
-		b.setStyle( Qt::NoBrush );
+    SimpleNodeItem::updateItem( );
 
-	if ( _shapeItem != 0 )
-		_shapeItem->setBrush( b );
-	if ( _bottomItem != 0 )	// Set bottom item widget back color
-	{
-		QPalette p = _bottomItem->palette( );
-		p.setColor( QPalette::Window, Qt::transparent );
-		_bottomItem->setPalette( p );
-	}
+    qan::Style* style = _styleManager.getStyle( getNode( ) );
+    if ( style == 0 )
+    {
+        style = _styleManager.getTargetStyle( "qan::Node" );
+        if ( style != 0 )
+            _styleManager.styleNode( _node, style->getName( ) );
+    }
 
-	QPen p;
-	if ( _shapeItem != 0 )
-		p = _shapeItem->pen( );
-	QColor borderColor = QColor( 0, 0, 0 );
-	Qt::PenStyle borderStyle = Qt::SolidLine;
-	float borderWidth = 1.0; 
-	if ( style != 0 && style->has( "Border Color" ) )
-		borderColor = style->getColor( "Border Color" );
-	if ( style != 0 && style->has( "Border Style" ) )
-		borderStyle = ( Qt::PenStyle )( style->get( "Border Style" ).toInt( ) + 1 );	// +1 since 0 is noline and does not appears in style selection dialog
-	if ( style != 0 && style->has( "Border Width" ) )
-		borderWidth = style->get( "Border Width" ).toFloat( );
-	p.setColor( borderColor );
-	p.setStyle( borderStyle );
-	p.setJoinStyle( Qt::RoundJoin );
-	p.setWidthF( borderWidth );
-	if ( _shapeItem != 0 )
-		_shapeItem->setPen( p );
+    if ( _bottomItem != 0 )	// Set bottom item widget back color
+    {
+        QPalette p = _bottomItem->palette( );
+        p.setColor( QPalette::Window, Qt::transparent );
+        _bottomItem->setPalette( p );
+    }
 
-	// Compute the _label size once it is laid out as rich text html
-	{
-		QFont font;
-		if ( style != 0 && style->has( "Font" ) )
-			font = style->get( "Font" ).value< QFont >( );
+    // Compute the _label size once it is laid out as rich text html
+    {
+        QFont font;
+        if ( style != 0 && style->has( "Font" ) )
+            font = style->get( "Font" ).value< QFont >( );
 
-		if ( _labelItem == 0 )
-			_labelItem = new LabelEditorItem( getNode( ).getLabel( ), "<< label >>", this );
-		_labelItem->setParentItem( this );
-		_labelItem->setHtml( getNode( ).getLabel( ) );
-		_labelItem->setFont( font );
-	}
+        if ( _labelItem == 0 )
+            _labelItem = new LabelEditorItem( getNode( ).getLabel( ), "<< label >>", this );
+        _labelItem->setParentItem( this );
+        _labelItem->setHtml( getNode( ).getLabel( ) );
+        _labelItem->setFont( font );
+    }
 
-	// Updating node geometry and content
-	{
-		updateItemLayout( );
+    // Update node geometry and content
+    updateItemLayout( );
 
-		// Check for item maximum dimension (if specified)
-		QSizeF maxSize( -1., -1. );
-		if ( style != 0 && style->has( "Maximum Size" ) )
-			maxSize = style->get( "Maximum Size" ).toSizeF( );
+    /*
+        // Check for item maximum dimension (if specified)
+        QSizeF maxSize( -1., -1. );
+        if ( style != 0 && style->has( "Maximum Size" ) )
+            maxSize = style->get( "Maximum Size" ).toSizeF( );
 
-		// Compute the item height according to the _label size once formatted and displayed
-		/*if ( _labelItem != 0 )
-		{
-			// Do not resize the item larger than its maximum allowed size
-			double textLayoutWidth = _labelItem->boundingRect( ).width( ) + 2.;
-			double textLayoutHeight = _labelItem->boundingRect( ).height( ) + 2.;
-			_dimension.setX( maxSize.width( ) > 0. ? qMin( textLayoutWidth, maxSize.width( ) ) : textLayoutWidth );
-			_dimension.setY( maxSize.height( ) > 0. ? qMin( textLayoutHeight, maxSize.height( ) ) : textLayoutHeight );
-		}*/
-
-		bool hasShadow = false;
-		if ( style != 0 && style->has( "Has Shadow" ) )
-			hasShadow = style->get( "Has Shadow" ).toBool( );
-		if ( hasShadow )
-		{
-			if ( style->has( "Shadow Color" ) ) 
-				_shadowColor = style->getColor( "Shadow Color" );
-			else
-				_shadowColor = QColor( 105, 105, 105 );
-			_shadowOffset = QPointF( 4., 4. );
-			if ( style->has( "Shadow Offset" ) ) 
-			{
-				QSizeF shadowOffset = style->get( "Shadow Offset" ).toSizeF( );
-				_shadowOffset = QPointF( shadowOffset.width( ), shadowOffset.height( ) );
-			}
-
-			if ( _shadowEffect == 0 )
-				_shadowEffect = new QGraphicsDropShadowEffect( this );
-			if ( _shadowEffect != 0 && _shapeItem != 0 )
-			{
-				_shadowEffect->setColor( _shadowColor );
-				_shadowEffect->setOffset( _shadowOffset );
-				_shapeItem->setGraphicsEffect( _shadowEffect );
-				_shadowEffect->setEnabled( true );
-			}
-		}
-		else
-		{
-			if ( _shadowEffect != 0 )
-				_shadowEffect->setEnabled( false );
-			_shadowColor = QColor( ); // Invalid color since there is no shadow
-		}
-	}
-}
-
-void	NodeItem::updateItemStyle( )
-{
-	updateItem( );
-}
-//-----------------------------------------------------------------------------
-
-
-/* NodeItem Drawing Management *///--------------------------------------------
-void	NodeItem::paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget )
-{
-    Q_UNUSED( painter ); Q_UNUSED( option ); Q_UNUSED( widget );
-	updateItemLayout( );
-
-	if ( !_shadowColor.isValid( ) && _shadowEffect != 0 )
-		_shadowEffect->setEnabled( false );
-}
-
-QVariant	NodeItem::itemChange( GraphicsItemChange change, const QVariant& value )
-{
-	if ( change == QGraphicsItem::ItemPositionHasChanged || change == QGraphicsItem::ItemScenePositionHasChanged )
-	{
-		//if ( !qFuzzyCompare( ( _node.getPosition( ) - pos( ) ).manhattanLength( ), 0. ) )
-		{
-			_node.setPosition( pos( ) );
-			foreach ( Edge* edge, _node.getOutEdges( ) )
-				edge->getGraphItem( )->updateItem( );
-			foreach ( Edge* edge, _node.getInEdges( ) )
-				edge->getGraphItem( )->updateItem( );
-		}
-	}
-	return 	QGraphicsItem::itemChange( change, value );
-}
-
-void	NodeItem::mouseMoveEvent( QGraphicsSceneMouseEvent* e )
-{
-	if ( _mousePressed && _isMovable )
-	{
-		QPointF oldPos	= scenePos( );
-		QPointF d		=  e->scenePos( ) - _mousePos;
-		if ( !qFuzzyCompare( 1. + d.manhattanLength( ), 1. ) )
-		{
-			hidePropertiesPopup( );
-			moveBy( d.x( ), d.y( ) );
-			emit itemMoved( pos( ), oldPos );
-			getNode( ).setPosition( pos( ) );
-			_mousePos = e->scenePos( );
-
-			if ( isDraggable( ) )
-			{
-				// Detect collision with a drag target item in scene
-				bool dragOverItem = false;
-				foreach ( QGraphicsItem* dropTarget, _scene.getDropTargets( ) )
-					if ( dropTarget->sceneBoundingRect( ).contains( sceneBoundingRect( ) ) )
-					{
-						_scene.emitItemDragMove( this, dropTarget );
-						dragOverItem = true;
-						_dragOverItem = dropTarget;
-					}
-				// If we were previously dragging over an item and there is no longer collision, send a drag leave signal to that item
-				if ( dragOverItem == false && _dragOverItem != 0 )
-				{
-					_scene.emitItemDragLeave( this, _dragOverItem );
-					_dragOverItem = 0;
-				}
-			}
-		}
-		e->accept( );
-	}
-	else
-		QGraphicsItem::mouseMoveEvent( e );
-}
-
-void	NodeItem::mousePressEvent( QGraphicsSceneMouseEvent* e )
-{
-	if ( _isMovable && e->button( ) == Qt::LeftButton )
-	{
-		_mousePressed = true;
-		_mousePos = e->scenePos( );
-		update( );
-		e->accept( );
-	}
-	else
-		QGraphicsItem::mousePressEvent( e );
-}
-
-void	NodeItem::mouseReleaseEvent( QGraphicsSceneMouseEvent* e )
-{
-	if ( isDraggable( ) && _dragOverItem != 0 )
-	{
-		_scene.emitItemDropped( this, _dragOverItem );
-		_dragOverItem = 0;
-	}
-	_mousePressed = false;
-	update( );
-	QGraphicsItem::mouseReleaseEvent( e );
+        // Compute the item height according to the _label size once formatted and displayed
+        /*if ( _labelItem != 0 )
+        {
+            // Do not resize the item larger than its maximum allowed size
+            double textLayoutWidth = _labelItem->boundingRect( ).width( ) + 2.;
+            double textLayoutHeight = _labelItem->boundingRect( ).height( ) + 2.;
+            _dimension.setX( maxSize.width( ) > 0. ? qMin( textLayoutWidth, maxSize.width( ) ) : textLayoutWidth );
+            _dimension.setY( maxSize.height( ) > 0. ? qMin( textLayoutHeight, maxSize.height( ) ) : textLayoutHeight );
+        }
+    */
 }
 //-----------------------------------------------------------------------------
 

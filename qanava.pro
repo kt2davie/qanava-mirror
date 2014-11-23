@@ -7,7 +7,10 @@ test-basic.depends  = qanava
 test-container.subdir   = tests/container
 test-container.depends  = qanava
 
-SUBDIRS     +=  qanava test-basic test-container
+test-custom.subdir   = tests/custom
+test-custom.depends  = qanava
+
+SUBDIRS     +=  qanava test-basic test-container test-custom
 
 
 

@@ -34,7 +34,7 @@
 #include "./qanNode.h"
 #include "./qanGraphItem.h"
 #include "./qanEdgeItem.h"
-
+#include "./qanSimpleNodeItem.h"
 
 // QT headers
 #include <QGraphicsItem>
@@ -84,7 +84,8 @@ namespace qan { // ::qan
 		//---------------------------------------------------------------------
 	};
 
-	//! Model a rectangular node item on a QT graphics view.
+
+    //! Model a rectangular node item on a Qt graphics view.
 	/*!
 	The following style options are supported:
 	<ul>
@@ -97,7 +98,7 @@ namespace qan { // ::qan
 	</ul>
 		\nosubgrouping
 	*/
-	class NodeItem : public GraphItem
+    class NodeItem : public SimpleNodeItem
 	{
 		Q_OBJECT
 
@@ -109,84 +110,21 @@ namespace qan { // ::qan
 
 		virtual ~NodeItem( );
 
-		Node&	getNode( ) { return _node; }
-
 		enum { Type = UserType + 42 + 2 };
 
 		virtual int	type( ) const { return Type; }
 
-	protected:
-
-		Node&		_node;
-
-		GraphScene&	_scene;
+    private:
+        Q_DISABLE_COPY( NodeItem );
 		//@}
 		//---------------------------------------------------------------------
 
 
 		/*! \name NodeItem Associed Graphics Item Management *///-------------
 		//@{
-	public:
-
-		virtual QGraphicsItem*		getGraphicsItem( ) { return static_cast< QGraphicsItem* >( this ); }
-
-		virtual QRectF				boundingRect( ) const;
-		
-		QPainterPath				shape( ) const;
-
 	public slots:
 
 		virtual void				updateItem( );
-
-		virtual void				updateItemStyle( );
-		//@}
-		//---------------------------------------------------------------------
-
-
-		/*! \name NodeItem Drawing Management *///-----------------------------
-		//@{
-	public:
-
-		void	paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0 );
-
-		bool	isDraggable( ) const { return _isDraggable; }
-
-		void	setDraggable( bool isDraggable ) { _isDraggable = isDraggable; }
-
-		void	setMovable( bool isMovable ) { _isMovable = isMovable; }
-
-	protected:
-
-		QPointF						_dimension;
-
-		QColor						_shadowColor;
-
-		QPointF						_shadowOffset;
-		
-		QGraphicsDropShadowEffect*	_shadowEffect;
-
-	protected:
-
-		virtual QVariant	itemChange( QGraphicsItem::GraphicsItemChange change, const QVariant& value );
-    
-	signals:
-
-		void				itemMoved( QPointF pos, QPointF oldPos );
-
-	protected:
-
-		virtual	void		mouseMoveEvent( QGraphicsSceneMouseEvent* e );
-		virtual void		mousePressEvent( QGraphicsSceneMouseEvent* e );
-		virtual void		mouseReleaseEvent( QGraphicsSceneMouseEvent* e );
-
-		QPointF				_mousePos;
-		bool				_mousePressed;
-		bool				_isMovable;
-
-		bool				_isDraggable;
-		bool				_dragMove;
-
-		QGraphicsItem*		_dragOverItem;
 		//@}
 		//---------------------------------------------------------------------
 
@@ -197,9 +135,6 @@ namespace qan { // ::qan
 
 		//! Indicate to a specialized class the ideal size of the item computed in updateItemLayout().
 		virtual	void			setLayoutRect( QRectF layoutBr ) = 0;
-
-		//! Set a concrete shape item used in subclasse to draw this node item (usually a QGraphicsRectItem or QGraphicsPolygonItem).
-		void					setShapeItem( QAbstractGraphicsShapeItem* shapeItem ) { _shapeItem = shapeItem; }
 
 		//! Layout this item left, pixmap, label and bottom item, and return the ideal item rect trought setLayoutRect().
 		void					updateItemLayout( );
@@ -213,8 +148,6 @@ namespace qan { // ::qan
 		void					setBottomItem( QGraphicsProxyWidget* leftItem );
 
 	protected:
-
-		QAbstractGraphicsShapeItem*	_shapeItem; 
 
 		QGraphicsPixmapItem*		_pixmapItem;
 

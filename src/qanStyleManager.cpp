@@ -101,7 +101,7 @@ StyleManager::StyleManager( qan::Graph* graph, QObject* parent ) :
 	edgeStyle->addProperty( "Line Style", QtVariantPropertyManager::enumTypeId(),  lineStyles );
 	edgeStyle->addProperty( "Line Width", QVariant( 1.2 ) );
 	edgeStyle->addProperty( "Arrow Size", QVariant( 4.0 ) );
-	edgeStyle->addProperty( "Draw Bounding Rect", QVariant( true ) );
+    edgeStyle->addProperty( "Draw Bounding Rect", QVariant( false ) );
 
 	qan::Style* hEdgeStyle = addStyle( "default hyper edge", "qan::HEdge" );
 	lineStyles.clear( ); lineStyles << "Solid line" << "Dash line" << "Dot line" << "Dash Dot line" << "Dash Dot Dot line";
