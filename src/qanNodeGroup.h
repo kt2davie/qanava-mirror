@@ -58,7 +58,7 @@ namespace qan { // ::qan
 		//@{
 	public:
 
-		NodeGroup( qan::GraphScene& scene, QString name, QGraphicsItem* parent = 0 );
+        NodeGroup( qan::GraphScene& scene, QString name, QGraphicsItem* parent = 0 );
 
 		qan::GraphScene& getScene( ) { return _scene; }
 
@@ -139,11 +139,11 @@ namespace qan { // ::qan
 
 	protected slots:
 		
-		void			itemDragMove( qan::NodeItem* item, QGraphicsItem* target );
+        virtual void			itemDragMove( qan::SimpleNodeItem* item, QGraphicsItem* target );
 
-		void			itemDragLeave( qan::NodeItem* item, QGraphicsItem* target );
+        virtual void			itemDragLeave( qan::SimpleNodeItem* item, QGraphicsItem* target );
 
-		void			itemDropped( qan::NodeItem* item, QGraphicsItem* target );
+        virtual void			itemDropped( qan::SimpleNodeItem* item, QGraphicsItem* target );
 		//@}
 		//---------------------------------------------------------------------
 

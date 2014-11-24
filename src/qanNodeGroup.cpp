@@ -58,9 +58,9 @@ NodeGroup::NodeGroup( qan::GraphScene& scene, QString name, QGraphicsItem* paren
 	_mousePressed( false ),
 	_addAsChilds( true )
 {
-	connect( &scene, SIGNAL( itemDragMove( qan::NodeItem*, QGraphicsItem* ) ), this, SLOT( itemDragMove( qan::NodeItem*, QGraphicsItem* ) ) );
-	connect( &scene, SIGNAL( itemDragLeave( qan::NodeItem*, QGraphicsItem* ) ), this, SLOT( itemDragLeave( qan::NodeItem*, QGraphicsItem* ) ) );
-	connect( &scene, SIGNAL( itemDropped( qan::NodeItem*, QGraphicsItem* ) ), this, SLOT( itemDropped( qan::NodeItem*, QGraphicsItem* ) ) );
+    connect( &scene, SIGNAL( itemDragMove( qan::SimpleNodeItem*, QGraphicsItem* ) ), this, SLOT( itemDragMove( qan::SimpleNodeItem*, QGraphicsItem* ) ) );
+    connect( &scene, SIGNAL( itemDragLeave( qan::SimpleNodeItem*, QGraphicsItem* ) ), this, SLOT( itemDragLeave( qan::SimpleNodeItem*, QGraphicsItem* ) ) );
+    connect( &scene, SIGNAL( itemDropped( qan::SimpleNodeItem*, QGraphicsItem* ) ), this, SLOT( itemDropped( qan::SimpleNodeItem*, QGraphicsItem* ) ) );
 
 	_nameItem = new LabelEditorItem( name, "<< Group name >>", this );
 	_nameItem->setPos( QPointF( 0., -_nameItem->boundingRect( ).height( ) ) );
@@ -238,7 +238,7 @@ void	NodeGroup::paint( QPainter* painter, const QStyleOptionGraphicsItem* option
 
 
 /* Drag and Drop Management *///-----------------------------------------------
-void	NodeGroup::itemDragMove( qan::NodeItem* item, QGraphicsItem* target )
+void	NodeGroup::itemDragMove( qan::SimpleNodeItem* item, QGraphicsItem* target )
 {
     Q_UNUSED( item );
 	if ( !getAcceptDrops( ) )
@@ -250,7 +250,7 @@ void	NodeGroup::itemDragMove( qan::NodeItem* item, QGraphicsItem* target )
 	update( );
 }
 
-void	NodeGroup::itemDragLeave( qan::NodeItem* item, QGraphicsItem* target )
+void	NodeGroup::itemDragLeave( qan::SimpleNodeItem* item, QGraphicsItem* target )
 {
     Q_UNUSED( item );
 	if ( !getAcceptDrops( ) )
@@ -265,7 +265,7 @@ void	NodeGroup::itemDragLeave( qan::NodeItem* item, QGraphicsItem* target )
 	}
 }
 
-void	NodeGroup::itemDropped( qan::NodeItem* item, QGraphicsItem* target )
+void	NodeGroup::itemDropped( qan::SimpleNodeItem* item, QGraphicsItem* target )
 {
 	if ( !getAcceptDrops( ) )
 		return;

@@ -18,7 +18,7 @@
 */
 
 //-----------------------------------------------------------------------------
-// This file is a part of the Qarte software.
+// This file is a part of the Qanava software.
 //
 // \file	canApp.cpp
 // \author	benoit@qanava.org
@@ -36,17 +36,12 @@
 
 int	main( int argc, char** argv )
 {
-	// QT gui creation (Needed to allocate plugin qt components and application kernel)
 	QApplication app( argc, argv );
 
-	// Create main application form
 	MainWindow mainWindow( &app );
-
-	// Display main window and start processing events
 	mainWindow.show( );
 	app.connect( &app, SIGNAL( lastWindowClosed( ) ), &app, SLOT( quit( ) ) );
 
-	// Process events
 	return app.exec( );
 }
 

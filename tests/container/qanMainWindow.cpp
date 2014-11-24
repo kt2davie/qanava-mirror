@@ -103,6 +103,7 @@ ContainerWidget::ContainerWidget( QGraphicsScene& scene, QGraphicsView* gw, QGra
 	QGraphicsWidget( parent ),
 	_scene( scene )
 { 
+    Q_UNUSED( gw );
     _vLayout = new QGraphicsLinearLayout( Qt::Vertical );
 	_vLayout->setContentsMargins( 0.2, 0.2, 0.2, 0.2 );
     setLayout( _vLayout );
