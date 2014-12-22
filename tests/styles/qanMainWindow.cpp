@@ -31,7 +31,6 @@
 #include "../../src/qanGrid.h"
 #include "../../src/qanLayout.h"
 #include "../../src/qanTreeLayout.h"
-#include "../../src/qanContainerGraphicsItem.h"
 #include "./qanMainWindow.h"
 #include "./ui/uiStyleEditorWidget.h"
 #include "./ui/uiStyleBrowserWidget.h"
