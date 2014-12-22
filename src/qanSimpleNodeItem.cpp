@@ -42,6 +42,7 @@
 #include <QTextEdit>
 #include <QTransform>
 #include <QMimeData>
+#include <QGraphicsLayout>
 
 
 namespace qan {	// ::qan
@@ -49,7 +50,7 @@ namespace qan {	// ::qan
 
 /* SimpleNodeItem Constructor/Destructor *///----------------------------------
 SimpleNodeItem::SimpleNodeItem( GraphScene& scene, Node& node, QGraphicsItem* parent, bool isMovable, bool showPropertiesWidget ) :
-	GraphItem( scene, parent ),
+    GraphItem( scene, parent ), QGraphicsLayoutItem( ),
 	_node( node ),
 	_scene( scene ),
 	_dimension( 170.0, 45.0 ),
@@ -66,11 +67,14 @@ SimpleNodeItem::SimpleNodeItem( GraphScene& scene, Node& node, QGraphicsItem* pa
 {
 	setFlag( QGraphicsItem::ItemSendsGeometryChanges );
 	setFlag( QGraphicsItem::ItemSendsScenePositionChanges );	// Catch position changes from node child of a qan::NodeGroup
-	setZValue( 2.0 );
 	setAcceptDrops( false );
+    setAcceptHoverEvents( false );
+    setZValue( 2.0 );
 
 	if ( showPropertiesWidget )
 		activatePropertiesPopup( node.getProperties( ), 500, true );
+
+    QGraphicsLayoutItem::setGraphicsItem( this );
 }
 
 SimpleNodeItem::~SimpleNodeItem( ) { }
@@ -271,6 +275,57 @@ void	SimpleNodeItem::mouseReleaseEvent( QGraphicsSceneMouseEvent* e )
 }
 //-----------------------------------------------------------------------------
 
+
+/* Graphics layout item implementation *///------------------------------------
+void SimpleNodeItem::updateGeometry( )
+{
+    // Force parent layout update to take into account this item new geometry
+    // Note Qt 5.4.3: Should have been done automatically by Qt in base method, strange...
+    if ( parentLayoutItem( ) != 0 && parentLayoutItem( )->isLayout( ) )
+    {
+        QGraphicsLayout* gl = static_cast< QGraphicsLayout* >(  parentLayoutItem( ) );
+        gl->invalidate( );
+    }
+    QGraphicsLayoutItem::updateGeometry( );
+}
+
+void SimpleNodeItem::setGeometry( const QRectF& geom )
+{
+    prepareGeometryChange( );
+    QGraphicsLayoutItem::setGeometry( geom );
+
+    // Get subitem bounding rect to set a correct group top left position
+    QRectF childrenBr = childrenBoundingRect( );
+    QPointF topLeftDelta = boundingRect( ).topLeft( ) - childrenBr.topLeft( );
+    setPos( geom.topLeft( ) + topLeftDelta );
+
+//    if ( _shapeItem != 0 )
+//        _shapeItem->setPos( geom.topLeft( ) + topLeftDelta );
+}
+
+QSizeF SimpleNodeItem::sizeHint( Qt::SizeHint which, const QSizeF& constraint ) const
+{
+    switch ( which )
+    {
+    case Qt::MinimumSize:
+    case Qt::PreferredSize:
+    {
+        // Compute bounding rect for item and all its subitems
+        QRectF globalBr = boundingRect( ) | childrenBoundingRect( );
+        return globalBr.size( );
+    }
+        break;
+    case Qt::MaximumSize:
+        return QSizeF( 1000, 1000 );
+        break;
+    case Qt::MinimumDescent:
+        break;
+    default:
+        break;
+    }
+    return constraint;
+}
+//-----------------------------------------------------------------------------
 
 } // ::qan
 

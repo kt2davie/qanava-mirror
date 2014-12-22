@@ -31,7 +31,8 @@
 
 // QT headers
 #include <QGraphicsItem>
-
+#include <QGraphicsLayoutItem>
+#include <QGraphicsLinearLayout>
 
 // Qanava headers
 #include "./qanNodeItem.h"
@@ -45,12 +46,28 @@ namespace qan { // ::qan
 	class Layout;
 
 
+    //! Model a group of nodes showing a consistent layout and behaviour.
+    /*! qan::NodeGroup support two kind of layouts:
+            \li Graphics layout based on QGraphicsLayout can be used in a way similar to QGraphicsWidget with setGraphLayout() method.
+            \li Qanava graph layout based on qan::Layout could be used with the setGraphLayout() method.
+            \li Using QGraphicsLayout and qan::Layout simultaneously will lead to unpredictable results (warnings will be issued in debug mode).
 
-	//! Models a group of nodes showing a consistent layout and behaviour.
-	/*!
+        Since qan::NodeGroup inherits from QGraphicsLayoutItem, it can be inserted in QGraphicsLayout
+        layouts (such as QGraphicsLinearLayout), alternatively, group content could be laid out using a graphics layout by calling
+        \c setLayout() with a QGraphicLinearLayout for example. Nodes could be laidout after insertion in a group using a Qanava
+        layout (qan::HierarchyTree or qan::UndirectedGraph) sets via setGraphLayout(). Before adding a group in a standard Qt
+        graphics layout, take care of disabling node drag move support by calling \c setMovable( false ).
+
+        While the drag and drop interface is similar to Qt, Qanava node group provide a custom mechanism to
+        directly insert node via drag and drop. %Node dragging is accepted by default, use \c setAcceptDrops( false )
+        to disable qan::NodeItem insertion via drag and drop.
+
+        When a group is added direclty in a graphics layout hosted in a QGraphicsWidget based item, graphics widget should
+        be used as a \c parent argument at group creation (you could also call \c setParentGraphicsItem() after creation).
+
 		\nosubgrouping
 	*/
-	class NodeGroup : public QObject, public QGraphicsItem
+    class NodeGroup : public QObject, public QGraphicsItem, public QGraphicsLayout
 	{
 		Q_OBJECT
 
@@ -58,34 +75,44 @@ namespace qan { // ::qan
 		//@{
 	public:
 
+        //! %NodeGroup constructor.
+        /*!
+         * \param scene     Graphics scene when the group should be added (call qan::GraphScene::addNodeGroup() with
+         *                  the created group).
+         * \param name      Name will be shown at the top left corner of the group graphics item (it is
+         *                  dynamically editable by the user or can be set manually with setName() method).
+         * \param parent    Default to 0, node groups should be top level scene graphics items.
+         */
         NodeGroup( qan::GraphScene& scene, QString name, QGraphicsItem* parent = 0 );
 
 		qan::GraphScene& getScene( ) { return _scene; }
 
-	protected:
+    protected:
 	
 		qan::GraphScene& _scene;
 		//@}
 		//---------------------------------------------------------------------
-	
 
-		/*! \name Group Management *///----------------------------------------
+
+        /*! \name GroupLayout  Management *///---------------------------------
 		//@{
 	public:
 
-		virtual void	setLayout( qan::Layout* layout );
+        virtual void	setGraphLayout( qan::Layout* graphLayout );
 
-		qan::Layout*	getLayout( ) { return _layout; }
+        virtual void	setLayout( QGraphicsLinearLayout* layout );
+
+        qan::Layout*	getGraphLayout( ) { return _graphLayout; }
 
 		virtual void	layout( );
-
-		virtual void	setVisible( bool v );
 
 		Properties&		getProperties( ) { return _properties; }
 
 	protected:
 	
-		qan::Layout*	_layout;
+        qan::Layout*	_graphLayout;
+
+        QGraphicsLinearLayout* _layout;
 
 		Properties		_properties;
 		//@}
@@ -139,11 +166,11 @@ namespace qan { // ::qan
 
 	protected slots:
 		
-        virtual void			itemDragMove( qan::SimpleNodeItem* item, QGraphicsItem* target );
+        virtual void	itemDragMove( qan::SimpleNodeItem* item, QGraphicsItem* target );
 
-        virtual void			itemDragLeave( qan::SimpleNodeItem* item, QGraphicsItem* target );
+        virtual void	itemDragLeave( qan::SimpleNodeItem* item, QGraphicsItem* target );
 
-        virtual void			itemDropped( qan::SimpleNodeItem* item, QGraphicsItem* target );
+        virtual void	itemDropped( qan::SimpleNodeItem* item, QGraphicsItem* target );
 		//@}
 		//---------------------------------------------------------------------
 
@@ -154,30 +181,25 @@ namespace qan { // ::qan
 
 		virtual QRectF			boundingRect( ) const;
 
-		virtual QSizeF			getMinimumSize( ) const { return QSizeF( 170., 75. ); }
+        void					paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0 );
 
-		//! Generate a bounding box taking into account bounding rect from group nodes. Return the bounding rect in scene coordinate system.
-		virtual	QRectF			updateBoundingRect( );
+        virtual void            updateGroup( );
 
-		void					paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0 );
+        virtual void            setVisible( bool v );
 
-		void					setElementItem( void* element, QGraphicsItem* item ) { _elementItemMap.insert( element, item ); }
+    protected slots:
 
-		QList< QGraphicsItem* >	getElementItems( void* element ) { return _elementItemMap.values( element ); }
+        void                    itemMoved( QPointF curPos, QPointF oldPos );
 
-		void					removeElementItem( void* element ) { _elementItemMap.remove( element ); }
+    protected:
 
-		//! Set keepTopLeft to true if you do not want layout to move the group.
-		void					updateNodesPositions( bool keepTopLeft = false );
-
-	protected:
+        //! .
+        virtual	void            groupMoved( QPointF curPos, QPointF oldPos );
 
 		QRectF					getNodesSceneBoundingRect( ) const;
 		
 		//! Solid group bounding rect.
 		QRectF					_br;
-
-		QMultiMap< void*, QGraphicsItem* >	_elementItemMap;
 
 		QGraphicsRectItem*		getBackgroundItem( ) { return _background; }
 
@@ -189,13 +211,50 @@ namespace qan { // ::qan
 		//---------------------------------------------------------------------
 
 
+        /*! \name Decoration Items Management *///-----------------------------
+        //@{
+    public:
+
+        void                                setElementItem( void* element, QGraphicsItem* item ) { _elementItemMap.insert( element, item ); }
+
+        QList< QGraphicsItem* >             getElementItems( void* element ) { return _elementItemMap.values( element ); }
+
+        void                                removeElementItem( void* element ) { _elementItemMap.remove( element ); }
+
+    protected:
+
+        QMultiMap< void*, QGraphicsItem* >	_elementItemMap;
+        //@}
+        //---------------------------------------------------------------------
+
+
+
+        /*! Graphics layout item implementation *///---------------------------
+        //@{
+    public:
+        virtual void    updateGeometry( );
+        virtual void    setGeometry( const QRectF& geom );
+
+        virtual int     count( ) const;
+        virtual QGraphicsLayoutItem*    itemAt( int i ) const;
+        virtual void	removeAt( int index );
+
+    protected:
+        virtual QSizeF  sizeHint( Qt::SizeHint which, const QSizeF & constraint = QSizeF( ) ) const;
+        //@}
+        //---------------------------------------------------------------------
+
+
 		/*! \name Group Node Management *///-----------------------------------
 		//@{
 	public:
 
+        //! Insert a given node in this group.
+        /*! Insertion will fails if no layout has been set for this group with
+         * setLayout() or setGraphLayout() methods.*/
 		virtual void		addNode( qan::Node& node );
 
-		//! Default implementation update the layout when an edge is added, override that method to avoid that standard behaviour.
+        //! Default implementation updates the layout when an edge is added, override that method to disable this standard behaviour.
 		virtual void		addEdge( qan::Edge& edge );
 
 		bool				hasNode( qan::Node& node ) { return _nodes.contains( &node ); }
@@ -206,17 +265,13 @@ namespace qan { // ::qan
 
 		const qan::Node::Set&	getNodes( ) const { return _nodes; }
 
-		//! Get an unordered list of root nodes for this group (a node will not appears multiple times).
+        //! Get an unordered set of root nodes for this group (a node will not appears multiple times).
 		/*! A node will be a group root node if it has no "in" nodes, or if its "in" nodes are not registered in the group.	*/
 		void				getRootNodes( qan::Node::Set& rootNode );
 
 	protected:
 
 		qan::Node::Set		_nodes;
-
-	protected slots:
-
-		void				itemMoved( QPointF curPos, QPointF oldPos );
 		//@}
 		//---------------------------------------------------------------------
 
@@ -225,8 +280,9 @@ namespace qan { // ::qan
 		//@{
 	public:
 
-		//! Set to true if added node became child items of this group.
-		void			setAddAsChilds( bool addAsChilds ) { _addAsChilds = addAsChilds; }
+        //! When set to false, prevent the group to be dragged by mouse (for example, when the group is part of a graphice view layout).
+        /*! \default true           */
+        void            setMovable( bool isMovable ) { _isMovable = isMovable; }
 
 	protected:
 
@@ -235,12 +291,9 @@ namespace qan { // ::qan
 		virtual void	mouseReleaseEvent( QGraphicsSceneMouseEvent* e );
 		virtual void	wheelEvent( QGraphicsSceneWheelEvent* e );
 
-		//! Could be overriden by sub classes to update layout when the group is moved (bounding rect will be updated before this method is called).
-        virtual	void	groupMoved( QPointF curPos, QPointF oldPos ) { Q_UNUSED( curPos ); Q_UNUSED( oldPos ); }
-
 		QPointF			_mousePos;
 		bool			_mousePressed;
-		bool			_addAsChilds;
+        bool            _isMovable;
 		//@}
 		//---------------------------------------------------------------------
 	};

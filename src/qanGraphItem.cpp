@@ -160,6 +160,12 @@ void	GraphItem::hoverMoveEvent( QGraphicsSceneHoverEvent* e )
 {
 	QGraphicsItem::hoverMoveEvent ( e );
 
+    if ( !propertyPopupActivated( ) )
+    {
+        e->ignore( );
+        return;
+    }
+
 	bool showPopup = shape( ).contains( e->pos( ) );
 	if ( showPopup )	// If the distance is small, the cursor is almost on the edge, show the popup
 		getScene( ).emitShowItemPopup( this, e->scenePos( ) );		// show the label
@@ -168,7 +174,7 @@ void	GraphItem::hoverMoveEvent( QGraphicsSceneHoverEvent* e )
 
 	// Showing the properties widget after a few milliseconds if the user is still 'hovering'
 	_hoveringPos = e->scenePos( );
-	if ( showPopup )
+    if ( showPopup && _propertiesWidget != 0 )
 	{
 		_hovering = true;
 		if ( _propertiesWidget->isVisible( ) && _propertiesWidget->hasHover( ) )
@@ -178,7 +184,7 @@ void	GraphItem::hoverMoveEvent( QGraphicsSceneHoverEvent* e )
 	}
 	else
 	{		
-		if ( _propertiesWidget->isVisible( ) && !_propertiesWidget->hasHover( ) )
+        if ( _propertiesWidget != 0 && _propertiesWidget->isVisible( ) && !_propertiesWidget->hasHover( ) )
 			hidePropertiesPopup( );
 		_hovering = false;
 	}
@@ -187,34 +193,43 @@ void	GraphItem::hoverMoveEvent( QGraphicsSceneHoverEvent* e )
 
 void	GraphItem::hoverEnterEvent( QGraphicsSceneHoverEvent* e )
 {
-	bool showPopup = shape( ).contains( e->pos( ) );
+    if ( propertyPopupActivated( ) )
+    {
+        bool showPopup = shape( ).contains( e->pos( ) );
 
-	// Showing the properties widget after a few milliseconds if the user is still 'hovering'
-	_hoveringPos = e->scenePos( );
-	if ( showPopup )
-	{
-		_hovering = true;
-		QTimer::singleShot( _popupDelay, this, SLOT( showPropertiesWidget( ) ) ); 
-	}
+        // Showing the properties widget after a few milliseconds if the user is still 'hovering'
+        _hoveringPos = e->scenePos( );
+        if ( showPopup )
+        {
+            _hovering = true;
+            QTimer::singleShot( _popupDelay, this, SLOT( showPropertiesWidget( ) ) );
+        }
+    }
 
 	QGraphicsItem::hoverEnterEvent( e );
 }
 
 void	GraphItem::hoverLeaveEvent( QGraphicsSceneHoverEvent* e )
 {
-	getScene( ).emitHideItemPopup( this );
+    if ( propertyPopupActivated( ) )
+    {
+        getScene( ).emitHideItemPopup( this );
 
-	// Hide the property editor widget (it will stay visible if mouse is currently hovering over it, see sceneEventFilter)
-	_hovering = false;
-	_hoveringPos = QPointF( 0., 0. );
-	if ( _propertiesWidget->isVisible( ) )
-		QTimer::singleShot( 100, this, SLOT( delayedHoverLeaveEvent( ) ) );	// hoverLeave is called before properties widget hoverEnter automatically, delay it...
+        // Hide the property editor widget (it will stay visible if mouse is currently hovering over it, see sceneEventFilter)
+        _hovering = false;
+        _hoveringPos = QPointF( 0., 0. );
+        if ( _propertiesWidget->isVisible( ) )
+            QTimer::singleShot( 100, this, SLOT( delayedHoverLeaveEvent( ) ) );	// hoverLeave is called before properties widget hoverEnter automatically, delay it...
+    }
 
 	QGraphicsItem::hoverLeaveEvent( e );
 }
 
 void	GraphItem::showPropertiesWidget( )
 {
+    if ( !propertyPopupActivated( ) )
+        return;
+
 	if ( _hovering && !_propertiesWidget->isVisible( ) )	// Do not show the widget if hovering is over
 	{
 		// Show the property editor with actual edge properties
@@ -236,7 +251,7 @@ void	GraphItem::showPropertiesWidget( )
 
 void	GraphItem::delayedHoverLeaveEvent( )
 {
-	if ( !_propertiesWidget->hasHover( ) )
+    if ( propertyPopupActivated( ) && !_propertiesWidget->hasHover( ) )
 		_propertiesWidget->setVisible( false );
 }
 //-----------------------------------------------------------------------------

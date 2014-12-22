@@ -85,17 +85,8 @@ namespace qan { // ::qan
 	};
 
 
-    //! Model a rectangular node item on a Qt graphics view.
+    //! Model an abstract node item in a Qt graphics view, with built-in user defined shape support and label edition.
 	/*!
-	The following style options are supported:
-	<ul>
-	<li> <b>'backcolor':</b> Background color, when there is no background image defined.
-	<li> <b>'bordercolor':</b> Color of the item border.
-	<li> <b>'maximumwidth':</b> Maximum width of the item, content is cropped to fit this with limit.
-	<li> <b>'maximumheight':</b> Maximum height of the item, content is cropped to fit this height limit.
-	<li> <b>'fontsize':</b> Base size for the font used to display the item label.
-	<li> <b>'hasshadow':</b> Set this value to false to supress the node shadow.
-	</ul>
 		\nosubgrouping
 	*/
     class NodeItem : public SimpleNodeItem

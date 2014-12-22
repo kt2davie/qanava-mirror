@@ -30,7 +30,7 @@
 #include "./qanStyleManager.h"
 #include "./qanController.h"
 #include "./qanGraphView.h"
-#include "./qanContainerGraphicsItem.h"
+#include "./qanGraphicsContainer.h"
 
 
 // QT headers
@@ -347,6 +347,13 @@ bool	ZoomController::mouseMoveEvent( QMouseEvent* e )
 	}
 	return false;
 }
+
+QGraphicsItem*      ZoomController::lookForParent( QGraphicsItem* item, int type )
+{
+    if ( item->type( ) == type )
+        return item;
+    return ( item->parentItem( ) != 0 ? lookForParent( item->parentItem( ), type ) : 0 );
+}
 //-----------------------------------------------------------------------------
 
 
@@ -359,7 +366,8 @@ bool		ZoomController::wheelEvent( QWheelEvent* e )
     if ( _actionZoomNav->isChecked( ) )
     {
         QGraphicsItem* item = getGraphView( ).scene( )->itemAt( p, QTransform( ) );
-        if ( item == 0 || ( item != 0 && item->type( ) != qan::ContainerGraphicsItem::Type ) )	// Do not catch wheel event for widget in container items
+        if ( item == 0 ||
+             lookForParent( item, qan::GraphicsContainer::Type ) == 0 ) // Do not catch wheel event for widget in container items
         {
             getGraphView( ).setTransformationAnchor( QGraphicsView::AnchorUnderMouse );
 

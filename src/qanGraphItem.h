@@ -164,7 +164,9 @@ namespace qan { // ::qan
 		//! Call from a sub classe with properties object to activate automatic properties edition, widget could be shown always at item bottom.
 		void			activatePropertiesPopup( qan::Properties& properties, int popupDelay = 150, bool showBottom = false );
 
-		void			hidePropertiesPopup( );
+        bool            propertyPopupActivated( ) const { return _propertiesWidget != 0; }
+
+        void			hidePropertiesPopup( );
 
 		virtual void	hoverEnterEvent( QGraphicsSceneHoverEvent* e );
 

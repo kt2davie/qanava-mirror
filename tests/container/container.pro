@@ -14,16 +14,19 @@ SOURCES	+=  qanApp.cpp          \
 HEADERS	+=  qanMainWindow.h
 
 android {
-  LIBS	+= -L../../build/ -lqanava -L$(PROPERTYBROWSER) -lpropertybrowserd
-  Debug:LIBS	+= -L../../build/ -lqanavad -L$(PROPERTYBROWSER) -lpropertybrowserd
-  Release:LIBS	+= -L../../build/ -lqanava -L$(PROPERTYBROWSER) -lpropertybrowser
+    LIBS	+= -L../../build/ -lqanava -L$(PROPERTYBROWSER) -lpropertybrowserd
+    Debug:LIBS	+= -L../../build/ -lqanavad -L$(PROPERTYBROWSER) -lpropertybrowserd
+    Release:LIBS	+= -L../../build/ -lqanava -L$(PROPERTYBROWSER) -lpropertybrowser
 }
 
 win32 {
-  Debug:OBJECTS_DIR = ./Debug
-  Release:OBJECTS_DIR = ./Release
-  Debug:LIBS	+= ../../build/qanavad.lib $(PROPERTYBROWSER)/qtpropertybrowserd.lib
-  Release:LIBS	+= ../../build/qanava.lib $(PROPERTYBROWSER)/qtpropertybrowser.lib
+    Debug:PRE_TARGETDEPS += ../../build/qanavad.lib
+    Release:PRE_TARGETDEPS += ../../build/qanava.lib
+
+    Debug:OBJECTS_DIR = ./Debug
+    Release:OBJECTS_DIR = ./Release
+    Debug:LIBS	+= ../../build/qanavad.lib $(PROPERTYBROWSER)/libpropertybrowserd.lib
+    Release:LIBS	+= ../../build/qanava.lib $(PROPERTYBROWSER)/libpropertybrowser.lib
 }
 
 

@@ -163,13 +163,13 @@ void	GraphView::mouseDoubleClickEvent( QMouseEvent* e )
 
 void	GraphView::wheelEvent( QWheelEvent* e )
 {
-	if ( _controllerManager.wheelEvent( e ) )
+    if ( _controllerManager.wheelEvent( e ) )
 	{
 		viewport( )->update( );
 		e->accept( );
 	}
-	else
-		QGraphicsView::wheelEvent( e );
+    else
+        QGraphicsView::wheelEvent( e );
 }
 
 void	GraphView::resizeEvent ( QResizeEvent* e )

@@ -60,12 +60,13 @@ LabelEditorItem::LabelEditorItem( QString text, QString defaultText, QGraphicsIt
 	QGraphicsTextItem( text, parent ),
 	_defaultText( defaultText )
 { 
-	QFont nameFont; nameFont.setPointSize( 16 );
+    setFlag( QGraphicsItem::ItemIsMovable, false );
+    setTextInteractionFlags( Qt::NoTextInteraction );	// Text interaction will be activated only in qan::GraphScene when item is double clicked
+    setAcceptHoverEvents( true );
+
+    QFont nameFont; nameFont.setPointSize( 16 );
 	setFont( nameFont );
 	setDefaultTextColor( QColor( 50, 50, 50, 200 ) );
-	setTextInteractionFlags( Qt::NoTextInteraction );	// Text interaction will be activated only in qan::GraphScene when item is double clicked
-
-	setAcceptHoverEvents( true );
 }
 
 void	LabelEditorItem::keyPressEvent( QKeyEvent* e )
@@ -108,21 +109,6 @@ void	LabelEditorItem::mousePressEvent( QGraphicsSceneMouseEvent* e )
 
 
 /* NodeItem Constructor/Destructor *///----------------------------------------
-/*!
-    The following style options are supported:
-    <ul>
-    <li> <b>'backcolor':</b> Background color, when there is no background image defined.
-    <li> <b>'bordercolor':</b> Color of the item border.
-    <li> <b>'backimage':</b> Background image (scaled to fit the item size).
-    <li> <b>'maximumwidth':</b> Maximum width of the item, content is cropped to fit this with limit.
-    <li> <b>'maximumheight':</b> Maximum height of the item, content is cropped to fit this height limit.
-    <li> <b>'fontsize':</b> Base size for the font used to display the item label.
-    <li> <b>'icon':</b> Display an icon centered in the left of the item.
-    <li> <b>'hasshadow':</b> Set this value to false to supress the node shadow.
-    </ul>
-
-    An item with an empty style is transparent with no background and border.
- */
 NodeItem::NodeItem( GraphScene& scene, Node& node, QGraphicsItem* parent, bool isMovable, bool showPropertiesWidget ) :
     SimpleNodeItem( scene, node, parent, isMovable, showPropertiesWidget ),
     _pixmapItem( 0 ),
@@ -293,6 +279,7 @@ NodeRectItem::NodeRectItem( GraphScene& scene, Node& node, QGraphicsItem* parent
 	NodeItem( scene, node, parent, isMovable, showPropertiesWidget )
 {
 	setAcceptDrops( true );
+    setAcceptHoverEvents( true );   // FIXME v1.0: verify that hover event is necessary for drag and drop support
 
 	_rectItem = new QGraphicsRectItem( getGraphicsItem( ) );
 	_rectItem->setParentItem( getGraphicsItem( ) );

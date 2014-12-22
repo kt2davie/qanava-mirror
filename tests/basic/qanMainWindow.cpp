@@ -31,7 +31,6 @@
 #include "../../src/qanGrid.h"
 #include "../../src/qanLayout.h"
 #include "../../src/qanTreeLayout.h"
-#include "../../src/qanContainerGraphicsItem.h"
 #include "./qanMainWindow.h"
 #include "./ui/uiStyleEditorWidget.h"
 
@@ -173,7 +172,7 @@ MainWindow::MainWindow( QApplication* application, QWidget* parent ) :
 
 		// Creating a node group
 		qan::NodeGroup* treeGroup = new qan::NodeGroup( _graph->getM( ), "Node Group" );
-		treeGroup->setLayout( new qan::HierarchyTree( ) );
+        treeGroup->setGraphLayout( new qan::HierarchyTree( ) );
 		//treeGroup->setAcceptDrops( true );
 		_graph->getM( ).addNodeGroup( *treeGroup );
 		_graph->getM( ).addDropTarget( treeGroup );

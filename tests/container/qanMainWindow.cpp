@@ -32,6 +32,8 @@
 #include "../../src/qanLayout.h"
 #include "../../src/qanTreeLayout.h"
 #include "../../src/qanContainerGraphicsItem.h"
+#include "../../src/qanGraphicsContainer.h"
+#include "../../src/qanGraphicsResizer.h"
 #include "./qanMainWindow.h"
 #include "./ui/uiStyleEditorWidget.h"
 
@@ -143,24 +145,27 @@ MainWindow::MainWindow( QApplication* application, QWidget* parent ) :
 	if ( zoomSlider != 0 )
 		zoomSlider->hide( );
 
-	// Add an empty container graphics item
-	qan::ContainerGraphicsItem* container1 = new qan::ContainerGraphicsItem( QRectF(0., 0., 300., 200. ) );
-	_graph->getM( ).addItem( container1 );
-	container1->init( );
-	ContainerWidget* gw = new ContainerWidget( _graph->getM( ), graphView, 0 );
-	_graph->getM( ).addItem( gw );
-	container1->setChild( gw );
-	container1->setPos( 100, 150 );
-	container1->setTitle( "HTML container item test" );
+    // Add a graphics container item with an HTML graphics widget
+    qan::GraphicsContainer* container1 = new qan::GraphicsContainer( QRectF(0., 0., 300., 200. ) );
+    _graph->getM( ).addItem( container1 );
+    ContainerWidget* gw = new ContainerWidget( _graph->getM( ), graphView, container1 );
+    container1->setContent( gw, gw );
+    container1->setPos( 100, 150 );
+    container1->setTitle( "HTML container item test" );
 
-	qan::ContainerGraphicsItem* container2 = new qan::ContainerGraphicsItem( QRectF(0., 0., 300., 200. ) );
-	_graph->getM( ).addItem( container2 );
-	container2->init( );
-	
+    qan::GraphicsContainer* container3 = new qan::GraphicsContainer( QRectF(0., 0., 300., 200. ), qan::GraphicsDecoration::Round );
+    _graph->getM( ).addItem( container3 );
+    ContainerWidget* gw2 = new ContainerWidget( _graph->getM( ), graphView, container1 );
+    container3->setContent( gw2, gw2 );
+    container3->setPos( 100, 350 );
+    container3->setTitle( "HTML in a round graphics container" );
+
+    qan::GraphicsContainer* container2 = new qan::GraphicsContainer( QRectF(0., 0., 300., 200. ) );
+    _graph->getM( ).addItem( container2 );
     QGraphicsWidget* proxy = _graph->getM( ).addWidget( new PixmapWidget( QPixmap( ":/test.png" ) ) );
-	container2->setChild( proxy );
-	container2->setPos( 450, 150 );
-	container2->setTitle( "Graphics view inside a container inside a graphics view!" );
+    container2->setContent( proxy, proxy );
+    container2->setPos( 450, 150 );
+    container2->setTitle( "Graphics view inside a container inside a graphics view!" );
 
 	_graph->getM( ).setSceneRect( QRectF( 0.0, 0., 1000., 1000. ) );
 }

@@ -45,8 +45,7 @@ namespace ui  { // ::qan::ui
 
 /* StyleNodeItem Object Management *///----------------------------------------
 StyleNodeItem::StyleNodeItem( qan::GraphScene& scene, qan::Node& node, QGraphicsItem* parent ) :
-	qan::NodeRectItem( scene, node, parent, false, false ),
-	QGraphicsLayoutItem( 0 )
+    qan::NodeRectItem( scene, node, parent, false, false )
 {
 	node.setGraphicsItem( this );
 	node.setGraphItem( this );

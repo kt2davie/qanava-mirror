@@ -21,8 +21,8 @@ android {
 win32 {
   Debug:OBJECTS_DIR = ./Debug
   Release:OBJECTS_DIR = ./Release
-  Debug:LIBS	+= ../../build/qanavad.lib $(PROPERTYBROWSER)/qtpropertybrowserd.lib
-  Release:LIBS	+= ../../build/qanava.lib $(PROPERTYBROWSER)/qtpropertybrowser.lib
+  Debug:LIBS	+= ../../build/qanavad.lib $(PROPERTYBROWSER)/libpropertybrowserd.lib
+  Release:LIBS	+= ../../build/qanava.lib $(PROPERTYBROWSER)/libpropertybrowser.lib
 }
 
 

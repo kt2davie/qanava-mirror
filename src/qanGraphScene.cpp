@@ -204,6 +204,8 @@ void	GraphScene::addNodeGroup( qan::NodeGroup& nodeGroup )
 {
 	_nodeGroups.append( &nodeGroup );
 	addItem( &nodeGroup );
+    if ( nodeGroup.getAcceptDrops( ) )
+        addDropTarget( &nodeGroup );
 	emit nodeGroupAdded( &nodeGroup );
 }
 
@@ -211,6 +213,7 @@ void	GraphScene::removeNodeGroup( qan::NodeGroup& nodeGroup )
 {
 	_nodeGroups.removeAll( &nodeGroup );
 	removeItem( &nodeGroup );
+    _dropTargets.removeAll( &nodeGroup );   // Eventually, remove the given nodegroup from drop targets list
 	emit nodeGroupRemoved( &nodeGroup );
 }
 //-----------------------------------------------------------------------------

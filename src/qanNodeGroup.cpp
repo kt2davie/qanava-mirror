@@ -34,30 +34,43 @@
 #include "./qanNodeGroup.h"
 
 // QT headers
+#include <QtDebug>
 #include <QVBoxLayout>
 #include <QTimer>
 #include <QScrollBar>
 #include <QTextDocument>
+#include <QGraphicsLayout>
 
 
 namespace qan { // ::qan
 
 
 /* NodeGroup Object Management *///--------------------------------------------
-NodeGroup::NodeGroup( qan::GraphScene& scene, QString name, QGraphicsItem* parent ) : 
-	QObject( ), QGraphicsItem( parent ),
+NodeGroup::NodeGroup( qan::GraphScene& scene, QString name, QGraphicsItem* parent ) :
+    QObject( ), QGraphicsItem( parent ), QGraphicsLayout( ),
 	_scene( scene ),
-	_layout( 0 ),
+    _graphLayout( 0 ),
+    _layout( 0 ),
 	_properties( "properties" ),
 	_name( name ),
 	_nameItem( 0 ),
-	_acceptDrops( false ),
+    _acceptDrops( true ),
 	_dragOver( false ),
 	_br( QRectF( ) ),
 	_background( 0 ),
 	_mousePressed( false ),
-	_addAsChilds( true )
+    _isMovable( true )
 {
+    setFlag( QGraphicsItem::ItemIsMovable, false );
+    setFlag( QGraphicsItem::ItemIsSelectable, false );
+    setFlag( QGraphicsItem::ItemClipsToShape, false );
+
+    // Graphics layout item initialisation
+    setGraphicsItem( this );
+    setMinimumSize( QSizeF( 185., 85. ) );
+    setPreferredSize( QSizeF( 185., 85. ) );
+
+    // Node group initialisation
     connect( &scene, SIGNAL( itemDragMove( qan::SimpleNodeItem*, QGraphicsItem* ) ), this, SLOT( itemDragMove( qan::SimpleNodeItem*, QGraphicsItem* ) ) );
     connect( &scene, SIGNAL( itemDragLeave( qan::SimpleNodeItem*, QGraphicsItem* ) ), this, SLOT( itemDragLeave( qan::SimpleNodeItem*, QGraphicsItem* ) ) );
     connect( &scene, SIGNAL( itemDropped( qan::SimpleNodeItem*, QGraphicsItem* ) ), this, SLOT( itemDropped( qan::SimpleNodeItem*, QGraphicsItem* ) ) );
@@ -66,62 +79,51 @@ NodeGroup::NodeGroup( qan::GraphScene& scene, QString name, QGraphicsItem* paren
 	_nameItem->setPos( QPointF( 0., -_nameItem->boundingRect( ).height( ) ) );
 	connect( _nameItem, SIGNAL( textModified( ) ), this, SLOT( nameTextModified( ) ) );
 
-	_background = scene.addRect( boundingRect( ).adjusted( -1, -1, 1, 1 ), QPen( QColor( 190, 190, 190, 75 ) ), QBrush( QColor( 190, 190, 190, 75 ) ) );
-	_background->setParentItem( this );
+    _br.setSize( preferredSize( ) );
+    _background = scene.addRect( QRectF( QPointF( 0., 0. ), preferredSize( ) ),
+                                 QPen( QColor( 190, 190, 190, 75 ) ), QBrush( QColor( 190, 190, 190, 75 ) ) );
+    _background->setParentItem( this );
+    QGraphicsLayout::setGraphicsItem( this );
+    QGraphicsLayout::setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding, QSizePolicy::DefaultType );
+    updateGeometry( );  // Force Br generation
+    updateGroup( );     // Force bounding rect generation
 }
 //-----------------------------------------------------------------------------
 
 
 /* Group Management *///-------------------------------------------------------
-void	NodeGroup::setLayout( qan::Layout* layout ) { _layout = layout; }
-
-void	NodeGroup::setVisible( bool v )
+void	NodeGroup::setGraphLayout( qan::Layout* graphLayout )
 {
-	QGraphicsItem::setVisible( v );
+    _graphLayout = graphLayout;
+}
 
-	if ( !_addAsChilds )	// If nodes are child items of this group, graphics item will take care of hidding/showing thems more efficiently
-		foreach ( qan::Node* node, _nodes ) // Hide nodes
-		{
-			qan::GraphItem* nodeItem = _scene.getGraphItem( *node );
-			QGraphicsItem* nodeGraphicsItem = nodeItem->getGraphicsItem( );
-			if ( nodeGraphicsItem != 0 )
-				nodeGraphicsItem->setVisible( v );
-		}
-
-	foreach ( qan::Node* node, _nodes ) 		// Hide nodes edges graphics items
-	{
-		qan::Edge::Set edges( node->getInEdges( ).toSet( ) ); 
-		edges.unite( node->getOutEdges( ).toSet( ) );
-		foreach ( qan::Edge* edge, edges )
-			edge->getGraphicsItem( )->setVisible( v );
-	}
+void	NodeGroup::setLayout( QGraphicsLinearLayout* layout )
+{
+#ifdef QT_DEBUG
+    if ( _graphLayout != 0 )
+    {
+    qDebug() << "NodeGroup::setLayout - Can't set a graphics layout if a regular Qanava graph layout is already sets... ";
+    Q_ASSERT( false );
+    }
+#endif
+    if ( layout != 0 && layout->isLayout( ) )
+    {
+        _layout = layout;
+        layout->setParentLayoutItem( this );
+    }
 }
 
 void	NodeGroup::layout( )
 {
-	if ( _layout != 0 )
-	{
-		qan::Node::Set rootNodes; getRootNodes( rootNodes );
-        qan::Node::List rootNodesList = rootNodes.toList( );
-        _layout->layout( rootNodesList, _nodes, _scene.sceneRect( ), 0, 0 );
-	}
+    if ( _graphLayout == 0 )
+        return;
 
-	// Update laid out nodes
-	foreach ( qan::Node* node, getNodes( ) )
-	{
-		QGraphicsItem* nodeItem = node->getGraphicsItem( );
-		if ( nodeItem != 0 )
-			nodeItem->setPos( node->getPosition( ) );
-	}
+    // Apply qanava layout
+    qan::Node::Set rootNodes; getRootNodes( rootNodes );
+    qan::Node::List rootNodesList = rootNodes.toList( );
+    _graphLayout->layout( rootNodesList, _nodes, _scene.sceneRect( ), 0, 0 );
 
-	// Force edge item update
-	qan::Edge::Set edges;
-	foreach ( qan::Node* node, getNodes( ) )
-		edges.unite( node->getOutEdges( ).toSet( ) );
-	foreach ( qan::Edge* edge, edges )
-		edge->getGraphItem( )->updateItem( );
-
-	updateBoundingRect( );
+    updateGroup( ); // Update node with their new layout and generate a correct bounding rect
 }
 //-----------------------------------------------------------------------------
 
@@ -136,31 +138,108 @@ void	NodeGroup::nameTextModified( )
 
 
 /* Graphics Item Management *///-----------------------------------------------
-QRectF	NodeGroup::boundingRect( ) const
+QRectF	NodeGroup::boundingRect( ) const { return _br; }
+
+void	NodeGroup::paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget )
 {
-	if ( _br.isEmpty( ) )
-		return QRectF( QPointF( 0., 0. ), getMinimumSize( ) );
-	return _br;
+    Q_UNUSED( option ); Q_UNUSED( widget );
+    if ( _dragOver )
+    {
+        painter->setPen( Qt::NoPen );
+        painter->setBrush( QBrush( QColor( 50, 50, 50, 25 ) ) );
+        QRectF itemOutline( boundingRect( ) );
+        if ( _nameItem != 0 && _nameItem->isVisible( ) )
+            itemOutline = itemOutline.united( mapRectFromItem( _nameItem, _nameItem->boundingRect( ) ) );
+        painter->drawRect( itemOutline );
+    }
+    else
+        painter->setBrush( QBrush( ) );
 }
 
-QRectF	NodeGroup::updateBoundingRect( )
+void	NodeGroup::updateGroup( )
 {
-	// Update this group bounding rect
-	prepareGeometryChange( );
+    // Update sub items position according to their laid out position
+    if ( _graphLayout != 0 )
+    {
+        qan::Node::Set rootNodes; getRootNodes( rootNodes );
+        qan::Node::List rootNodesList = rootNodes.toList( );
+        _graphLayout->layout( rootNodesList, _nodes, _scene.sceneRect( ), 0, 0 );
+        foreach ( qan::Node* node, getNodes( ) )
+            node->getGraphicsItem( )->setPos( node->getPosition( ) );
+    }
 
-	QRectF sceneBr = getNodesSceneBoundingRect( );
-	QSizeF minSize = getMinimumSize( );
-	if ( sceneBr.width( ) < minSize.width( ) )
-		sceneBr.setWidth( minSize.width( ) );
-	if ( sceneBr.height( ) < minSize.height( ) )
-		sceneBr.setHeight( minSize.height( ) );
+    // Update group bounding rect
+    if ( _graphLayout != 0 && _layout == 0 )
+    {
+        QSizeF minSize = minimumSize( );
+        Q_ASSERT( minSize.isValid( ) );
+        if ( _br.isNull( ) || _br.isEmpty( ) || !_br.isValid( ) )   // Bounding rect evntual initialization
+        {
+            prepareGeometryChange( );
+            _br.setSize( minimumSize( ) );
+        }
 
-	_br = QRectF( QPointF( 0., 0. ), sceneBr.size( ) );
-	setPos( sceneBr.topLeft( ) );
-	if ( _background != 0 )
-		_background->setRect( boundingRect( ) ); 
+        if ( _br.width( ) < minSize.width( ) ||     // Expand actual Br to minimum size defined by user
+            _br.height( ) < minSize.height( ) )
+        {
+            prepareGeometryChange( );
+            _br.setSize( _br.size( ).expandedTo( minSize ) );
+        }
 
-	return sceneBr;
+        // Adapt bounding rect to the layed out content
+        QRectF nodesSceneBr = getNodesSceneBoundingRect( );
+        prepareGeometryChange( );
+        _br = QRectF( QPointF( 0., 0. ), nodesSceneBr.size( ).expandedTo( minimumSize( ) ) );
+        //setPos( nodesSceneBr.topLeft( ) );
+    }
+
+    // Update group nodes edges
+    qan::Edge::Set edges;
+    foreach ( qan::Node* node, getNodes( ) )
+        edges.unite( node->getOutEdges( ).toSet( ) );
+    foreach ( qan::Node* node, getNodes( ) )
+        edges.unite( node->getInEdges( ).toSet( ) );
+    foreach ( qan::Edge* edge, edges )
+        edge->getGraphItem( )->updateItem( );
+
+    if ( _background != 0 ) // Update group background according to the new bounding rect
+        _background->setRect( boundingRect( ).adjusted( -1, -1, 1, 1 ) );
+}
+
+void	NodeGroup::setVisible( bool v )
+{
+    QGraphicsItem::setVisible( v );
+
+    // Hide group node's graphics items (and their edges graphics items)
+    foreach ( qan::Node* node, _nodes )
+    {
+        Q_ASSERT( node->getGraphicsItem( ) );
+        node->getGraphicsItem( )->setVisible( v );
+
+        // Hide nodes edges graphics items
+        qan::Edge::Set edges( node->getInEdges( ).toSet( ) );
+        edges.unite( node->getOutEdges( ).toSet( ) );
+        foreach ( qan::Edge* edge, edges )
+            edge->getGraphicsItem( )->setVisible( v );
+    }
+}
+
+void	NodeGroup::groupMoved( QPointF curPos, QPointF oldPos )
+{
+    Q_UNUSED( oldPos );
+
+    // Update group nodes edges
+    qan::Edge::Set edges;
+    foreach ( qan::Node* node, getNodes( ) )
+        edges.unite( node->getOutEdges( ).toSet( ) );
+    foreach ( qan::Node* node, getNodes( ) )
+        edges.unite( node->getInEdges( ).toSet( ) );
+    foreach ( qan::Edge* edge, edges )
+        edge->getGraphItem( )->updateItem( );
+
+    // Force group update when there is no parent layout to invalidate...
+    if ( _layout != 0 && parentLayoutItem( ) == 0 )
+        setGeometry( QRectF( curPos, boundingRect( ).size( ) ) );
 }
 
 QRectF	NodeGroup::getNodesSceneBoundingRect( ) const
@@ -176,63 +255,92 @@ QRectF	NodeGroup::getNodesSceneBoundingRect( ) const
 	}
 	return sceneBr;
 }
-		
-void	NodeGroup::updateNodesPositions( bool keepTopLeft )
+//-----------------------------------------------------------------------------
+
+
+/* Graphics layout item implementation *///------------------------------------
+void NodeGroup::updateGeometry( )
 {
-	if ( _layout != 0 )
-	{
-		qan::Node::Set rootNodes; getRootNodes( rootNodes );
-        qan::Node::List rootNodesList = rootNodes.toList( );
-        _layout->layout( rootNodesList, _nodes, _scene.sceneRect( ), 0, 0 );
-		foreach ( qan::Node* node, getNodes( ) )
-			node->getGraphicsItem( )->setPos( node->getPosition( ) );
-
-		if ( !_addAsChilds )
-		{
-			// Update this group bounding rect
-			QPointF topLeft = pos( );
-
-			prepareGeometryChange( );
-			QRectF sceneBr = updateBoundingRect( );
-			setPos( sceneBr.topLeft( ) );
-
-			if ( keepTopLeft )
-			{
-				groupMoved( topLeft, pos( ) );
-				setPos( topLeft );
-			}
-		}
-	}
-
-	updateBoundingRect( );
-
-	// Update in and out edges for group's nodes
-	qan::Edge::Set edges;
-	foreach ( qan::Node* node, getNodes( ) )
-		edges.unite( node->getOutEdges( ).toSet( ) );
-	foreach ( qan::Node* node, getNodes( ) )
-		edges.unite( node->getInEdges( ).toSet( ) );
-	foreach ( qan::Edge* edge, edges )
-		edge->getGraphItem( )->updateItem( );
-
-	if ( _background != 0 )
-		_background->setRect( boundingRect( ).adjusted( -1, -1, 1, 1 ) );
+    QGraphicsLayout::updateGeometry( );
 }
 
-void	NodeGroup::paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget )
+void NodeGroup::setGeometry( const QRectF& geom )
 {
-    Q_UNUSED( option ); Q_UNUSED( widget );
-	if ( _dragOver )
-	{
-		painter->setPen( Qt::NoPen );
-		painter->setBrush( QBrush( QColor( 50, 50, 50, 25 ) ) );
-		QRectF itemOutline( boundingRect( ) );
-		if ( _nameItem != 0 && _nameItem->isVisible( ) )
-			itemOutline = itemOutline.united( mapRectFromItem( _nameItem, _nameItem->boundingRect( ) ) );
-		painter->drawRect( itemOutline );
-	}
-	else
-		painter->setBrush( QBrush( ) );
+    prepareGeometryChange( );
+    QGraphicsLayout::setGeometry( geom );
+
+    if ( _background != 0 )
+        _background->setRect( QRectF( 0., 0., geom.width( ), geom.height( ) ) );
+        //_background->setRect( boundingRect( ) );
+
+    // Update sublayout
+    if ( _layout != 0 )
+    {
+        _layout->setGeometry( geom );   // Let sublayout compute an "ideal" geometry, then set it to this group
+        _br = QRectF( QPointF( 0., 0. ), _layout->geometry( ).size( ) ); // (usefull to avoid resizing smaller than the sub layout content...
+        setPos( geom.topLeft( ) );
+    }
+    else
+    {
+        _br = QRectF( QPointF( 0., 0. ), geom.size( ) );
+        setPos( geom.topLeft( ) );
+    }
+}
+
+QSizeF NodeGroup::sizeHint( Qt::SizeHint which, const QSizeF& constraint ) const
+{
+    switch ( which )
+    {
+    case Qt::MinimumSize:
+    {
+        if ( _layout != 0 )
+            return _layout->minimumSize( );
+        return  sizeHint( which, constraint ); //SizeF( 185., 85. )
+    }
+    case Qt::PreferredSize:
+    {
+        if ( _layout != 0 )
+        {
+            QSizeF layoutPrefSize = _layout->preferredSize( );
+            return layoutPrefSize;
+        }
+        QSizeF prefSize = boundingRect( ).size( );
+
+        // If group is laid off with a qanava graph layout and that group must
+        // adapt to content size, return an ideal br enclosing all laid out items
+        /*if ( _graphLayout != 0 )
+        {
+            QRectF preferredBr = getNodesSceneBoundingRect( );
+            prefSize = preferredBr.size( );
+        }*/
+        return prefSize;
+    }
+        break;
+    case Qt::MaximumSize:
+        return QSizeF( 1000, 1000 );
+        break;
+    case Qt::MinimumDescent:
+        break;
+    default:
+        break;
+    }
+    return constraint;
+}
+
+int	NodeGroup::count( ) const
+{
+    return ( _layout != 0 ? _layout->count( ) : 0 );
+}
+
+QGraphicsLayoutItem*	NodeGroup::itemAt( int i ) const
+{
+    return ( _layout != 0 ? _layout->itemAt( i ) : 0 );
+}
+
+void	NodeGroup::removeAt( int index )
+{
+    if ( _layout != 0 )
+        _layout->removeAt( index );
 }
 //-----------------------------------------------------------------------------
 
@@ -280,42 +388,66 @@ void	NodeGroup::itemDropped( qan::SimpleNodeItem* item, QGraphicsItem* target )
 /* Group Node Management *///--------------------------------------------------
 void	NodeGroup::addNode( qan::Node& node )
 {
-	_nodes.insert( &node );
-	qan::NodeItem* nodeItem = ( qan::NodeItem* )node.getGraphItem( );
-	Q_ASSERT( nodeItem );
+    if ( _layout == 0 && _graphLayout == 0 )
+        return; // Node can't be added to a group if there is no layout sets.
 
-	nodeItem->setZValue( zValue( ) + 1.0 );
-	nodeItem->setDraggable( false );	// Once added in a group the item is no longer draggable to another group.
-	if ( _addAsChilds && nodeItem != 0 )
-	{
-		node.getGraphicsItem( )->setParentItem( this );
-		nodeItem->setMovable( false );		// If the group is movable, node item will become a child of this group, let the group manage node "moving"
-		updateNodesPositions( );
-	}
-	else
-	{
-		nodeItem->setMovable( true );
-		nodeItem->setFlag( QGraphicsItem::ItemSendsGeometryChanges, false );
-		nodeItem->setFlag( QGraphicsItem::ItemSendsScenePositionChanges, false );
-		connect( nodeItem, SIGNAL( itemMoved( QPointF, QPointF ) ), this, SLOT( itemMoved( QPointF, QPointF ) ) );
-		updateNodesPositions( true );
-	}
+    qan::NodeItem* nodeItem = ( qan::NodeItem* )node.getGraphItem( );
+    Q_ASSERT( nodeItem );
+    _nodes.insert( &node );
+
+    nodeItem->setZValue( zValue( ) + 1.0 );
+    nodeItem->setDraggable( false );	// Once added in a group the item is no longer draggable to another group.
+
+    if ( _layout != 0 )
+    {
+        nodeItem->setMovable( false );  // When added as a child, node is no longer movable, since its position is managed by Qt graphics layout
+        _layout->addItem( nodeItem );
+        nodeItem->setParentLayoutItem( _layout );
+        //parentLayoutItem( )->updateGeometry( );
+        if ( parentLayoutItem( ) != 0 && parentLayoutItem( )->isLayout( ) )
+        {
+            QGraphicsLayout* gl = static_cast< QGraphicsLayout* >(  parentLayoutItem( ) );
+            gl->invalidate( );
+        }
+
+        // FIXME: see what is exactly necessary....
+        _layout->invalidate( );
+        _layout->activate();
+
+        invalidate( );
+        activate( );
+
+        // Necessary to update groups who doesn't have a parent item layout
+        if ( parentLayoutItem( ) == 0 )
+            setGeometry( QRectF( pos( ), preferredSize( ) ) );
+    } else if ( _graphLayout != 0 )
+    {
+        nodeItem->setParentItem( this );
+        nodeItem->setMovable( false );
+        nodeItem->setFlag( QGraphicsItem::ItemSendsGeometryChanges, false );
+        nodeItem->setFlag( QGraphicsItem::ItemSendsScenePositionChanges, false );
+        connect( nodeItem, SIGNAL( itemMoved( QPointF, QPointF ) ), this, SLOT( itemMoved( QPointF, QPointF ) ) );
+    }
+
+    updateGroup( );
+    updateGeometry( );
 }
-		
+
 void	NodeGroup::addEdge( qan::Edge& edge )
 {
     Q_UNUSED( edge );
-	updateNodesPositions( _addAsChilds ? false : true );
+    updateGroup( );
 }
 
 void	NodeGroup::removeNode( qan::Node& node )
 { 
 	_nodes.remove( &node ); 
 
-	updateBoundingRect( );
+    // FIXME v1.0:
+        // Reparent node to scene eventually
+        // Remove every decoration items associed to node graphics item.
 
-	if ( _background != 0 )
-		_background->setRect( boundingRect( ) ); 
+    updateGroup( );
 }
 
 void	NodeGroup::getRootNodes( qan::Node::Set& rootNodes )
@@ -340,12 +472,14 @@ void	NodeGroup::getRootNodes( qan::Node::Set& rootNodes )
 
 void	NodeGroup::itemMoved( QPointF curPos, QPointF oldPos )
 {
-	qan::NodeItem* movedNode = ( qan::NodeItem* )sender( );
-	if ( !_addAsChilds && _layout != 0 && movedNode != 0 )	// A group that is not movable should update nodes positions if one of them is modified (ex: dynamic relationnal layout)
+    qan::NodeItem* movedNode = static_cast< qan::NodeItem* >( sender( ) );
+    Q_ASSERT( movedNode );
+
+/*    if ( !_addAsChilds && _graphLayout != 0 && movedNode != 0 )	// A group that is not movable should update nodes positions if one of them is modified (ex: dynamic relationnal layout)
 	{
 		qan::Node::Set rootNodes; getRootNodes( rootNodes );
         qan::Node::List rootNodesList = rootNodes.toList( );
-        _layout->layout( rootNodesList, _nodes, _scene.sceneRect( ), &movedNode->getNode( ), 0 );
+        _graphLayout->layout( rootNodesList, _nodes, _scene.sceneRect( ), &movedNode->getNode( ), 0 );
 	
 		qan::Edge::Set edges;
 		foreach ( qan::Node* node, getNodes( ) )
@@ -370,7 +504,7 @@ void	NodeGroup::itemMoved( QPointF curPos, QPointF oldPos )
 		QPointF delta =  curPos - oldPos;
 		setPos( pos( ) + delta );
 		groupMoved( curPos, oldPos );
-	}
+    }*/
 }
 //-----------------------------------------------------------------------------
 
@@ -378,14 +512,14 @@ void	NodeGroup::itemMoved( QPointF curPos, QPointF oldPos )
 /* Group Mouse Management *///-------------------------------------------------
 void	NodeGroup::mouseMoveEvent( QGraphicsSceneMouseEvent* e )
 {
-	if ( _mousePressed )
+    if ( _isMovable && _mousePressed )
 	{
 		QPointF groupPos = scenePos( );
 		QPointF mousePos = e->scenePos( );
 		QPointF d =  mousePos - _mousePos;
 		if ( !qFuzzyCompare( d.manhattanLength( ), 0. ) )
 		{
-			moveBy( d.x( ), d.y( ) );
+            moveBy( d.x( ), d.y( ) );
 			groupMoved( scenePos( ), groupPos );
 			_mousePos = mousePos;
 		}
@@ -397,7 +531,7 @@ void	NodeGroup::mouseMoveEvent( QGraphicsSceneMouseEvent* e )
 
 void	NodeGroup::mousePressEvent( QGraphicsSceneMouseEvent* e )
 {
-	if ( e->button( ) == Qt::LeftButton )
+    if ( _isMovable && e->button( ) == Qt::LeftButton )
 	{
 		_mousePressed = true;
 		_mousePos = e->scenePos( );
@@ -409,7 +543,7 @@ void	NodeGroup::mousePressEvent( QGraphicsSceneMouseEvent* e )
 
 void	NodeGroup::mouseReleaseEvent( QGraphicsSceneMouseEvent* e )
 {
-	if ( _mousePressed == true )
+    if ( _isMovable && _mousePressed == true )
 	{
 		_mousePressed = false;
 		e->accept( );

@@ -8,32 +8,34 @@ CONFIG		+= debug warn_on qt thread staticlib
 INCLUDEPATH	+= $(PROPERTYBROWSER)
 QT		+= widgets xml core
  
-HEADERS +=	./qanConfig.h \
-                ./qanEdge.h \
-                ./qanGraph.h \
-                ./qanGrid.h \
-                ./qanLayout.h \
-                ./qanSimpleLayout.h \
-                ./qanTreeLayout.h \
-                ./qanNode.h \
-                ./qanController.h \
-                ./qanSimpleNodeItem.h \
-                ./qanNodeItem.h \
-                ./qanEdgeItem.h \
-                ./qanGraphItem.h \
-                ./qanProperties.h \
-                ./qanStyleManager.h \
-                ./qanGraphView.h \
-                ./qanGraphModel.h \
-                ./qanGraphScene.h \
-                ./qanNodeGroup.h \
-                ./qanGridItem.h \
-                ./ui/uiStyleEditorWidget.h \
-                ./ui/uiStyleBrowserWidget.h \
-                ./ui/uiNodeGroupFilterWidget.h \
-                ./ui/uiNodesItemModel.h \
-                ./ui/uiUtil.h		\
-                ./qanContainerGraphicsItem.h
+HEADERS +=	./qanConfig.h                   \
+                ./qanEdge.h                     \
+                ./qanGraph.h                    \
+                ./qanGrid.h                     \
+                ./qanLayout.h                   \
+                ./qanSimpleLayout.h             \
+                ./qanTreeLayout.h               \
+                ./qanNode.h                     \
+                ./qanController.h               \
+                ./qanSimpleNodeItem.h           \
+                ./qanNodeItem.h                 \
+                ./qanEdgeItem.h                 \
+                ./qanGraphItem.h                \
+                ./qanProperties.h               \
+                ./qanStyleManager.h             \
+                ./qanGraphView.h                \
+                ./qanGraphModel.h               \
+                ./qanGraphScene.h               \
+                ./qanNodeGroup.h                \
+                ./qanGridItem.h                 \
+                ./ui/uiStyleEditorWidget.h      \
+                ./ui/uiStyleBrowserWidget.h     \
+                ./ui/uiNodeGroupFilterWidget.h  \
+                ./ui/uiNodesItemModel.h         \
+                ./ui/uiUtil.h                   \
+                ./qanGraphicsController.h       \
+                ./qanGraphicsResizer.h          \
+                ./qanGraphicsContainer.h
 	
 SOURCES += 	./qanEdge.cpp                       \
                 ./qanGraph.cpp                      \
@@ -57,7 +59,9 @@ SOURCES += 	./qanEdge.cpp                       \
                 ./ui/uiStyleBrowserWidget.cpp       \
                 ./ui/uiNodeGroupFilterWidget.cpp    \
                 ./ui/uiNodesItemModel.cpp           \
-                ./qanContainerGraphicsItem.cpp
+                ./qanGraphicsController.cpp         \
+                ./qanGraphicsResizer.cpp            \
+                ./qanGraphicsContainer.cpp
 
 android {
     Debug:TARGET    = qanavad
@@ -66,8 +70,8 @@ android {
 
 win32 {
     Debug:TARGET	= qanavad
-    Debug:LIBS		+= $(PROPERTYBROWSER)/qtpropertybrowserd.lib
+    Debug:LIBS		+= $(PROPERTYBROWSER)/libpropertybrowserd.lib
     Release:TARGET	= qanava
-    Release:LIBS	+= $(PROPERTYBROWSER)/qtpropertybrowser.lib
+    Release:LIBS	+= $(PROPERTYBROWSER)/libpropertybrowser.lib
 }
 

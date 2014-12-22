@@ -43,7 +43,7 @@
 namespace qan { // ::qan
 namespace ui  { // ::qan::ui
 
-class StyleNodeItem : public qan::NodeRectItem, public QGraphicsLayoutItem
+class StyleNodeItem : public qan::NodeRectItem
 {
 	Q_OBJECT
 

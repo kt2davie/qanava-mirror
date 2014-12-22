@@ -278,6 +278,9 @@ namespace qan { // ::qan
 
 	private:
 
+        //! Recursively look for an ancestor of a given type in an item paren hierarchy.
+        QGraphicsItem*      lookForParent( QGraphicsItem* item, int type );
+
 		//! .
 		QPointF				_zoomRectStart;
 

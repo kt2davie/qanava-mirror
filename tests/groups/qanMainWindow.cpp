@@ -31,31 +31,25 @@
 #include "../../src/qanGrid.h"
 #include "../../src/qanLayout.h"
 #include "../../src/qanTreeLayout.h"
+#include "../../src/qanGraphicsResizer.h"
+#include "../../src/ui/uiNodeGroupFilterWidget.h"
+#include "../../src/ui/uiNodeGroupFilterWidget.h"
 #include "./qanMainWindow.h"
-#include "./ui/uiNodeGroupFilterWidget.h"
-
 
 // QT headers
 #include <QToolBar>
 #include <QAction>
-#include <QSplitter>
-#include <QMessageBox>
 #include <QTextEdit>
-#include <QPushButton>
 #include <QVariant>
-#include <QCheckBox>
-#include <QProgressBar>
 
 using namespace qan;
 
 
 /* Group Management *///-------------------------------------------------------
-RelationalGroup::RelationalGroup( qan::GraphScene& scene, QString name ) : 
-	NodeGroup( scene, name )
+RelationalGroup::RelationalGroup( qan::GraphScene& scene, QString name ) :
+    NodeGroup( scene, name )
 { 
-	setLayout( new qan::HierarchyTree( ) ); 	// Set an horizontal tree layout for position initialisation
-	setAddAsChilds( false );	
-	setAcceptDrops( true );
+    setGraphLayout( new qan::HierarchyTree( ) ); 	// Set an horizontal tree layout for position initialisation
 }
 //-----------------------------------------------------------------------------
 
@@ -97,6 +91,7 @@ void	RelationalGroup::itemMoved( QPointF curPos, QPointF oldPos )
 		edge->getGraphItem( )->updateItem( );
 }
 
+
 //-----------------------------------------------------------------------------
 MainWindow::MainWindow( QApplication* application, QWidget* parent ) : 
 	QMainWindow( parent ),
@@ -119,79 +114,166 @@ MainWindow::MainWindow( QApplication* application, QWidget* parent ) :
 	if ( zoomSlider != 0 )
 		zoomSlider->hide( );
 
-	qan::NodeGroup* treeGroup = new qan::NodeGroup( _graph->getM( ), "Tree Group" );
-	treeGroup->setLayout( new qan::HierarchyTree( ) );
-	treeGroup->setAcceptDrops( true );
-	_graph->getM( ).addNodeGroup( *treeGroup );
-	_graph->getM( ).addDropTarget( treeGroup );
-	Node& ha = *_graph->insertNode( "Node A", "default node");
-	Node& ha1 = *_graph->insertNode( "Node A1", "default node");
-	Node& ha2 = *_graph->insertNode( "Node A2", "default node");
-	Node& ha11 = *_graph->insertNode( "Node A11", "default node");
-	Node& ha21 = *_graph->insertNode( "Node A21", "default node");
-	Edge* haha1 = _graph->insertEdge( ha, ha1 );
-	Edge* ha1ha11 = _graph->insertEdge( ha1, ha11 );
-	Edge* haha2 = _graph->insertEdge( ha, ha2 );
-	Edge* h2ha21 = _graph->insertEdge( ha2, ha21 );
-	treeGroup->addNode( ha );
-	treeGroup->addNode( ha1 );
-	treeGroup->addNode( ha2 );
-	treeGroup->addNode( ha11 );
-	treeGroup->addNode( ha21 );
+    // Test node to be dragged in groups
+    Node& hb = *_graph->insertNode( "Node B", "default node");
+    Node& hb1 = *_graph->insertNode( "Node B1", "default node");
+    Node& hb11 = *_graph->insertNode( "Node B11", "default node");
+    Edge* hbhb1 = _graph->insertEdge( hb, hb1 ); Q_UNUSED( hbhb1 );
+    Edge* hb1hb11 = _graph->insertEdge( hb1, hb11 ); Q_UNUSED( hb1hb11 );
 
-	Node& hb = *_graph->insertNode( "Node B", "default node");
-	Node& hb1 = *_graph->insertNode( "Node B1", "default node");
-	Edge* hbhb1 = _graph->insertEdge( hb, hb1 );
+    {/*
+        qan::NodeGroup* treeGroup = new qan::NodeGroup( _graph->getM( ), "Tree Group" );
+        treeGroup->setLayout( new qan::HierarchyTree( ) );
+        treeGroup->setAcceptDrops( true );
+        _graph->getM( ).addNodeGroup( *treeGroup );
+        _graph->getM( ).addDropTarget( treeGroup );
+        Node& ha = *_graph->insertNode( "Node A", "default node");
+        Node& ha1 = *_graph->insertNode( "Node A1", "default node");
+        Node& ha2 = *_graph->insertNode( "Node A2", "default node");
+        Node& ha11 = *_graph->insertNode( "Node A11", "default node");
+        Node& ha21 = *_graph->insertNode( "Node A21", "default node");
+        Edge* haha1 = _graph->insertEdge( ha, ha1 ); Q_UNUSED( haha1 );
+        Edge* ha1ha11 = _graph->insertEdge( ha1, ha11 ); Q_UNUSED( ha1ha11 );
+        Edge* haha2 = _graph->insertEdge( ha, ha2 ); Q_UNUSED( haha2 );
+        Edge* h2ha21 = _graph->insertEdge( ha2, ha21 ); Q_UNUSED( h2ha21 );
+        treeGroup->addNode( ha );
+        treeGroup->addNode( ha1 );
+        treeGroup->addNode( ha2 );
+        treeGroup->addNode( ha11 );
+        treeGroup->addNode( ha21 );
 
-	qan::Style* actorStyle = _graph->getM( ).getStyleManager( ).addStyle( "default actor node", "qan::Node" );
-	actorStyle->addProperty( "No Background", QVariant( false ) );
-	actorStyle->addProperty( "Back Color", QVariant( QColor( 130, 120, 250 ) ) );
-	actorStyle->addProperty( "Border Color", QVariant( QColor( 0, 0, 0 ) ) );
-	QStringList lineStyles; lineStyles << "Solid line" << "Dash line" << "Dot line" << "Dash Dot line" << "Dash Dot Dot line";
-	actorStyle->addProperty( "Border Style", QtVariantPropertyManager::enumTypeId(),  lineStyles );
-	actorStyle->addProperty( "Border Width", QVariant( 1.0 ) );
-	actorStyle->addProperty( "Font", QVariant( QFont( ) ) );
-	actorStyle->addProperty( "Maximum Size", QVariant( QSizeF( 100., 25. ) ) );
-	actorStyle->addProperty( "Has Shadow", QVariant( true ) );
-	actorStyle->addProperty( "Shadow Color", QVariant( QColor( 50, 50, 50 ) ) );
-	actorStyle->addProperty( "Shadow Offset", QVariant( QSizeF( 2., 2. ) ) );
+        qan::Style* actorStyle = _graph->getM( ).getStyleManager( ).addStyle( "default actor node", "qan::Node" );
+        actorStyle->addProperty( "No Background", QVariant( false ) );
+        actorStyle->addProperty( "Back Color", QVariant( QColor( 130, 120, 250 ) ) );
+        actorStyle->addProperty( "Border Color", QVariant( QColor( 0, 0, 0 ) ) );
+        QStringList lineStyles; lineStyles << "Solid line" << "Dash line" << "Dot line" << "Dash Dot line" << "Dash Dot Dot line";
+        actorStyle->addProperty( "Border Style", QtVariantPropertyManager::enumTypeId(),  lineStyles );
+        actorStyle->addProperty( "Border Width", QVariant( 1.0 ) );
+        actorStyle->addProperty( "Font", QVariant( QFont( ) ) );
+        actorStyle->addProperty( "Maximum Size", QVariant( QSizeF( 100., 25. ) ) );
+        actorStyle->addProperty( "Has Shadow", QVariant( true ) );
+        actorStyle->addProperty( "Shadow Color", QVariant( QColor( 50, 50, 50 ) ) );
+        actorStyle->addProperty( "Shadow Offset", QVariant( QSizeF( 2., 2. ) ) );
 
-	qan::NodeGroup* relationalGroup = new RelationalGroup( _graph->getM( ), "Undirected Layout Group" );
-	_graph->getM( ).addNodeGroup( *relationalGroup );
-	_graph->getM( ).addDropTarget( relationalGroup );
-	Node* ra = new qan::Node( "Node A" );
-	ra->getProperties( ).addProperty( "Type", "Actor" );
-	_graph->insertNode( ra, "default actor node");
-	Node* rb = new qan::Node( "Node B" );
-	rb->getProperties( ).addProperty( "Type", "Actor" );
-	_graph->insertNode( rb, "default actor node");
-	Node* rc = new qan::Node( "Node C" );
-	rc->getProperties( ).addProperty( "Type", "Actor" );
-	_graph->insertNode( rc, "default actor node");
-	Node* rd = new qan::Node( "Node D" );
-	rd->getProperties( ).addProperty( "Type", "Actor" );
-	_graph->insertNode( rd, "default actor node");
-	Node* re = new qan::Node( "Node E" );
-	re->getProperties( ).addProperty( "Type", "Actor" );
-	_graph->insertNode( re, "default actor node");
-	Node* rf = new qan::Node( "Node F" );
-	rf->getProperties( ).addProperty( "Type", "Actor" );
-	_graph->insertNode( rf, "default actor node");
-	Edge* rarb = _graph->insertEdge( *ra, *rb );
-	Edge* rarc = _graph->insertEdge( *ra, *rc );
-	Edge* rard = _graph->insertEdge( *ra, *rd );
-	Edge* rare = _graph->insertEdge( *ra, *re );
-	Edge* rerf = _graph->insertEdge( *re, *rf );
-	Edge* rarf = _graph->insertEdge( *ra, *rf );
-	relationalGroup->addNode( *ra );
-	relationalGroup->addNode( *rb );
-	relationalGroup->addNode( *rc );
-	relationalGroup->addNode( *rd );
-	relationalGroup->addNode( *re );
-	relationalGroup->addNode( *rf );
+        qan::NodeGroup* relationalGroup = new RelationalGroup( _graph->getM( ), "Undirected Layout Group" );
+        _graph->getM( ).addNodeGroup( *relationalGroup );
+        _graph->getM( ).addDropTarget( relationalGroup );
+        Node* ra = new qan::Node( "Node A" );
+        ra->getProperties( ).addProperty( "Type", "Actor" );
+        _graph->insertNode( ra, "default actor node");
+        Node* rb = new qan::Node( "Node B" );
+        rb->getProperties( ).addProperty( "Type", "Actor" );
+        _graph->insertNode( rb, "default actor node");
+        Node* rc = new qan::Node( "Node C" );
+        rc->getProperties( ).addProperty( "Type", "Actor" );
+        _graph->insertNode( rc, "default actor node");
+        Node* rd = new qan::Node( "Node D" );
+        rd->getProperties( ).addProperty( "Type", "Actor" );
+        _graph->insertNode( rd, "default actor node");
+        Node* re = new qan::Node( "Node E" );
+        re->getProperties( ).addProperty( "Type", "Actor" );
+        _graph->insertNode( re, "default actor node");
+        Node* rf = new qan::Node( "Node F" );
+        rf->getProperties( ).addProperty( "Type", "Actor" );
+        _graph->insertNode( rf, "default actor node");
+        Edge* rarb = _graph->insertEdge( *ra, *rb ); Q_UNUSED( rarb );
+        Edge* rarc = _graph->insertEdge( *ra, *rc ); Q_UNUSED( rarc );
+        Edge* rard = _graph->insertEdge( *ra, *rd ); Q_UNUSED( rard );
+        Edge* rare = _graph->insertEdge( *ra, *re ); Q_UNUSED( rare );
+        Edge* rerf = _graph->insertEdge( *re, *rf ); Q_UNUSED( rerf );
+        Edge* rarf = _graph->insertEdge( *ra, *rf ); Q_UNUSED( rarf );
+        relationalGroup->addNode( *ra );
+        relationalGroup->addNode( *rb );
+        relationalGroup->addNode( *rc );
+        relationalGroup->addNode( *rd );
+        relationalGroup->addNode( *re );
+        relationalGroup->addNode( *rf );
 
-	qan::Layout* relationalLayout = new qan::UndirectedGraph( );
-	relationalGroup->setLayout( relationalLayout );
+        qan::Layout* relationalLayout = new qan::UndirectedGraph( );
+        relationalGroup->setLayout( relationalLayout );*/
+    }
+
+    // Test graphics layout with node groups
+    {
+        // Add a moveable group with a qanava hierarchy tree layout
+/*        qan::NodeGroup* hierarchyGroup = new qan::NodeGroup( _graph->getM( ), "Hierarchy 1" );
+        hierarchyGroup->setMovable( true );
+        hierarchyGroup->setGraphLayout( new qan::HierarchyTree( ) );
+        _graph->getM( ).addNodeGroup( *hierarchyGroup );
+
+        hierarchyGroup->addNode( hb );
+        hierarchyGroup->addNode( hb1 );
+        hierarchyGroup->addNode( hb11 );
+
+
+        Node& n1 = *_graph->insertNode( "Node 1", "default node" );
+        Node& n2 = *_graph->insertNode( "Node 2", "default node" );
+        Node& n3 = *_graph->insertNode( "Node 3", "default node" );
+        Node& n4 = *_graph->insertNode( "Node 4", "default node" );
+
+        // Add a group with a graphics layout in a graphics widget that has an horizontal graphics layout
+        QGraphicsWidget* sceneWidget = new QGraphicsWidget( 0 );
+        QGraphicsLinearLayout* groupLayout = new QGraphicsLinearLayout( sceneWidget );
+        sceneWidget->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding, QSizePolicy::DefaultType );
+        sceneWidget->setPos( 50, 50 );
+        sceneWidget->resize( 400, 300 );
+        sceneWidget->setLayout( groupLayout );
+        _graph->getM( ).addItem( sceneWidget );
+
+        qan::NodeGroup* vLinearGroup = new qan::NodeGroup( _graph->getM( ), "vLinear 1", sceneWidget );
+        vLinearGroup->setMovable( false );
+        vLinearGroup->setLayout( new QGraphicsLinearLayout( Qt::Vertical ) );
+        _graph->getM( ).addNodeGroup( *vLinearGroup );
+        vLinearGroup->addNode( n4 );
+        vLinearGroup->addNode( n3 );
+
+        groupLayout->addItem( reinterpret_cast< qan::NodeItem *>( n1.getGraphItem( ) ) );
+        groupLayout->addItem( reinterpret_cast< qan::NodeItem *>( n2.getGraphItem( ) ) );
+        groupLayout->addItem( vLinearGroup );
+        groupLayout->addItem( reinterpret_cast< qan::NodeItem *>( n3.getGraphItem( ) ) );
+*/
+
+        /* //////////////////////////// OLD CODE*/
+        /*qan::NodeGroup* group2 = new qan::NodeGroup( _graph->getM( ), "Group 2" );
+        group2->setGraphLayout( new qan::HierarchyTree( ) );
+        group2->setAcceptDrops( true );
+        group2->setMovable( false );
+        _graph->getM( ).addNodeGroup( *group2 );
+        _graph->getM( ).addDropTarget( group2 );
+
+        qan::NodeGroup* group3 = new qan::NodeGroup( _graph->getM( ), "Group 3" );
+        group3->setLayout( new QGraphicsLinearLayout( Qt::Vertical ) );
+        group3->setAcceptDrops( true );
+        group3->setMovable( false );
+        _graph->getM( ).addNodeGroup( *group3 );
+        _graph->getM( ).addDropTarget( group3 );
+        group3->addNode( n1 );
+        group3->addNode( n2 );
+        group3->addNode( n3 );
+        group3->addNode( n4 );*/
+
+        //groupLayout->addItem( group1 );
+        //groupLayout->addItem( group2 );
+        //groupLayout->addItem( group3 );
+
+        // Resizable node group test
+        Node& r1 = *_graph->insertNode( "R1", "default node" );
+        Node& r2 = *_graph->insertNode( "R2", "default node" );
+        Node& r3 = *_graph->insertNode( "R3", "default node" );
+        Node& r4 = *_graph->insertNode( "R4", "default node" );
+
+        qan::NodeGroup* resizableGroup = new qan::NodeGroup( _graph->getM( ), "Resizable Group" );
+        resizableGroup->setAcceptDrops( true );
+        resizableGroup->setLayout( new QGraphicsLinearLayout( Qt::Vertical ) );
+        _graph->getM( ).addNodeGroup( *resizableGroup );
+        resizableGroup->addNode( r1 );
+        resizableGroup->addNode( r2 );
+        resizableGroup->addNode( r3 );
+
+        qan::GraphicsController* controller = new qan::GraphicsController( resizableGroup, resizableGroup );
+        qan::GraphicsResizer* resizer = new qan::GraphicsResizer( controller, resizableGroup );
+        //new qan::GraphicsResizerDecoration( resizableGroup, resizableGroup );
+    }
 
 	// Add a style browser widget to dynamically set node's style
 	ui::NodeGroupFilterWidget* groupFilterWidget = new qan::ui::NodeGroupFilterWidget( *graphView, _graph->getM( ) );

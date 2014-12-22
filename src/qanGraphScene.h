@@ -137,6 +137,11 @@ namespace qan { // ::qan
 	public:
 
 		//! Add a node group to this scene, ownership goes to scene.
+        /*! This method will automatically calls addDropTarget() with the given group
+         *  if group getAcceptDrop() return true (ie if groups accepts Qanava node insertion via
+         * drag and drop).
+         * \param nodeGroup Node group that must be added to this graphics scene.
+         */
 		virtual	void				addNodeGroup( qan::NodeGroup& nodeGroup );
 
 		//! Remove a node group from this scene, ownership goes back to the caller.

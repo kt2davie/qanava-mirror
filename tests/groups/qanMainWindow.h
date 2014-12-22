@@ -38,12 +38,6 @@
 
 // QT headers
 #include <QMainWindow>
-#include <QTreeView>
-#include <QMenu>
-#include <QTextEdit>
-#include <QGraphicsLinearLayout>
-#include <QCheckBox>
-#include <QGraphicsItem>
 
 	//! Models a group of nodes showing a relationnal graph of actors.
 	/*!
@@ -71,6 +65,7 @@
 
 		void				itemMoved( QPointF curPos, QPointF oldPos );
 	};
+
 
 //-----------------------------------------------------------------------------
 //! 
