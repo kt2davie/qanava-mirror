@@ -58,7 +58,7 @@ namespace qan { // ::qan
             AutoHide = 16,
             ShowFocusShadow = 32,
             ShowBorder = 64,
-            ShowCloseMaximize = ShowClose | ShowMaximize,
+            ShowCloseMaximize = ShowClose | ShowMaximize | AutoHide,
             ShowAll = ShowClose | ShowMaximize | ShowExpand | ShowFocusShadow | AutoHide,
             AlwaysShowAll = ShowClose | ShowMaximize | ShowExpand | ShowFocusShadow,
             AlwaysShowAllWithBorder = ShowClose | ShowMaximize | ShowExpand | ShowBorder | ShowFocusShadow

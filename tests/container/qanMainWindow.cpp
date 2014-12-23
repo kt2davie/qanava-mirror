@@ -144,27 +144,42 @@ MainWindow::MainWindow( QApplication* application, QWidget* parent ) :
 	if ( zoomSlider != 0 )
 		zoomSlider->hide( );
 
-    // Add a graphics container item with an HTML graphics widget
-    qan::GraphicsContainer* container1 = new qan::GraphicsContainer( QRectF(0., 0., 300., 200. ) );
-    _graph->getM( ).addItem( container1 );
-    ContainerWidget* gw = new ContainerWidget( _graph->getM( ), graphView, container1 );
-    container1->setContent( gw, gw );
-    container1->setPos( 100, 150 );
-    container1->setTitle( "HTML container item test" );
+    { // Graphics container test
+        // Add a graphics container item with an HTML graphics widget
+        qan::GraphicsContainer* container1 = new qan::GraphicsContainer( QRectF(0., 0., 300., 200. ) );
+        _graph->getM( ).addItem( container1 );
+        ContainerWidget* gw = new ContainerWidget( _graph->getM( ), graphView, container1 );
+        container1->setContent( gw, gw );
+        container1->setPos( 100, 150 );
+        container1->setTitle( "HTML container item test" );
 
-    qan::GraphicsContainer* container3 = new qan::GraphicsContainer( QRectF(0., 0., 300., 200. ), qan::GraphicsDecoration::Round );
-    _graph->getM( ).addItem( container3 );
-    ContainerWidget* gw2 = new ContainerWidget( _graph->getM( ), graphView, container1 );
-    container3->setContent( gw2, gw2 );
-    container3->setPos( 100, 350 );
-    container3->setTitle( "HTML in a round graphics container" );
+        qan::GraphicsContainer* container3 = new qan::GraphicsContainer( QRectF(0., 0., 300., 200. ), qan::GraphicsDecoration::Round );
+        _graph->getM( ).addItem( container3 );
+        ContainerWidget* gw2 = new ContainerWidget( _graph->getM( ), graphView, container1 );
+        container3->setContent( gw2, gw2 );
+        container3->setPos( 100, 350 );
+        container3->setTitle( "HTML in a round graphics container" );
 
-    qan::GraphicsContainer* container2 = new qan::GraphicsContainer( QRectF(0., 0., 300., 200. ) );
-    _graph->getM( ).addItem( container2 );
-    QGraphicsWidget* proxy = _graph->getM( ).addWidget( new PixmapWidget( QPixmap( ":/test.png" ) ) );
-    container2->setContent( proxy, proxy );
-    container2->setPos( 450, 150 );
-    container2->setTitle( "Graphics view inside a container inside a graphics view!" );
+        qan::GraphicsContainer* container2 = new qan::GraphicsContainer( QRectF(0., 0., 300., 200. ) );
+        _graph->getM( ).addItem( container2 );
+        QGraphicsWidget* proxy = _graph->getM( ).addWidget( new PixmapWidget( QPixmap( ":/test.png" ) ) );
+        container2->setContent( proxy, proxy );
+        container2->setPos( 450, 150 );
+        container2->setTitle( "Graphics view inside a container inside a graphics view!" );
+    }
+
+    { // Graphics controller test
+        QLabel* label = new QLabel( "this is a standard QLabel" );
+        label->setGeometry( QRect( 0, 0, 130, 100 ) );
+        QGraphicsWidget* labelProxy = _graph->getM( ).addWidget( label );
+        labelProxy->setPos( 15., 15. );
+
+        // FIXME: I know this is ugly, but I should maintain VC++2010 support without strongly typed enums...
+        qan::GraphicsController* controller = new qan::GraphicsController( labelProxy, labelProxy, QSizeF( 20, 20 ), GraphicsController::ShowCloseMaximize );
+        //qan::GraphicsController* controller = new qan::GraphicsController( labelProxy, labelProxy, QSizeF( 20, 20 ), GraphicsController::Config( GraphicsController::ShowCloseMaximize | GraphicsController::ShowFocusShadow ) );
+
+        qan::GraphicsResizer* resizer = new qan::GraphicsResizer( controller, this, controller ); Q_UNUSED( resizer );
+    }
 
 	_graph->getM( ).setSceneRect( QRectF( 0.0, 0., 1000., 1000. ) );
 }
