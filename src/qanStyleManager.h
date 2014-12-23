@@ -38,7 +38,7 @@
 #include <QAbstractListModel>
 
 // QT Solutions (qtpropertybrowser) headers
-#include "QtVariantProperty.h"
+#include "QtVariantProperty"
 
 // Qanava headers
 #include "./qanProperties.h"

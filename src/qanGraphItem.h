@@ -35,8 +35,8 @@
 #include <QGraphicsObject>
 
 // QT Solutions (qtpropertybrowser) headers
-#include "QtVariantProperty.h"
-#include "QtTreePropertyBrowser.h"
+#include "QtVariantProperty"
+#include "QtTreePropertyBrowser"
 
 // Qanava headers
 #include "./qanStyleManager.h"

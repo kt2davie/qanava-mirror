@@ -4,9 +4,9 @@ LANGUAGE	= C++
 DEFINES		+= QANAVA
 TARGET		= qanava
 DESTDIR		= ../build
-CONFIG		+= debug warn_on qt thread staticlib
+CONFIG		+= warn_on qt thread staticlib
 INCLUDEPATH	+= $(PROPERTYBROWSER)
-QT		+= widgets xml core
+QT		+= core widgets gui xml
  
 HEADERS +=	./qanConfig.h                   \
                 ./qanEdge.h                     \
@@ -63,15 +63,14 @@ SOURCES += 	./qanEdge.cpp                       \
                 ./qanGraphicsResizer.cpp            \
                 ./qanGraphicsContainer.cpp
 
-android {
-    Debug:TARGET    = qanavad
-    Release:TARGET  = qanava
+CONFIG(debug, debug|release) {
+    linux-g++*: TARGET    = qanavad
+    android:    TARGET    = qanavad
+    win32:      TARGET    = qanavad
 }
 
-win32 {
-    Debug:TARGET	= qanavad
-    Debug:LIBS		+= $(PROPERTYBROWSER)/libpropertybrowserd.lib
-    Release:TARGET	= qanava
-    Release:LIBS	+= $(PROPERTYBROWSER)/libpropertybrowser.lib
+CONFIG(release, debug|release) {
+    linux-g++*: TARGET    = qanava
+    android:    TARGET    = qanava
+    win32:      TARGET    = qanava
 }
-

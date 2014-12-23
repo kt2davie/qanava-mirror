@@ -25,6 +25,8 @@
 // \date	2004 May 22
 //-----------------------------------------------------------------------------
 
+// Qt headers
+#include <QtMath>
 
 // Qanava headers
 #include "./qanLayout.h"
@@ -202,7 +204,8 @@ QPointF	UndirectedGraph::computeSpringForce( Node& u, Node::Set& adjacentNodes )
 		double l = length( uv ) / 100.f;
 		double size = 1.;
 		if ( l > 1.0 ) 
-			size = 2.f * log( l );
+            size = 2.f * qLn( l );
+            //size = 2.f * log( l ); // FIXME v0.9.3 didn't compile on linux
 
 		uv *= size;
 		force += uv;
@@ -213,7 +216,7 @@ QPointF	UndirectedGraph::computeSpringForce( Node& u, Node::Set& adjacentNodes )
 
 float		UndirectedGraph::length( const QPointF& v )
 {
-	return sqrt( ( v.x( ) * v.x( ) ) + ( v.y( ) * v.y( ) ) );
+    return qSqrt( ( v.x( ) * v.x( ) ) + ( v.y( ) * v.y( ) ) );
 }
 
 float		UndirectedGraph::length2( const QPointF& v )

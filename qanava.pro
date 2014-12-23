@@ -1,4 +1,5 @@
 TEMPLATE    =   subdirs
+CONFIG      += ordered      # Well I know, but no choice...
 
 qanava.file         = src/qan.pro
 test-basic.subdir   = tests/basic

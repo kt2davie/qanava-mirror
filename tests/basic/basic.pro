@@ -11,17 +11,18 @@ SOURCES	+=  qanApp.cpp          \
             qanMainWindow.cpp
 HEADERS	+=  qanMainWindow.h
 
-android {
-  LIBS	+= -L../../build/ -lqanava -L$(PROPERTYBROWSER) -lpropertybrowserd
-  Debug:LIBS	+= -L../../build/ -lqanavad -L$(PROPERTYBROWSER) -lpropertybrowserd
-  Release:LIBS	+= -L../../build/ -lqanava -L$(PROPERTYBROWSER) -lpropertybrowser
+CONFIG(debug, debug|release) {
+    linux-g++*: LIBS	+= -L../../build/ -lqanavad -L$(PROPERTYBROWSER) -lpropertybrowserd
+    android:    LIBS	+= -L../../build/ -lqanavad -L$(PROPERTYBROWSER) -lpropertybrowserd
+    win32:      PRE_TARGETDEPS += ../../build/qanavad.lib
+    win32:      OBJECTS_DIR = ./Debug
+    win32:      LIBS	+= ../../build/qanavad.lib $(PROPERTYBROWSER)/libpropertybrowserd.lib
 }
 
-win32 {
-  Debug:OBJECTS_DIR = ./Debug
-  Release:OBJECTS_DIR = ./Release
-  Debug:LIBS	+= ../../build/qanavad.lib $(PROPERTYBROWSER)/libpropertybrowserd.lib
-  Release:LIBS	+= ../../build/qanava.lib $(PROPERTYBROWSER)/libpropertybrowser.lib
+CONFIG(release, debug|release) {
+    linux-g++*: LIBS	+= -L../../build/ -lqanava -L$(PROPERTYBROWSER) -lpropertybrowser
+    android:    LIBS	+= -L../../build/ -lqanava -L$(PROPERTYBROWSER) -lpropertybrowser
+    win32:      PRE_TARGETDEPS += ../../build/qanava.lib
+    win32:      OBJECTS_DIR = ./Release
+    win32:      LIBS	+= ../../build/qanava.lib $(PROPERTYBROWSER)/libpropertybrowser.lib
 }
-
-
