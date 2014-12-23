@@ -25,6 +25,8 @@
 // \date	2006 January 06
 //-----------------------------------------------------------------------------
 
+// Qt headers
+#include <QtMath>
 
 // Qanava headers
 #include "./qanSimpleLayout.h"
@@ -53,8 +55,8 @@ void	Concentric::layout( Graph& graph, QProgressDialog* progress )
 		double azimut = azimutIndex * _azimutDelta;
 
 		int circleIndex = 1 + ( n / nodesPerCircle );
-		double cx = sin( azimut * 3.14156 / 180. ) * ( circleIndex * _circleInterval );
-		double cy = cos( azimut * 3.14156 / 180. ) * ( circleIndex * _circleInterval );
+        double cx = qSin( azimut * 3.14156 / 180. ) * ( circleIndex * _circleInterval );
+        double cy = qCos( azimut * 3.14156 / 180. ) * ( circleIndex * _circleInterval );
 
 		node.getPosition( ).rx( ) = center.x( ) + cx;
 		node.getPosition( ).ry( ) = center.y( ) + cy;

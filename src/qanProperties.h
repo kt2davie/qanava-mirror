@@ -30,7 +30,6 @@
 #define qan_Properties_h
 
 // QT headers
-#include <QIcon>
 #include <QVariant>
 #include <QList>
 #include <QMap>

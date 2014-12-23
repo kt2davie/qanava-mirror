@@ -166,7 +166,7 @@ void	NodeItem::updateItem( )
             maxSize = style->get( "Maximum Size" ).toSizeF( );
 
         // Compute the item height according to the _label size once formatted and displayed
-        /*if ( _labelItem != 0 )
+        ( _labelItem != 0 )
         {
             // Do not resize the item larger than its maximum allowed size
             double textLayoutWidth = _labelItem->boundingRect( ).width( ) + 2.;

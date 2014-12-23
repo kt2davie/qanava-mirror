@@ -46,8 +46,8 @@
 #include <QGraphicsLayoutItem>
 
 // QT Solutions (qtpropertybrowser) headers
-#include "QtVariantProperty.h"
-#include "QtTreePropertyBrowser.h"
+#include "QtVariantProperty"
+#include "QtTreePropertyBrowser"
 
 
 //-----------------------------------------------------------------------------
