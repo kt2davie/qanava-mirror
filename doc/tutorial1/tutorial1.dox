@@ -1,0 +1,52 @@
+
+/*! \page tutorial1 Tutorial 1 - Creating a simple graph
+  \tableofcontents
+
+  Qanava has a model/view architecture with a graph model encoding graph topology and two intermediate views exposing the graph topology to both Qt Interview widgets and Qt Graphics View:
+
+\image html 20141102_NP_tut1-model-view-architecture.png
+
+Configuring a simple Qanava view :
+\code
+ // Create a graph model object
+ qan::Graph* graph = new qan::Graph( );
+
+ // Create, then configure a graph view object
+ qan::GraphView* graphView = new qan::GraphView( this, Qt::white );
+ graphView->setGraph( *graph );
+ hbox->addWidget( graphView ); // Add the view to an existing layout
+\endcode
+
+Graph model could be populated by adding nodes and edges with dedicated methods, the associated view will be updated automatically :
+
+\code
+ qan::Node* q = new qan::Node( "Q" );
+ graph->insertNode( q );
+
+ qan::Node* a = new qan::Node( "a" );
+ graph->insertNode( a );
+
+ qan::Node* n = new qan::Node( "n" );
+ graph->insertNode( a );
+
+ qan::Edge* qa = graph->insertEdge( *q, *a );
+ qan::Edge* an = graph->insertEdge( *a, *n );
+\endcode
+
+\image html 20141102_NP_tut1-creating-simple-graph-qan-graph.png
+
+\code
+ // Creating a node group
+ qan::NodeGroup* group = new qan::NodeGroup( _graph->getM( ), "Node Group" );
+ treeGroup->setLayout( new qan::HierarchyTree( ) );
+ graph->getM( ).addNodeGroup( *group );
+ qan::Node* n1 = graph->insertNode( "N1" );
+ qan::Node* n2 = graph->insertNode( "N2" );
+ qan::Edge* n1n2 = graph->insertEdge( *n1, *n2 );
+ group->addNode( *n1 );
+ group->addNode( *n2 );
+\endcode
+
+\image html 20141102_NP_tut1-creating-simple-graph-groups.png
+
+*/

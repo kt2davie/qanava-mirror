@@ -1,0 +1,102 @@
+
+/*! \mainpage Qanava Manual
+
+Qanava is an open source LGPL’ed C++ library designed to display graphs in a Qt graphics view. Qanava provide classes to generate various layouts of directed graphs and visualize their nodes with custom styles on a graphic canvas.
+
+Qanava source repository is hosted on Gitorious: https://gitorious.org/qanava
+
+Qanava is primarily developed with Qt >= 5.4 and Qt Creator with MSVC 2012 but compiles well with G++ for Linux and GCC-ARM for Android. Qanava depends on Qt property browser: https://qt.gitorious.org/qt-solutions/qt-solutions
+
+For any questions, please contact: benoit@qanava.org
+\tableofcontents
+
+- \ref installation
+- \ref features 
+- \ref examples 
+- \ref tutorial1 
+
+\section installation Installation
+
+Prerequisites:
+- Windows: Qt >= 5.4, MSVC++ >= 2012 (compilation fails without full C++11 support).
+- Linux: Qt >= 5.4, any recent g++.
+
+Get the latest source archive on: https://gitorious.org/qanava either by clicking on the top right 'download' button or using the following GIT command: 
+\code git clone https://gitorious.org/qanava/qanava.git qanava \endcode
+
+Latest stable source archive could also be downloaded on : http://www.qanava.org/dl  
+
+Get Qt Solutions Qt Property Browser in the qt-solutions GIT repository : https://qt.gitorious.org/qt-solutions 
+(Be careful, Qt Property Browser also exists in the qt-tools repository in the <tt>src/shared/propertybrowser</tt> directory on: https://qt.gitorious.org/qt/qttools which is almost the same code than in qt-solutions, but Qanava understand headers from qt-solutions and not qt-tools). 
+
+Configure <tt>'common.pri'</tt> in <tt>/qtpropertybrowser</tt> directory, modifying <tt>QTPROPERTYBROWSER_LIBNAME</tt> as follow:
+\code QTPROPERTYBROWSER_LIBNAME = $$qtLibraryTarget(libqtpropertybrowser) \endcode
+
+Open <tt>qtpropertybrowser.pro</tt> with Qt Creator, and select an available kit on your plateform, then build <tt>buildlib.pro</tt>, you should have <tt>libqtpropertybrowser.lib</tt> and <tt>libqtpropertybrowserd.lib</tt> (or .a on Linux) in the <tt>$(QTPROPERTBROWSER)/lib</tt> directory. 
+
+Open qanava.pro in Qt Creator, select a valid compilation kit (either MSVC2012 or linux-g++*), and build after having set the <tt>\$(QTPROPERTYBROWSER)</tt> environment variable to a correct <tt>qtpropertybrowser</tt> directory (or add a <tt>\$(QTPROPERTYBROWSER)</tt> variable in Qt Creator compilation environment in project mode for the active kit).
+
+You can now try any of the .pro in <tt>'\$(QANAVADIR)/tests'</tt> directory or reuse Qanava in a custom project with the following qmake configuration:
+\code
+# Set QANAVADIR env var pointing to your current Qanava root directory
+INCLUDEPATH += ($QANAVADIR)/src ($QTPROPERTYBROWSER)/src
+
+# Qanava Debug configuration
+CONFIG(debug, debug|release) {
+    linux-g++*: LIBS	+= -L($QANAVADIR)/build/ -lqanavad -L$(QTPROPERTYBROWSER)/lib -lqtpropertybrowserd
+    android:    LIBS	+= -L($QANAVADIR)/build/ -lqanavad -L$(QTPROPERTYBROWSER)/lib -lqtpropertybrowserd
+    win32:      PRE_TARGETDEPS += ($QANAVADIR)/build/qanavad.lib
+    win32:      LIBS	+= -L($QANAVADIR)/build/qanavad.lib $(QTPROPERTYBROWSER)/lib/libqtpropertybrowserd.lib
+}
+
+# Qanava release configuration
+CONFIG(release, debug|release) {
+    linux-g++*: LIBS	+= -L($QANAVADIR)/build/ -lqanava -L$(QTPROPERTYBROWSER)/lib -lqtpropertybrowser
+    android:    LIBS	+= -L($QANAVADIR)/build/ -lqanava -L$(QTPROPERTYBROWSER)/lib -lqtpropertybrowser
+    win32:      PRE_TARGETDEPS += -L($QANAVADIR)/build/qanava.lib
+    win32:      LIBS	+= -L($QANAVADIR)/build/qanava.lib $(QTPROPERTYBROWSER)/lib/libqtpropertybrowser.lib
+} 
+\endcode
+
+\section features Features
+
+Qanava models directed node/edge graphs who are internally stored in a standard node/edge list model. Edges are not weighted by default, but a weight property can be added dynamically. The main class for modeling graphs is qan::Graph who store lists of qan::Node and qan::Edge.
+
+The graph model class can be viewed Qt Interview or Qt Graphics View via qan::GraphScene and qan::GraphModel classes. A qan::Graph instance automatically maintain theses two corresponding objects (via a standard listener) that could be accessed by the user to populate the needed views.
+
+Library comes with ready to use widgets allowing the user to interact with the graph :
+- <i>View tools :</i> simple toolbar widget controlling a Qt Graphics View (and qan::GraphView) to allow user to zoom in/out, navigate via panning or select an area to perform a « window zoom ».
+- <i>Style management :</i> associate style to node and edge and provide a complete style graphic editor (qan::StyleEditor) and a graphics widget allowing to apply styles dynamically by dropping a style preview to an arbitrary node.
+- <i>Grid drawing :</i> qan::Grid subclasses could draw simple grids (actually that code is quite outdated and is just an efficient way to draw check-board style grids).
+- <i>Group management :</i> nodes could be sorted by groups, and the user can drag an drop nodes to populate its groups (qan::NodeGroup), groups could actually be seen like a pure hyper-edge implementation.
+- <i>Custom window container :</i> qan::GraphicsContainer avoid the use of QGraphicsWidget that generate platform dependent windows decorations with an easy to use and fast QGraphicsItem based container showing a window decoration (it could actually display a title, allow window moving, resizing and minimization).
+
+Qanava is not designed to visualize large graphs using complex layout algorithms, but rather to display very specific medium sized graphs with complex properties in an advanced graphical user interface.
+
+Proceed to \ref tutorial1 "creating a simple graph" for an example of a basic qan::Graph utilisation.
+
+\section examples Examples
+
+- Graphics container example:
+
+\htmlonly <img src="20141222_NP_qanava-graphics-container2.png" width="450px"/>\endhtmlonly
+
+- Basic node creation example :
+
+\htmlonly <img src="20141019_NP_qanava-basic-screenshot.png" width="450px"/>\endhtmlonly
+
+- Node group example:
+
+\htmlonly <img src="20141019_NP_qanava-groups-screenshot.png" width="450px"/>\endhtmlonly
+
+- Node styling example:
+
+\htmlonly <img src="20141019_NP_qanava-styles-screenshot.png" width="450px"/>\endhtmlonly
+
+- Nodes with custom content:
+
+\htmlonly <img src="20141122_NP_qanava-custom-screenshot.png" width="450px"/>\endhtmlonly
+
+*/
+
+\include tutorial1/tutorial1.dox
