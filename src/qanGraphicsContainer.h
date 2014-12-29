@@ -47,6 +47,7 @@ namespace qan { // ::qan
     class GraphicsDecoration : public QGraphicsObject, public QGraphicsLayoutItem
 	{
 		Q_OBJECT
+        Q_INTERFACES( QGraphicsLayoutItem )
 
     public:
         /*! Define graphics decoration look and feel.  */
@@ -114,6 +115,7 @@ namespace qan { // ::qan
     class GraphicsContainer : public QGraphicsObject, public QGraphicsLayout
 	{
 		Q_OBJECT
+        Q_INTERFACES( QGraphicsLayout )
 
         /*! \name GraphicsContainer Object Management *///---------------------
         //@{

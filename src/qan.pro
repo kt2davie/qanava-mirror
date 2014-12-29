@@ -5,7 +5,7 @@ DEFINES		+= QANAVA
 TARGET		= qanava
 DESTDIR		= ../build
 CONFIG		+= warn_on qt thread staticlib
-INCLUDEPATH	+= $(PROPERTYBROWSER)
+INCLUDEPATH	+= $(QTPROPERTYBROWSER)/src
 QT		+= core widgets gui xml
  
 HEADERS +=	./qanConfig.h                   \

@@ -365,7 +365,7 @@ void    GraphicsContainer::expanded( bool isExpanded )
 /* Container Graphics Item Management *///-------------------------------------
 void    GraphicsContainer::paint ( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget )
 {
-
+    Q_UNUSED( painter ); Q_UNUSED( option ); Q_UNUSED( widget );
 }
 
 QVariant	GraphicsContainer::itemChange( GraphicsItemChange change, const QVariant& value )
