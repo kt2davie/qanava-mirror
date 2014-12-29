@@ -39,7 +39,7 @@
 #include "qanConfig.h"
 
 // QT Solutions (qtpropertybrowser) headers
-#include "qtvariantproperty.h"
+#include "QtVariantProperty"
 
 //-----------------------------------------------------------------------------
 namespace qan // ::qan
