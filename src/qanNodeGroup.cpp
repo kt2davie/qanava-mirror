@@ -47,7 +47,7 @@ namespace qan { // ::qan
 
 /* NodeGroup Object Management *///--------------------------------------------
 NodeGroup::NodeGroup( qan::GraphScene& scene, QString name, QGraphicsItem* parent ) :
-    QObject( ), QGraphicsItem( parent ), QGraphicsLayout( ),
+    QGraphicsObject( parent ), QGraphicsLayout( ),
 	_scene( scene ),
     _graphLayout( 0 ),
     _layout( 0 ),
@@ -472,6 +472,7 @@ void	NodeGroup::getRootNodes( qan::Node::Set& rootNodes )
 
 void	NodeGroup::itemMoved( QPointF curPos, QPointF oldPos )
 {
+    Q_UNUSED( oldPos ); Q_UNUSED( curPos );
     qan::NodeItem* movedNode = static_cast< qan::NodeItem* >( sender( ) );
     Q_ASSERT( movedNode );
 

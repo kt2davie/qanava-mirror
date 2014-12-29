@@ -69,6 +69,7 @@ namespace qan { // ::qan
     class SimpleNodeItem : public GraphItem, public QGraphicsLayoutItem
     {
         Q_OBJECT
+        Q_INTERFACES( QGraphicsLayoutItem )
 
         /*! \name SimpleNodeItem Constructor / Destructor *///-----------------
         //@{

@@ -263,6 +263,7 @@ bool    GraphicsController::sceneEventFilter( QGraphicsItem* watched, QEvent* e 
 
 void	GraphicsController::hoverEnterEvent( QGraphicsSceneHoverEvent* e )
 {
+    Q_UNUSED( e );
     Q_ASSERT( _target != 0 );
 
     _showMaximize = true;
@@ -323,6 +324,7 @@ void    GraphicsController::hoverMoveEvent( QGraphicsSceneHoverEvent* e )
 
 void    GraphicsController::hoverLeaveEvent( QGraphicsSceneHoverEvent* e )
 {
+    Q_UNUSED( e );
     if ( _config & AutoHide )
     {
         _showMaximize = false;

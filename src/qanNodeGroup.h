@@ -67,9 +67,10 @@ namespace qan { // ::qan
 
 		\nosubgrouping
 	*/
-    class NodeGroup : public QObject, public QGraphicsItem, public QGraphicsLayout
+    class NodeGroup : public QGraphicsObject, public QGraphicsLayout
 	{
 		Q_OBJECT
+        Q_INTERFACES( QGraphicsLayout )
 
 		/*! \name NodeGroup Object Management *///-----------------------------
 		//@{

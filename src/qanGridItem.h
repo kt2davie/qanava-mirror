@@ -51,7 +51,7 @@ namespace qan { // ::qan
         \deprecated
 		\nosubgrouping
 	*/
-	class GridItem : public QObject, public QGraphicsItem, public Grid
+    class GridItem : public QGraphicsObject, public Grid
 	{
 		Q_OBJECT
 

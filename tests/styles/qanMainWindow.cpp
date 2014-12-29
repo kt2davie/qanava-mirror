@@ -157,11 +157,11 @@ MainWindow::MainWindow( QApplication* application, QWidget* parent ) :
 	Node* a3 = new qan::Node( "a" );
 	_graph->insertNode( a3, "a3Style");
 
-	Edge* qa = _graph->insertEdge( *q, *a );
-	Edge* an = _graph->insertEdge( *a, *n );
-	Edge* na2 = _graph->insertEdge( *n, *a2 );
-	Edge* a2v = _graph->insertEdge( *a2, *v );
-	Edge* va3 = _graph->insertEdge( *v, *a3 );
+    Edge* qa = _graph->insertEdge( *q, *a );    Q_UNUSED( qa );
+    Edge* an = _graph->insertEdge( *a, *n );    Q_UNUSED( an );
+    Edge* na2 = _graph->insertEdge( *n, *a2 );  Q_UNUSED( na2 );
+    Edge* a2v = _graph->insertEdge( *a2, *v );  Q_UNUSED( a2v );
+    Edge* va3 = _graph->insertEdge( *v, *a3 );  Q_UNUSED( va3 );
 
 	_graph->getM( ).setSceneRect( QRectF( 0.0, 0., 1000., 1000. ) );
 

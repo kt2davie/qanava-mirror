@@ -168,11 +168,11 @@ MainWindow::MainWindow( ) : QMainWindow( 0 )
         Node* a3 = new CustomNode( ":/images/a.png" );
         _graph->insertNode( a3, "Custom style");
 
-        Edge* qa = _graph->insertEdge( *q, *a, "Custom edge style" );
-		Edge* an = _graph->insertEdge( *a, *n );
-        Edge* na2 = _graph->insertEdge( *n, *a2, "Custom edge style2" );
-        Edge* a2v = _graph->insertEdge( *a2, *v, "Custom edge style2" );
-		Edge* va3 = _graph->insertEdge( *v, *a3 );
+        Edge* qa = _graph->insertEdge( *q, *a, "Custom edge style" );       Q_UNUSED( qa );
+        Edge* an = _graph->insertEdge( *a, *n );                            Q_UNUSED( an );
+        Edge* na2 = _graph->insertEdge( *n, *a2, "Custom edge style2" );    Q_UNUSED( na2 );
+        Edge* a2v = _graph->insertEdge( *a2, *v, "Custom edge style2" );    Q_UNUSED( a2v );
+        Edge* va3 = _graph->insertEdge( *v, *a3 );                          Q_UNUSED( va3 );
 	}
 
     //_graph->getM( ).setSceneRect( QRectF( 0.0, 0., 1000., 1000. ) );

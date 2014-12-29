@@ -43,7 +43,7 @@ namespace qan {  // ::qan
 /*!
  */
 GridItem::GridItem( GraphView* GraphView ) :
-	QGraphicsItem( 0 )
+    QGraphicsObject( 0 )
 {
 	//connect( graphView->getGraphicsScene( ), SIGNAL( sceneRectChanged(const QRectF&) ),
 	//		 this, SLOT( sceneRectChanged(const QRectF&) ) );

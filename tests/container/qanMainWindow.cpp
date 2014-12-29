@@ -177,8 +177,7 @@ MainWindow::MainWindow( QApplication* application, QWidget* parent ) :
         // FIXME: I know this is ugly, but I should maintain VC++2010 support without strongly typed enums...
         qan::GraphicsController* controller = new qan::GraphicsController( labelProxy, labelProxy, QSizeF( 20, 20 ), GraphicsController::ShowCloseMaximize );
         //qan::GraphicsController* controller = new qan::GraphicsController( labelProxy, labelProxy, QSizeF( 20, 20 ), GraphicsController::Config( GraphicsController::ShowCloseMaximize | GraphicsController::ShowFocusShadow ) );
-
-        qan::GraphicsResizer* resizer = new qan::GraphicsResizer( controller, this, controller ); Q_UNUSED( resizer );
+        qan::GraphicsResizer* resizer = new qan::GraphicsResizer( controller, labelProxy, controller ); Q_UNUSED( resizer );
     }
 
 	_graph->getM( ).setSceneRect( QRectF( 0.0, 0., 1000., 1000. ) );

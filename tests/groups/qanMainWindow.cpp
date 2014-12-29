@@ -260,7 +260,7 @@ MainWindow::MainWindow( QApplication* application, QWidget* parent ) :
         Node& r1 = *_graph->insertNode( "R1", "default node" );
         Node& r2 = *_graph->insertNode( "R2", "default node" );
         Node& r3 = *_graph->insertNode( "R3", "default node" );
-        Node& r4 = *_graph->insertNode( "R4", "default node" );
+        Node& r4 = *_graph->insertNode( "R4", "default node" ); Q_UNUSED( r4 );
 
         qan::NodeGroup* resizableGroup = new qan::NodeGroup( _graph->getM( ), "Resizable Group" );
         resizableGroup->setAcceptDrops( true );
@@ -271,7 +271,7 @@ MainWindow::MainWindow( QApplication* application, QWidget* parent ) :
         resizableGroup->addNode( r3 );
 
         qan::GraphicsController* controller = new qan::GraphicsController( resizableGroup, resizableGroup );
-        qan::GraphicsResizer* resizer = new qan::GraphicsResizer( controller, resizableGroup );
+        qan::GraphicsResizer* resizer = new qan::GraphicsResizer( controller, resizableGroup );     Q_UNUSED( resizer );
         //new qan::GraphicsResizerDecoration( resizableGroup, resizableGroup );
     }
 
