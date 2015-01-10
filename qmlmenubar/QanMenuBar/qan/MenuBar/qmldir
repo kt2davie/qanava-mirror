@@ -1,0 +1,9 @@
+module qan.MenuBar
+QanMenu				1.0	QanMenu.qml
+QanMenuBar			1.0	QanMenuBar.qml
+QanMenuElement		1.0	QanMenuElement.qml
+QanMenuSeparator	1.0	QanMenuSeparator.qml
+QanMenuStyle		1.0	QanMenuStyle.qml
+
+
+
