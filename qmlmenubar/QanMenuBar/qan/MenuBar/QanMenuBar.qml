@@ -1,3 +1,29 @@
+/*
+    Copyright (C) 2008-2015 Benoit AUTHEMAN
+
+    This file is part of Qanava.
+
+    Qanava is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Qanava is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with Qanava.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+//-----------------------------------------------------------------------------
+// This file is a part of the Qanava software.
+//
+// \file	QanMenuBar.qml
+// \author	benoit@qanava.org
+// \date	2015 January 09
+//-----------------------------------------------------------------------------
 
 import QtQuick 2.2
 import QtQuick.Controls 1.2
@@ -14,34 +40,13 @@ Rectangle {
     visible: true
     border.width: 0
 
-    // Look for an element associed to a given action in a specific menu (return null if no such action has been registered in this menu bar)
-    // FIXME: move this method to QanMenu, will end up having only one parameter ?
-    // FIXME: children class name must be verified for QanMenuElement....
-    // FIXME: no longer necessary...
-    function    findMenuElement( menu, action )
-    {
-        var element;
-        if ( !action )
-            return element;
-
-        for ( var c = 0; c < menu.menuLayout.children.length; c++ )
-        {
-            var menuElement = menu.menuLayout.children[ c ];
-            console.log( "QanMenuBar::findMenuElement(): " + menuElement.className )
-
-            if ( menuElement.action === action )
-                return menuElement
-        }
-        return element;
-    }
+    // Menu bar style sheet
+    property QanMenuStyle style : QanMenuStyle { }
 
     /* Add a menu element with the given parameters in the sub menu of a given parent action. If no
        such sub menu exists for the given action, sub menu will be created. */
     function addMenuElement( parentMenuElement, elementLabel, elementImageSource, isChecked, action )
     {
-        if ( parentMenuElement )
-            console.log( "QanMenuBar::addMenuElement() '" + elementLabel + "' with parent element: '" + parentMenuElement.label + "'" );
-
         // Get the submenu attached to the parent action (and create it if no such sub menu exists)
         var elementMenu = null;
         if ( parentMenuElement )
@@ -50,7 +55,7 @@ Rectangle {
             if ( !elementMenu ) // Parent menu element still does not have a child menu, lets create it
             {
                 var component = Qt.createComponent( "QanMenu.qml" );
-                elementMenu = component.createObject( parentMenuElement, { menuHeight: 180, label: parentMenuElement.label } );
+                elementMenu = component.createObject( parentMenuElement, { style: root.style, menuHeight: 180, label: parentMenuElement.label } );
                 if ( elementMenu )
                 {
                     elementMenu.parent = parentMenuElement;
@@ -67,7 +72,7 @@ Rectangle {
         if ( elementMenu )
         {
             var component = Qt.createComponent( "QanMenuElement.qml" );
-            var menuElement = component.createObject( mainMenu, { source: elementImageSource, label: elementLabel } );
+            var menuElement = component.createObject( mainMenu, { style: root.style, source: elementImageSource, label: elementLabel } );
             if ( menuElement )
             {
                 menuElement.parent = elementMenu.layout;
@@ -88,8 +93,6 @@ Rectangle {
     */
     function addSeparator( parentMenuElement )
     {
-        console.log( "QanMenuBar::addSeparator(): " );
-
         var elementMenu = null;
         if ( parentMenuElement )
             elementMenu = parentMenuElement.childMenu;
@@ -101,7 +104,10 @@ Rectangle {
         var menuSeparator = component.createObject( mainMenu );
         mainMenu.separatorCount++;
         if ( menuSeparator )
+        {
             menuSeparator.parent = elementMenu.layout;
+            menuSeparator.style = root.style;
+        }
     }
 
     // Menu mouse area used to release the menu when the mouse exits
@@ -112,7 +118,6 @@ Rectangle {
         hoverEnabled: true
         propagateComposedEvents: true
         onEntered: {
-            console.log( "menu::MouseArea::onEntered(): " );
             if ( mainMenu.state !== "ENVELOPED" )
                 mainMenu.state = "ENVELOPED"
         }
@@ -120,7 +125,6 @@ Rectangle {
 
     QanMenu{
         id : mainMenu
-        //menuHeight: 300
         x : 0.
         y : 0.
         visible: true
@@ -128,156 +132,10 @@ Rectangle {
         label: "HLG"
         state: "ENVELOPED"
         Layout.fillHeight: true
+        style : root.style
 
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
-
- /*       QanMenuElement {
-            id: fileMenuElement
-            source: "qrc:/images/oxygen/document-open-folder.svg"
-            parentMenu: mainMenu
-            childMenu: fileMenu
-            label: "File"
-
-            QanMenu {
-                id: fileMenu
-                menuHeight: 180
-                label: "File"
-                parentElement: fileMenuElement
-
-                QanMenuElement {
-                    id: fileMenuOpenElement
-                    source: "qrc:/images/oxygen/document-open.svg"
-                    parentMenu: fileMenu
-                    label: "Open"
-                }
-                QanMenuElement {
-                    id: fileMenuSaveAsElement
-                    source: "qrc:/images/oxygen/document-save-as.svg"
-                    parentMenu: fileMenu
-                    label: "Save As"
-                }
-                QanMenuElement {
-                    id: fileMenuExitElement
-                    source: "qrc:/images/oxygen/application-exit.svg"
-                    parentMenu: fileMenu
-                    label: "Exit"
-                }
-
-                Component.onCompleted: {
-                    // Reparent menu element to this menu layout
-                    fileMenuOpenElement.parent = fileMenu.layout
-                    fileMenuSaveAsElement.parent = fileMenu.layout
-                    fileMenuExitElement.parent = fileMenu.layout
-                }
-            }
-        }
-
-        QanMenuElement{
-            id: topologyMenuElement
-            source: "qrc:/images/oxygen/code-class.svg"
-            label: "Topology"
-            parentMenu: mainMenu
-            childMenu: topologyMenu
-
-            QanMenu {
-                id: topologyMenu
-                menuHeight: 180
-                label: "Topology"
-                parentElement: topologyMenuElement
-
-                QanMenuElement {
-                    id: topologyMenuAddTagElement
-                    source: "qrc:/images/oxygen/insert-text.svg"
-                    label: "Add Tag"
-                    parentMenu: topologyMenu
-                }
-                QanMenuElement {
-                    id: topologyMenuAddLinkElement
-                    source: "qrc:/images/oxygen/insert-link.svg"
-                    label: "Add Link"
-                    parentMenu: topologyMenu
-                }
-                QanMenuElement {
-                    id: topologyMenuAddhLinkElement
-                    source: "qrc:/images/oxygen/insert-link.svg"
-                    label: "Add hLink"
-                    parentMenu: topologyMenu
-                }
-                Component.onCompleted: {
-                    // Reparent menu element to this menu layout
-                    topologyMenuAddTagElement.parent = topologyMenu.layout
-                    topologyMenuAddLinkElement.parent = topologyMenu.layout
-                    topologyMenuAddhLinkElement.parent = topologyMenu.layout
-                }
-            }
-        }
-
-        QanMenuElement{
-            id: groupsMenuElement
-            source: "qrc:/images/oxygen/preferences-plugin.svg"
-            label: "Groups"
-            parentMenu: mainMenu
-            childMenu: groupsMenu
-
-            QanMenu {
-                id: groupsMenu
-                menuHeight: 180
-                label: "Topology"
-                parentElement: groupsMenuElement
-
-                QanMenuElement {
-                    id: groupsMenuAddSequence
-                    source: "qrc:/images/oxygen/view-time-schedule.svg"
-                    label: "Sequence"
-                    parentMenu: groupsMenu
-                }
-                QanMenuElement {
-                    id: groupsMenuAddProspective
-                    source: "qrc:/images/oxygen/split.svg"
-                    label: "Prospective"
-                    parentMenu: groupsMenu
-                }
-                QanMenuElement {
-                    id: groupsMenuAddRelational
-                    source: "qrc:/images/oxygen/office-chart-polar.svg"
-                    label: "Relational"
-                    parentMenu: groupsMenu
-                }
-                Component.onCompleted: {
-                    // Reparent menu element to this menu layout
-                    groupsMenuAddSequence.parent = groupsMenu.layout
-                    groupsMenuAddProspective.parent = groupsMenu.layout
-                    groupsMenuAddRelational.parent = groupsMenu.layout
-                }
-            }
-        }*/
-
-       /* QanMenuSeparator { id: separator }
-
-        QanMenuElement{
-            id: editStylesMenuElement
-            source: "qrc:/images/oxygen/media-playlist.svg"
-            label: "Edit Styles"
-            parentMenu: mainMenu
-        }
-        QanMenuElement{
-            id: showStyleBrowserMenuElement
-            source: "qrc:/images/oxygen/office-chart-ring.svg"
-            label: "Style \nBrowser"
-            parentMenu: mainMenu
-        }*/
-
-        Component.onCompleted: {
-            // Reparent menu element to this menu layout
-            /*fileMenuElement.parent = mainMenu.layout
-            topologyMenuElement.parent = mainMenu.layout
-            groupsMenuElement.parent = mainMenu.layout
-            separator.parent = mainMenu.layout*/
-            /*editStylesMenuElement.parent = mainMenu.layout
-            showStyleBrowserMenuElement.parent = mainMenu.layout
-            mainMenu.elementCount += 2;*/
-       }
     }
 }
 

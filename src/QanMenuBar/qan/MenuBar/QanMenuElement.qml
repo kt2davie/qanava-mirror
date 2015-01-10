@@ -1,29 +1,3 @@
-/*
-    Copyright (C) 2008-2015 Benoit AUTHEMAN
-
-    This file is part of Qanava.
-
-    Qanava is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Qanava is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with Qanava.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-//-----------------------------------------------------------------------------
-// This file is a part of the Qanava software.
-//
-// \file	QanMenuElement.qml
-// \author	benoit@qanava.org
-// \date	2015 January 09
-//-----------------------------------------------------------------------------
 
 import QtQuick 2.2
 import QtQuick.Controls 1.2
@@ -32,14 +6,12 @@ import QtQuick.Window 2.1
 
 Rectangle {
     id: menuElement
-    state: "RELEASED"
-    objectName: "QanMenuElement"    // Do not change menu element object name...
-
-    // Menu bar style sheet (initialized by QanMenuBar)
-    property QanMenuStyle style
-    color: "transparent"
 
     anchors.margins: 5
+    state: "RELEASED"
+    color: "transparent"
+    objectName: "QanMenuElement"    // Do not change menu element object name...
+
     Layout.alignment: Qt.AlignCenter
     Layout.fillWidth : true
     Layout.fillHeight : true
@@ -59,18 +31,30 @@ Rectangle {
     property var    childMenu : null
     property bool   checkable: false
 
+    // Emitted when the element is activated and the user click this element
+    signal  activated( );
+
+    // Called by an eventually connected Qt Action (could be used to detect a checked state change with checkable actions).
+    function setChecked( checked )
+    {
+        checkable = true
+        console.log( "QanMenuElement::setChecked(): " + label + " is " + checked );
+        if ( checked && state !== "CHECKED" )
+            state = "CHECKED";
+        if ( state === "CHECKED" && !checked )
+            state = "RELEASED";
+    }
+
     // An eventual Qt action associed to this menu element.
     property QtObject   action;
 
-
-    // Private properties //-----------
-    property color hilightGradColor : style.element.hilightGradColor
+    property color hilightGradColor : "#4f4ae1"
 
     states: [
         State {
             name: "CHECKED"
             PropertyChanges { target: hiligther; opacity : 0.9; }
-            PropertyChanges { target: menuElement; hilightGradColor : style.element.checkedGradColor ; scale : 1.1 }
+            PropertyChanges { target: menuElement; hilightGradColor : "#f15050" ; scale : 1.1 }
         },
         State {
             name: "ACTIVATED"
@@ -158,7 +142,7 @@ Rectangle {
             id: menuElementLabel
             text : menuElement.label
             Layout.alignment: Qt.AlignCenter
-            color: menuElement.style.textColor
+            color: "white"
         }
     }
 
@@ -174,7 +158,6 @@ Rectangle {
         width: 12
         height: 12
     }
-
     Image { // check image to differentiate checkable menu elements
         id: subMenuIcon
         visible: menuElement.childMenu != null
@@ -194,19 +177,19 @@ Rectangle {
 
         // Hilight rectangle fill gradient
         gradient: Gradient {
-                    GradientStop {
-                        position: 0.00;
-                        color: "#00a3b5ff";
-                    }
-                    GradientStop {
-                        position: 0.50;
-                        color: hilightGradColor;
-                    }
-                    GradientStop {
-                        position: 1.00;
-                        color: "#00ccc7ff";
-                    }
-                }
+            GradientStop {
+                position: 0.00;
+                color: "#00a3b5ff";
+            }
+            GradientStop {
+                position: 0.50;
+                color: hilightGradColor;
+            }
+            GradientStop {
+                position: 1.00;
+                color: "#00ccc7ff";
+            }
+        }
 
         border.width: 0
         enabled: true
@@ -221,36 +204,14 @@ Rectangle {
             onEntered: {
                 if ( menuElement.state !== "CHECKED" )
                     menuElement.state = "ACTIVATED";
-                if ( menuElement.state === "CHECKED" )
-                    menuElement.hilightGradColor = style.element.hilightCheckedGradColor;
-                if ( menuElement.state === "CHECKED" && parentMenu )
-                    parentMenu.releaseAllMenuElement( menuElement );
             }
             onExited: {
-                if ( menuElement.state === "CHECKED" )
-                    menuElement.hilightGradColor = style.element.checkedGradColor;
                 // Do not force the RELEASED mode since child and parent menus are "leaders" for releasing menu elements
             }
             onClicked: {
+                console.log( "QanMenuElement::onClicked(): " + menuElement.label );
                 menuElement.activated( );
-                if ( menuElement.state !== "CHECKED" )
-                    menuElement.state = "RELEASED";
             }
         }
-    }
-
-    // Emitted when the element is activated and the user click this element
-    signal  activated( );
-
-    // Called by an eventually connected Qt Action (could be used to detect a checked state change with checkable actions).
-    function setChecked( checked )
-    {
-        checkable = true
-        if ( parentMenu.style.debug )
-            console.log( "QanMenuElement::setChecked(): " + label + " is " + checked );
-        if ( checked && state !== "CHECKED" )
-            state = "CHECKED";
-        if ( state === "CHECKED" && !checked )
-            state = "RELEASED";
     }
 }

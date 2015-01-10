@@ -1,29 +1,3 @@
-/*
-    Copyright (C) 2008-2015 Benoit AUTHEMAN
-
-    This file is part of Qanava.
-
-    Qanava is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Qanava is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with Qanava.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-//-----------------------------------------------------------------------------
-// This file is a part of the Qanava software.
-//
-// \file	QanMenu.qml
-// \author	benoit@qanava.org
-// \date	2015 January 09
-//-----------------------------------------------------------------------------
 
 import QtQuick 2.2
 import QtQuick.Controls 1.2
@@ -33,43 +7,42 @@ import QtQuick.Window 2.1
 
 Rectangle {
     id: menu
-    state: "RELEASED"
 
-    // Menu bar style sheet
-    property QanMenuStyle style
+    // Menu style sheet
+    property QanMenuStyle style : QanMenuStyle { }
 
     x: parent.x + parent.width
     y: parent.height / 5
     width: 70
-    height: ( elementCount * style.element.height + separatorCount * 10 > 80 ? elementCount * style.element.height + separatorCount * 10 : 80);
+    height: ( elementCount * 70 + separatorCount * 10 > 80 ? elementCount * 60 + separatorCount * 10 : 80);
+    //height: 180
 
-    // Public properties //------------
+    radius: style.border.radius
+    border.width: style.border.width
+    border.color: style.border.color
 
-    // Visual configuration
-    radius: style.menu.border.radius
-    border.width: style.menu.border.width
-    border.color: style.menu.border.color
-    gradient: style.menu.gradient
     visible: false
+    gradient: style.gradient
+
+    state: "RELEASED"
+
+    property int    elementCount: 0
+    property int    separatorCount: 0
 
     // Menu desired user height
-    property real   menuHeight: ( elementCount * style.element.height + separatorCount * 10 > 80 ? elementCount * style.element.height + separatorCount * 10 : 80)
+    property real   menuHeight: ( elementCount * 70 + separatorCount * 10 > 80 ? elementCount * 60 + separatorCount * 10 : 80)
+    //property real   menuHeight: height
 
     // Set to true if the menu is not a root menu
     property bool   root: false
+
+    property ColumnLayout layout: menuLayout
 
     // Menu label
     property string label: ""
 
     // Menu parent element (can be null)
     property QanMenuElement parentElement
-
-    // Main menu layout (child elements should affect this layout as their parent: childElement.parent = thisMenu.menuLayout.)
-    property ColumnLayout layout: menuLayout
-
-    // Private properties //-----------
-    property int    elementCount: 0
-    property int    separatorCount: 0
 
     // Menu mouse area used to release the menu when the mouse exits
     MouseArea {
@@ -84,8 +57,7 @@ Rectangle {
         }
 
         onExited: {
-            if ( style.debug )
-                console.log( "QanMenu::MouseArea::onExited(): " + menu + " / " + menu.label );
+            console.log( "QanMenu::MouseArea::onExited(): " + menu + " / " + menu.label );
             if ( root ) {   // For root menu, release all menu elements
                 for ( var c = 0; c < menuLayout.children.length; c++ )
                     if ( menuLayout.children[ c ].state !== "CHECKED" )
@@ -96,6 +68,7 @@ Rectangle {
 
     Image {
         id: menuHandler
+        //source: "arrow-right.svg"
         source: "arrow-right.svg"
         fillMode: Image.Stretch
         antialiasing: true
@@ -113,8 +86,7 @@ Rectangle {
             hoverEnabled: true
             propagateComposedEvents: true
             onEntered: {
-                if ( style.debug )
-                    console.log( "QanMenu:menuHandlerMouseArea::onEntered()" );
+                console.log( "QanMenu:menuHandlerMouseArea::onEntered()" );
                 menu.state = "ACTIVATED"
             }
         }
@@ -189,8 +161,7 @@ Rectangle {
 
     function releaseAllMenuElement( except )
     {
-        if ( style.debug )
-            console.log( "QanMenu::releaseAllMenuElement(): except " + except + " / " + except.label );
+        console.log( "QanMenu::releaseAllMenuElement(): except " + except + " / " + except.label );
         for ( var i = 0; i < menuLayout.children.length; i++ ) {
             if ( menuLayout.children[ i ] !== except && menuLayout.children[ i ].state !== "CHECKED" )
                 menuLayout.children[ i ].state = "RELEASED";

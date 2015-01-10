@@ -2,6 +2,7 @@ TEMPLATE    =   subdirs
 CONFIG      += ordered      # Well I know, but no choice...
 
 qanava.file         = src/qan.pro
+
 test-basic.subdir   = tests/basic
 test-basic.depends  = qanava
 
@@ -17,7 +18,10 @@ test-groups.depends  = qanava
 test-styles.subdir   = tests/styles
 test-styles.depends  = qanava
 
-SUBDIRS     +=  qanava test-basic test-container test-custom test-groups test-styles
+menubar..file    = qmlmenubar/qmlmenubar.pro
+menubar.subdir   = qmlmenubar
+
+SUBDIRS     +=  qanava test-basic test-container test-custom test-groups test-styles qmlmenubar
 
 
 

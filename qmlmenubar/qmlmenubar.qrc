@@ -1,0 +1,24 @@
+<RCC>
+    <qresource prefix="/">
+        <file>QanMenuBar/qan/MenuBar/arrow-right.svg</file>
+        <file>QanMenuBar/qan/MenuBar/checkbox.svg</file>
+        <file>QanMenuBar/qan/MenuBar/QanMenu.qml</file>
+        <file>QanMenuBar/qan/MenuBar/QanMenuBar.qml</file>
+        <file>QanMenuBar/qan/MenuBar/QanMenuElement.qml</file>
+        <file>QanMenuBar/qan/MenuBar/QanMenuSeparator.qml</file>
+        <file>QanMenuBar/qan/MenuBar/QanMenuStyle.qml</file>
+        <file>QanMenuBar/qan/MenuBar/qmldir</file>
+        <file>qmlmenubar.qml</file>
+        <file>oxygen/application-exit.svg</file>
+        <file>oxygen/arrow-right.svg</file>
+        <file>oxygen/checkbox.svg</file>
+        <file>oxygen/document-open.svg</file>
+        <file>oxygen/document-open-folder.svg</file>
+        <file>oxygen/document-save-as.svgz</file>
+        <file>oxygen/view-preview.svg</file>
+        <file>oxygen/view-restore.svg</file>
+        <file>oxygen/media-playlist.svg</file>
+        <file>oxygen/office-chart-ring.svg</file>
+        <file>oxygen/preferences-plugin.svg</file>
+    </qresource>
+</RCC>
