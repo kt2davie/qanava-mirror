@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2008-2014 Benoit AUTHEMAN
+	Copyright (C) 2008-2015 Benoit AUTHEMAN
 
     This file is part of Qanava.
 
@@ -32,7 +32,7 @@
 #include <QtCore/qmath.h>
 
 // Qanava headers
-#include "./qanNodeItem.h"
+#include "./qanNodeRectItem.h"
 #include "./qanEdge.h"
 #include "./qanEdgeItem.h"
 #include "./qanGraphScene.h"
@@ -42,8 +42,8 @@ namespace qan {	// ::qan
 
 
 /* Edge Constructor/Destructor *///--------------------------------------------
-EdgeItem::EdgeItem( GraphScene& scene, Edge& edge, QGraphicsItem* parent ) : 
-	GraphItem( scene, parent ),
+EdgeItem::EdgeItem( GraphScene& scene, Edge& edge ) :
+    GraphItem( scene ),
 	_edge( edge ),
 	_line( ),
 	_drawBRect( false ),
@@ -88,11 +88,12 @@ EdgeItem::~EdgeItem( ) { }
 /* EdgeItem Graphics Item Management *///--------------------------------------
 void	EdgeItem::updateItem( )
 {
-	// Get the source and destination node graphics items
-	QGraphicsItem* srcGraphicsItem = getEdge( ).getSrc( ).getGraphicsItem( );
-	QGraphicsItem* dstGraphicsItem = getEdge( ).getDst( ).getGraphicsItem( );
-	Q_ASSERT( srcGraphicsItem != 0 );
-	Q_ASSERT( dstGraphicsItem != 0 );
+    // Get the source and destination node graphics items
+    QGraphicsItem* srcGraphicsItem = getEdge( ).getSrc( ).getGraphicsItem( );
+    QGraphicsItem* dstGraphicsItem = getEdge( ).getDst( ).getGraphicsItem( );
+
+    if ( srcGraphicsItem == 0 || dstGraphicsItem == 0 )
+        return;
 
     QPolygonF srcBp = srcGraphicsItem->shape( ).toFillPolygon( QTransform( ).translate( srcGraphicsItem->scenePos( ).x( ),
                                                                                         srcGraphicsItem->scenePos( ).y( ) ) );
@@ -318,8 +319,8 @@ void	EdgeItem::drawArrow( QPainter* painter, QLineF line, QColor color, float ar
 
 
 /* HEdge Constructor/Destructor *///--------------------------------------------
-HEdgeItem::HEdgeItem( GraphScene& scene, HEdge& hEdge, QGraphicsItem* parent ) : 
-	EdgeItem( scene, hEdge, parent ),
+HEdgeItem::HEdgeItem( GraphScene& scene, HEdge& hEdge ) :
+    EdgeItem( scene, hEdge ),
 	_hEdge( hEdge ),
 	_inLineColor( Qt::black ), 
 	_outLineColor( Qt::black ),

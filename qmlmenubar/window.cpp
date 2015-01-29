@@ -14,6 +14,7 @@
 #include <QQuickItem>
 #include <QMenuBar>
 #include <QMenu>
+#include <QPushButton>
 
 // Cervlet headers
 #include "./window.h"
@@ -29,7 +30,7 @@ Window::Window( QApplication* application, QWidget* parent ) :
 
     QVBoxLayout* vbox = new QVBoxLayout( frame );
     vbox->setMargin( 0 );
-    vbox->setSpacing( 0 );
+    vbox->setSpacing( 25. );
     frame->setLayout( vbox );
 
     QLabel* label = new QLabel( );
@@ -114,14 +115,26 @@ Window::Window( QApplication* application, QWidget* parent ) :
     _qmlMenuBar->addMenuBarSeparator( );
     _qmlMenuBar->addMenuBarAction( styleEdit );
     _qmlMenuBar->addMenuBarAction( styleShowBrowser );
+
+    vbox->addWidget(new QPushButton( "1111111111111", this ) );
+    vbox->addWidget( new QPushButton( "22222222222222", this ) );
+    vbox->addWidget( new QPushButton( "33333333333333", this ) );
+    vbox->addWidget( new QPushButton( "44444444", this ) );
+    vbox->addWidget( new QPushButton( "5555555555555", this ) );
+    vbox->addWidget( new QPushButton( "666666666666", this ) );
+    vbox->addWidget( new QPushButton( "77777777777777", this ) );
+    vbox->addWidget( new QPushButton( "8", this ) );
+    vbox->addWidget( new QPushButton( "9", this ) );
+    vbox->addWidget( new QPushButton( "10", this ) );
+    vbox->addWidget( new QPushButton( "11", this ) );
+    vbox->addWidget( new QPushButton( "12", this ) );
 }
 
 void Window::resizeEvent( QResizeEvent* e )
 {
-/*  _qmlMenuBar->setGeometry( 0, 0, 40, height( ) );
-    //_qmlMenuBar->move( 0., 0. );
-    //_qmlMenuBar->resize( 40, height( ) );
-*/
+    qreal qmlMenuBarY = ( ( height( ) - 500 ) / 2. > 0 ? ( height( ) - 500 ) / 2. : 0 );
+    _qmlMenuBar->setGeometry( 0, qmlMenuBarY, 180, 500 );
+
     QMainWindow::resizeEvent( e );
 }
 

@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2008-2014 Benoit AUTHEMAN
+	Copyright (C) 2008-2015 Benoit AUTHEMAN
 
     This file is part of Qanava.
 
@@ -32,6 +32,9 @@
 #include <QAction>
 #include <QQuickWidget>
 #include <QQuickItem>
+#include <QMouseEvent>
+#include <QEvent>
+#include <QPaintEvent>
 
 // Qanava headers
 // Nil
@@ -69,6 +72,22 @@ namespace qan { // ::qan
         void            addMenuBarSeparator( QQuickItem* parentMenuElement = 0 );
 
     protected:
+
+        //! Used internally from QML to update this widget mask when a QML menu is shown or hidden.
+        Q_INVOKABLE void    resetMask( qreal x, qreal y, qreal w, qreal h );
+
+        //! Used internally from QML to update this widget mask when a QML menu is shown or hidden.
+        Q_INVOKABLE void    appendBrToMask( qreal x, qreal y, qreal w, qreal h );
+
+        //! Used internally from QML to update this widget mask when a QML menu is shown or hidden.
+        Q_INVOKABLE void    removeBrFromMask( qreal x, qreal y, qreal w, qreal h );
+
+        virtual     void    paintEvent( QPaintEvent* e );
+
+    private:
+        QPolygonF           _maskPolygon;
+
+        QRectF              _lastBr;
         //@}
         //---------------------------------------------------------------------
     };

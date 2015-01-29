@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2008-2014 Benoit AUTHEMAN
+	Copyright (C) 2008-2015 Benoit AUTHEMAN
 
     This file is part of Qanava.
 
@@ -63,7 +63,7 @@ namespace qan { // ::qan
             Node( QString label );
 
 			//! Node destructor.
-			virtual ~Node( ) { emit destroyed( ); }
+            virtual ~Node( ) { }
 
 		private:
 
@@ -205,8 +205,6 @@ namespace qan { // ::qan
 			void	edgeInInserted( qan::Edge& );
 
 			void	edgeOutInserted( qan::Edge& );
-
-			void	destroyed( );
 			//@}
 			//-----------------------------------------------------------------
 		};

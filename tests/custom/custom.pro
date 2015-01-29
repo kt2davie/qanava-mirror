@@ -1,6 +1,6 @@
 TEMPLATE	= app
 TARGET		= test-custom
-CONFIG		+= qt warn_on debug
+CONFIG		+= qt warn_on
 DEFINES		+= QANAVA  
 LANGUAGE	= C++
 QT		+= widgets core gui

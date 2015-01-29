@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2008-2014 Benoit AUTHEMAN
+	Copyright (C) 2008-2015 Benoit AUTHEMAN
 
     This file is part of Qanava.
 
@@ -31,7 +31,7 @@
 
 
 // Qanava headers
-#include "./qanNodeItem.h"
+#include "./qanNodeRectItem.h"
 #include "./qanEdgeItem.h"
 
 

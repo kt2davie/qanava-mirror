@@ -32,13 +32,14 @@ import QtQuick.Window 2.1
 
 Rectangle {
     id: root
-    width: 500
-    height: 700
+    width: 600
+    height: 300
     color: "#00000000"
     radius: 0
-    opacity: 0.8
+    opacity: style.menuOpacity
     visible: true
     border.width: 0
+    anchors.fill: parent
 
     // Menu bar style sheet
     property QanMenuStyle style : QanMenuStyle { }
@@ -111,31 +112,42 @@ Rectangle {
     }
 
     // Menu mouse area used to release the menu when the mouse exits
-    MouseArea {
+/*    MouseArea {
         id: menuMouseArea
         opacity: 1
         anchors.fill: parent
         hoverEnabled: true
-        propagateComposedEvents: true
         onEntered: {
-            if ( mainMenu.state !== "ENVELOPED" )
+            if ( root.style.expandedAtStartup === false && mainMenu.state !== "ENVELOPED" )
                 mainMenu.state = "ENVELOPED"
+        }
+    }*/
+
+    ColumnLayout {
+        anchors.fill: parent
+
+        QanMenu{
+            id : mainMenu
+            x : 5.
+            y : 0.
+            visible: true
+            root: true
+            label: "HLG"
+            state: "ENVELOPED"
+            Layout.alignment: Qt.AlignVCenter
+            style : root.style
         }
     }
 
-    QanMenu{
-        id : mainMenu
-        x : 0.
-        y : 0.
-        visible: true
-        root: true
-        label: "HLG"
-        state: "ENVELOPED"
-        Layout.fillHeight: true
-        style : root.style
-
-        anchors.left: parent.left
-        anchors.verticalCenter: parent.verticalCenter
+    Component.onCompleted: {
+        if ( root.style.expandedAtStartup )
+        {
+            mainMenu.state = "ACTIVATED";
+            console.log( "QanMenuBar::onCompleted: root.br(): " + root.x + " " + root.y + " " + root.width + " " + root.height );
+            console.log( "QanMenuBar::onCompleted: mainMenu.br(): " + mainMenu.x + " " + mainMenu.y + " " + mainMenu.width + " " + mainMenu.height );
+            var p = root.mapToItem( null, mainMenu.x, mainMenu.y );
+            console.log( "QanMenuBar::onCompleted: mainMenu.br(): " + p.x + " " + p.y + " " + mainMenu.width + " " + mainMenu.height );
+        }
     }
 }
 

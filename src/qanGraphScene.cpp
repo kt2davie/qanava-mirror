@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2008-2014 Benoit AUTHEMAN
+	Copyright (C) 2008-2015 Benoit AUTHEMAN
 
     This file is part of Qanava.
 
@@ -32,7 +32,7 @@
 #include "./qanGraphScene.h"
 #include "./qanGrid.h"
 #include "./qanLayout.h"
-#include "./qanNodeItem.h"
+#include "./qanNodeRectItem.h"
 
 
 // QT headers
@@ -256,7 +256,7 @@ void	GraphScene::createGraphItem( Node& node )
 	GraphItem::Factory::List factories = getGraphItemFactories( node.metaObject( )->className( ) );
 	foreach ( GraphItem::Factory* factory, factories )
 	{
-		GraphItem* graphItem = factory->create( *this, node, 0 );
+        GraphItem* graphItem = factory->create( *this, node );
 		if ( graphItem != 0 )
 		{
 			addItem( graphItem->getGraphicsItem( ) );	// Hack for QT 5.3
@@ -274,7 +274,7 @@ void	GraphScene::createGraphItem( Edge& edge )
 	GraphItem::Factory::List factories = getGraphItemFactories( edge.metaObject( )->className( ) );
 	foreach ( GraphItem::Factory* factory, factories )
 	{
-		GraphItem* graphItem = factory->create( *this, edge, 0 );
+        GraphItem* graphItem = factory->create( *this, edge );
 		if ( graphItem != 0 )
 		{
 			addItem( graphItem->getGraphicsItem( ) );	// Hack for QT 5.3

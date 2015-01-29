@@ -17,8 +17,8 @@ HEADERS +=	./qanConfig.h                   \
                 ./qanTreeLayout.h               \
                 ./qanNode.h                     \
                 ./qanController.h               \
-                ./qanSimpleNodeItem.h           \
                 ./qanNodeItem.h                 \
+                ./qanNodeRectItem.h             \
                 ./qanEdgeItem.h                 \
                 ./qanGraphItem.h                \
                 ./qanProperties.h               \
@@ -44,8 +44,8 @@ SOURCES += 	./qanEdge.cpp                       \
                 ./qanTreeLayout.cpp                 \
                 ./qanNode.cpp                       \
                 ./qanController.cpp                 \
-                ./qanSimpleNodeItem.cpp             \
                 ./qanNodeItem.cpp                   \
+                ./qanNodeRectItem.cpp               \
                 ./qanEdgeItem.cpp                   \
                 ./qanProperties.cpp                 \
                 ./qanStyleManager.cpp               \
@@ -63,14 +63,16 @@ SOURCES += 	./qanEdge.cpp                       \
                 ./qanGraphicsResizer.cpp            \
                 ./qanGraphicsContainer.cpp
 
+CONFIG(release, debug|release) {
+    linux-g++*: TARGET    = qanava
+    android:    TARGET    = qanava
+    win32:      TARGET    = qanava
+}
+
 CONFIG(debug, debug|release) {
     linux-g++*: TARGET    = qanavad
     android:    TARGET    = qanavad
     win32:      TARGET    = qanavad
 }
 
-CONFIG(release, debug|release) {
-    linux-g++*: TARGET    = qanava
-    android:    TARGET    = qanava
-    win32:      TARGET    = qanava
-}
+

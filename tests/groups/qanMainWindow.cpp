@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2008-2014 Benoit AUTHEMAN
+	Copyright (C) 2008-2015 Benoit AUTHEMAN
 
     This file is part of Qanava.
 
@@ -45,41 +45,70 @@
 using namespace qan;
 
 
-/* Group Management *///-------------------------------------------------------
+/* Dynamic Group Management *///-----------------------------------------------
 RelationalGroup::RelationalGroup( qan::GraphScene& scene, QString name ) :
     NodeGroup( scene, name )
 { 
-    setGraphLayout( new qan::HierarchyTree( ) ); 	// Set an horizontal tree layout for position initialisation
+    setGraphLayout( new qan::UndirectedGraph( ) );
 }
-//-----------------------------------------------------------------------------
 
 void	RelationalGroup::addNode( qan::Node& node )
 {
 	NodeGroup::addNode( node );
-}
-
-void	RelationalGroup::groupMoved( QPointF curPos, QPointF oldPos )
-{
-	NodeGroup::groupMoved( curPos, oldPos );
-	QPointF delta =  curPos - oldPos;
-
-	qan::Edge::Set edges;
-	foreach ( qan::Node* node, getNodes( ) )
-	{
-		node->getGraphicsItem( )->moveBy( delta.x( ), delta.y( ) );
-		node->setPosition( node->getPosition( ) + delta );
-		edges.unite( node->getOutEdges( ).toSet( ) );
-		edges.unite( node->getInEdges( ).toSet( ) );
-	}
-	// Force node group edges update
-	foreach ( qan::Edge* edge, edges )
-		edge->getGraphItem( )->updateItem( );
+    qan::NodeItem* nodeItem = ( qan::NodeItem* )node.getGraphItem( );
+    if ( nodeItem != 0 )
+        nodeItem->setMovable( true );
 }
 
 void	RelationalGroup::itemMoved( QPointF curPos, QPointF oldPos )
 {
 	NodeGroup::itemMoved( curPos, oldPos );
 
+    qan::NodeItem* movedNode = static_cast< qan::NodeItem* >( sender( ) );
+    Q_ASSERT( movedNode != 0 );
+
+    if ( _graphLayout != 0 )
+    {
+        qan::Node::Set rootNodes; getRootNodes( rootNodes );
+        qan::Node::List rootNodesList = rootNodes.toList( );
+        QRectF sceneSceneRect( _scene.sceneRect( ).translated( -pos( ) ) ); // Translate scene rect by group position, since layout is done in group local CCS
+        _graphLayout->layout( rootNodesList, _nodes, sceneSceneRect, &movedNode->getNode( ), 0 );
+
+        qan::Edge::Set edges;
+        foreach ( qan::Node* node, getNodes( ) )
+        {
+            if ( node->getGraphItem( ) != movedNode )
+                node->getGraphicsItem( )->setPos( node->getPosition( ) );
+            edges.unite( node->getOutEdges( ).toSet( ) );
+        }
+        foreach ( qan::Edge* edge, edges )
+            edge->getGraphItem( )->updateItem( );
+
+        // Update this group bounding rect
+        prepareGeometryChange( );
+
+        // Compute laid out nodes Br
+        QRectF layoutBr = movedNode->getGraphicsItem( )->sceneBoundingRect( );
+        foreach ( qan::Node* node, getNodes( ) )
+            layoutBr = layoutBr.united( node->getGraphicsItem( )->sceneBoundingRect( ) );
+
+        // Translate the group to follow item move
+        QPointF delta = curPos - oldPos;
+        movedNode->getGraphicsItem( )->moveBy( -delta.x( ), -delta.y( ) );
+        QRectF groupGeometry = QRectF( pos( ), _br.size( ) );
+        groupGeometry.translate( delta );
+        setGeometry( groupGeometry );
+
+        // Fix the group top left position according to the new layout bounding rect
+        QPointF groupDelta = layoutBr.topLeft( ) - groupGeometry.topLeft( );
+        foreach ( qan::Node* node, getNodes( ) )
+            node->getGraphicsItem( )->moveBy( -groupDelta.x( ), -groupDelta.y( ) );
+        //moveBy( groupDelta );
+        QRectF groupLayoutGeometry( pos( ) + groupDelta, layoutBr.size( ) );
+        if ( groupLayoutGeometry.isValid( ) && !groupLayoutGeometry.isEmpty( ) )
+            setGeometry( groupLayoutGeometry );
+    }
+
 	// Force node group edges update
 	qan::Edge::Set edges;
 	foreach ( qan::Node* node, getNodes( ) )
@@ -90,6 +119,7 @@ void	RelationalGroup::itemMoved( QPointF curPos, QPointF oldPos )
 	foreach ( qan::Edge* edge, edges )
 		edge->getGraphItem( )->updateItem( );
 }
+//-----------------------------------------------------------------------------
 
 
 //-----------------------------------------------------------------------------
@@ -233,29 +263,6 @@ MainWindow::MainWindow( QApplication* application, QWidget* parent ) :
         groupLayout->addItem( reinterpret_cast< qan::NodeItem *>( n3.getGraphItem( ) ) );
 */
 
-        /* //////////////////////////// OLD CODE*/
-        /*qan::NodeGroup* group2 = new qan::NodeGroup( _graph->getM( ), "Group 2" );
-        group2->setGraphLayout( new qan::HierarchyTree( ) );
-        group2->setAcceptDrops( true );
-        group2->setMovable( false );
-        _graph->getM( ).addNodeGroup( *group2 );
-        _graph->getM( ).addDropTarget( group2 );
-
-        qan::NodeGroup* group3 = new qan::NodeGroup( _graph->getM( ), "Group 3" );
-        group3->setLayout( new QGraphicsLinearLayout( Qt::Vertical ) );
-        group3->setAcceptDrops( true );
-        group3->setMovable( false );
-        _graph->getM( ).addNodeGroup( *group3 );
-        _graph->getM( ).addDropTarget( group3 );
-        group3->addNode( n1 );
-        group3->addNode( n2 );
-        group3->addNode( n3 );
-        group3->addNode( n4 );*/
-
-        //groupLayout->addItem( group1 );
-        //groupLayout->addItem( group2 );
-        //groupLayout->addItem( group3 );
-
         // Resizable node group test
         Node& r1 = *_graph->insertNode( "R1", "default node" );
         Node& r2 = *_graph->insertNode( "R2", "default node" );
@@ -273,14 +280,71 @@ MainWindow::MainWindow( QApplication* application, QWidget* parent ) :
         qan::GraphicsController* controller = new qan::GraphicsController( resizableGroup, resizableGroup );
         qan::GraphicsResizer* resizer = new qan::GraphicsResizer( controller, resizableGroup );     Q_UNUSED( resizer );
         //new qan::GraphicsResizerDecoration( resizableGroup, resizableGroup );
+
+        // Group with a hierarchy tree
+        qan::NodeGroup* hierarchyGroup = new qan::NodeGroup( _graph->getM( ), "Group 2" );
+        hierarchyGroup->setGraphLayout( new qan::HierarchyTree( ) );
+        hierarchyGroup->setAcceptDrops( true );
+        hierarchyGroup->setMovable( true );
+        _graph->getM( ).addNodeGroup( *hierarchyGroup );
+        _graph->getM( ).addDropTarget( hierarchyGroup );
+
+        hierarchyGroup->addNode( hb );
+        hierarchyGroup->addNode( hb1 );
+        hierarchyGroup->addNode( hb11 );
+
+        // Group with a dynamic undirected graph layout
+        qan::NodeGroup* graphGroup = new RelationalGroup( _graph->getM( ), "Group 2" );
+        graphGroup->setAcceptDrops( true );
+        graphGroup->setMovable( true );
+        _graph->getM( ).addNodeGroup( *graphGroup );
+        _graph->getM( ).addDropTarget( graphGroup );
+
+        Node* ra = new qan::Node( "Node A" );
+        _graph->insertNode( ra, "default actor node");
+        Node* rb = new qan::Node( "Node B" );
+        _graph->insertNode( rb, "default actor node");
+        Node* rc = new qan::Node( "Node C" );
+        _graph->insertNode( rc, "default actor node");
+        Node* rd = new qan::Node( "Node D" );
+        _graph->insertNode( rd, "default actor node");
+        Node* re = new qan::Node( "Node E" );
+        _graph->insertNode( re, "default actor node");
+        Node* rf = new qan::Node( "Node F" );
+        _graph->insertNode( rf, "default actor node");
+        Edge* rarb = _graph->insertEdge( *ra, *rb ); Q_UNUSED( rarb );
+        Edge* rarc = _graph->insertEdge( *ra, *rc ); Q_UNUSED( rarc );
+        Edge* rard = _graph->insertEdge( *ra, *rd ); Q_UNUSED( rard );
+        Edge* rare = _graph->insertEdge( *ra, *re ); Q_UNUSED( rare );
+        Edge* rerf = _graph->insertEdge( *re, *rf ); Q_UNUSED( rerf );
+        Edge* rarf = _graph->insertEdge( *ra, *rf ); Q_UNUSED( rarf );
+        graphGroup->addNode( *ra );
+        graphGroup->addNode( *rb );
+        graphGroup->addNode( *rc );
+        graphGroup->addNode( *rd );
+        graphGroup->addNode( *re );
+        graphGroup->addNode( *rf );
+
+/*        qan::NodeGroup* group3 = new qan::NodeGroup( _graph->getM( ), "Group 3" );
+        group3->setLayout( new QGraphicsLinearLayout( Qt::Vertical ) );
+        group3->setAcceptDrops( true );
+        group3->setMovable( false );
+        _graph->getM( ).addNodeGroup( *group3 );
+        _graph->getM( ).addDropTarget( group3 );
+        group3->addNode( n1 );
+        group3->addNode( n2 );
+        group3->addNode( n3 );
+        group3->addNode( n4 );*/
+
+        //groupLayout->addItem( group1 );
+        //groupLayout->addItem( group2 );
+        //groupLayout->addItem( group3 );
     }
 
 	// Add a style browser widget to dynamically set node's style
 	ui::NodeGroupFilterWidget* groupFilterWidget = new qan::ui::NodeGroupFilterWidget( *graphView, _graph->getM( ) );
 	groupFilterWidget->setParent( graphView );
 	_graph->getM( ).addItem( groupFilterWidget );
-
-	_graph->getM( ).setSceneRect( QRectF( 0.0, 0., 1000., 1000. ) );
 }
 //-----------------------------------------------------------------------------
 

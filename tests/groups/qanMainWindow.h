@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2008-2014 Benoit AUTHEMAN
+	Copyright (C) 2008-2015 Benoit AUTHEMAN
 
     This file is part of Qanava.
 
@@ -47,23 +47,18 @@
 	{
 		Q_OBJECT
 
-		/*! \name RelationalGroup Object Management *///-----------------------
+        /*! \name Dynamic Layout Management *///-------------------------------
 		//@{
 	public:
-
 		RelationalGroup( qan::GraphScene& scene, QString name );
-		//@}
+
+    public:
+        virtual void		addNode( qan::Node& node );
+
+    protected slots:
+        void				itemMoved( QPointF curPos, QPointF oldPos );
+        //@}
 		//---------------------------------------------------------------------
-
-		virtual void		addNode( qan::Node& node );
-
-	protected:
-
-		virtual	void	groupMoved( QPointF curPos, QPointF oldPos );
-
-	protected slots:
-
-		void				itemMoved( QPointF curPos, QPointF oldPos );
 	};
 
 

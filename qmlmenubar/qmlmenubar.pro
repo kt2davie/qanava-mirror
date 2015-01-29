@@ -1,7 +1,7 @@
 
 TEMPLATE    = app
 TARGET      = qmlmenubar
-CONFIG      += qt warn_on debug
+CONFIG      += qt warn_on
 LANGUAGE    = C++
 QT          += core widgets gui qml quick quickwidgets
 INCLUDEPATH +=

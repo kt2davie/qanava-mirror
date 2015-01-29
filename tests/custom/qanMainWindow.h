@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2008-2014 Benoit AUTHEMAN
+	Copyright (C) 2008-2015 Benoit AUTHEMAN
 
     This file is part of Qanava.
 
@@ -51,13 +51,13 @@ private:
     QString     _pixmapName;
 };
 
-class CustomNodeItem : public qan::SimpleNodeItem
+class CustomNodeItem : public qan::NodeItem
 {
     Q_OBJECT
 
 public:
 
-    CustomNodeItem( qan::GraphScene& scene, CustomNode& node, QGraphicsItem* parent );
+    CustomNodeItem( qan::GraphScene& scene, CustomNode& node );
     virtual ~CustomNodeItem( ) { }
 
 protected:
@@ -72,7 +72,7 @@ public:
     {
     public:
         Factory( ) : qan::GraphItem::Factory( ) { }
-        virtual	qan::GraphItem*	create( qan::GraphScene& scene, qan::Node& node, QGraphicsItem* parent );
+        virtual	qan::GraphItem*	create( qan::GraphScene& scene, qan::Node& node  );
         virtual	QString			getTargetClassName( ) { return QString( "CustomNode" ); }
     };
 };

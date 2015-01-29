@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2008-2014 Benoit AUTHEMAN
+    Copyright (C) 2008-2015 Benoit AUTHEMAN
 
     This file is part of Qanava.
 
@@ -93,7 +93,7 @@ namespace qan { // ::qan
 
 	public:
 
-		GraphItem( GraphScene& scene, QGraphicsItem* parent = 0 );
+        GraphItem( GraphScene& scene );
 
 		virtual ~GraphItem( );
 
@@ -128,7 +128,7 @@ namespace qan { // ::qan
 		virtual void			updateItem( ) { }
 
 		//! Force updating this graph item with its actual style.
-		virtual void			updateItemStyle( ) { };
+        virtual void			updateItemStyle( ) { updateItem( ); }
 
 		virtual	void			removeItem( ) { }
 
@@ -202,9 +202,9 @@ namespace qan { // ::qan
 
 			Factory( ) { }
 
-            virtual	GraphItem*	create( qan::GraphScene& scene, qan::Node& node, QGraphicsItem* parent );
+            virtual	GraphItem*	create( qan::GraphScene& scene, qan::Node& node );
 
-            virtual	GraphItem*	create( qan::GraphScene& scene, qan::Edge& edge, QGraphicsItem* parent );
+            virtual	GraphItem*	create( qan::GraphScene& scene, qan::Edge& edge );
 
 			virtual	QString		getTargetClassName( ) { return QString( "" ); }
 

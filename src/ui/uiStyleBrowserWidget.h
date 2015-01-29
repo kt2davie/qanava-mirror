@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2008-2014 Benoit AUTHEMAN
+	Copyright (C) 2008-2015 Benoit AUTHEMAN
 
     This file is part of Qanava.
 
@@ -30,14 +30,13 @@
 
 // QT headers
 #include <QGraphicsWidget>
-#include <QGraphicsLinearLayout>
-#include <QCheckBox>
 #include <QGraphicsLayoutItem>
+#include <QGraphicsGridLayout>
 
 // Qanava headers
 #include "../qanStyleManager.h"
 #include "../qanGraphScene.h"
-#include "../qanNodeItem.h"
+#include "../qanNodeRectItem.h"
 
 
 namespace qan { // ::qan
@@ -51,7 +50,7 @@ class StyleNodeItem : public qan::NodeRectItem
 	//@{
 public:
 
-	StyleNodeItem( qan::GraphScene& scene, qan::Node& node, QGraphicsItem* parent = 0 );
+    StyleNodeItem( qan::GraphScene& scene, qan::Node& node );
 	//@}
 	//-------------------------------------------------------------------------
 
@@ -60,12 +59,12 @@ public:
 	//@{
 public:
 
-	virtual void	setGeometry ( const QRectF & rect );
+/*	virtual void	setGeometry ( const QRectF & rect );
 
 protected:
 
 	virtual QSizeF	sizeHint( Qt::SizeHint which, const QSizeF & constraint = QSizeF( ) ) const;
-	//@}
+*/	//@}
 	//-------------------------------------------------------------------------
 
 
@@ -104,8 +103,9 @@ protected:
 
 	QList< qan::Node* >			_styleNodes;
 
-	QList< StyleNodeItem* >		_styleNodeItems;
-	//@}
+    //QList< StyleNodeItem* >		_styleNodeItems;
+    QList< qan::NodeItem* >		_styleNodeItems;
+    //@}
 	//-------------------------------------------------------------------------
 
 
@@ -130,6 +130,10 @@ protected slots:
 	void	styleManagerStyleAdded( qan::Style* style );
 
 	void	styleManagerStyleRemoved( qan::Style* style );
+
+private:
+
+    qreal   _widthCache;  // Cache used internally to limit call to resetStyleItemsLayout()
 	//@}
 	//-------------------------------------------------------------------------
 };

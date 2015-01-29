@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2008-2014 Benoit AUTHEMAN
+	Copyright (C) 2008-2015 Benoit AUTHEMAN
 
     This file is part of Qanava.
 
@@ -25,7 +25,6 @@
 // \date	2014 april 19
 //-----------------------------------------------------------------------------
 
-
 // Qanava headers
 #include "./qanGraph.h"
 #include "./qanGrid.h"
@@ -41,9 +40,7 @@
 #include <QTextDocument>
 #include <QGraphicsLayout>
 
-
 namespace qan { // ::qan
-
 
 /* NodeGroup Object Management *///--------------------------------------------
 NodeGroup::NodeGroup( qan::GraphScene& scene, QString name, QGraphicsItem* parent ) :
@@ -71,11 +68,11 @@ NodeGroup::NodeGroup( qan::GraphScene& scene, QString name, QGraphicsItem* paren
     setPreferredSize( QSizeF( 185., 85. ) );
 
     // Node group initialisation
-    connect( &scene, SIGNAL( itemDragMove( qan::SimpleNodeItem*, QGraphicsItem* ) ), this, SLOT( itemDragMove( qan::SimpleNodeItem*, QGraphicsItem* ) ) );
-    connect( &scene, SIGNAL( itemDragLeave( qan::SimpleNodeItem*, QGraphicsItem* ) ), this, SLOT( itemDragLeave( qan::SimpleNodeItem*, QGraphicsItem* ) ) );
-    connect( &scene, SIGNAL( itemDropped( qan::SimpleNodeItem*, QGraphicsItem* ) ), this, SLOT( itemDropped( qan::SimpleNodeItem*, QGraphicsItem* ) ) );
+    connect( &scene, SIGNAL( itemDragMove( qan::NodeItem*, QGraphicsItem* ) ), this, SLOT( itemDragMove( qan::NodeItem*, QGraphicsItem* ) ) );
+    connect( &scene, SIGNAL( itemDragLeave( qan::NodeItem*, QGraphicsItem* ) ), this, SLOT( itemDragLeave( qan::NodeItem*, QGraphicsItem* ) ) );
+    connect( &scene, SIGNAL( itemDropped( qan::NodeItem*, QGraphicsItem* ) ), this, SLOT( itemDropped( qan::NodeItem*, QGraphicsItem* ) ) );
 
-	_nameItem = new LabelEditorItem( name, "<< Group name >>", this );
+    _nameItem = new LabelEditorItem( name, "<< Group name >>", this, this );
 	_nameItem->setPos( QPointF( 0., -_nameItem->boundingRect( ).height( ) ) );
 	connect( _nameItem, SIGNAL( textModified( ) ), this, SLOT( nameTextModified( ) ) );
 
@@ -143,6 +140,13 @@ QRectF	NodeGroup::boundingRect( ) const { return _br; }
 void	NodeGroup::paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget )
 {
     Q_UNUSED( option ); Q_UNUSED( widget );
+
+    painter->setPen( Qt::red );
+    painter->drawRect( _br );
+
+    QRectF sceneSceneRect( _scene.sceneRect( ).translated( -scenePos( ) ) );
+    painter->drawRect( sceneSceneRect );
+
     if ( _dragOver )
     {
         painter->setPen( Qt::NoPen );
@@ -346,7 +350,7 @@ void	NodeGroup::removeAt( int index )
 
 
 /* Drag and Drop Management *///-----------------------------------------------
-void	NodeGroup::itemDragMove( qan::SimpleNodeItem* item, QGraphicsItem* target )
+void	NodeGroup::itemDragMove( qan::NodeItem* item, QGraphicsItem* target )
 {
     Q_UNUSED( item );
 	if ( !getAcceptDrops( ) )
@@ -358,7 +362,7 @@ void	NodeGroup::itemDragMove( qan::SimpleNodeItem* item, QGraphicsItem* target )
 	update( );
 }
 
-void	NodeGroup::itemDragLeave( qan::SimpleNodeItem* item, QGraphicsItem* target )
+void	NodeGroup::itemDragLeave( qan::NodeItem* item, QGraphicsItem* target )
 {
     Q_UNUSED( item );
 	if ( !getAcceptDrops( ) )
@@ -373,7 +377,7 @@ void	NodeGroup::itemDragLeave( qan::SimpleNodeItem* item, QGraphicsItem* target 
 	}
 }
 
-void	NodeGroup::itemDropped( qan::SimpleNodeItem* item, QGraphicsItem* target )
+void	NodeGroup::itemDropped( qan::NodeItem* item, QGraphicsItem* target )
 {
 	if ( !getAcceptDrops( ) )
 		return;
@@ -410,6 +414,7 @@ void	NodeGroup::addNode( qan::Node& node )
             gl->invalidate( );
         }
 
+		// FIXME 20150111: See NodeItem ctor to see what is necessary (almost nothing except the setGeometry call)
         // FIXME: see what is exactly necessary....
         _layout->invalidate( );
         _layout->activate();

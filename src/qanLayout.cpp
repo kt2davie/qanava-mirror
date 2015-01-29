@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2008-2014 Benoit AUTHEMAN
+	Copyright (C) 2008-2015 Benoit AUTHEMAN
 
     This file is part of Qanava.
 
@@ -95,26 +95,21 @@ void	UndirectedGraph::layout( qan::Node::Set& groupRootNodes, qan::Node::Set& no
 		progress->setValue( 0 );
 	}
 
-	// Configure a virtual center node
-	Node::Set nodesSet( nodes );
-
-	// Configure a virtual center node
-	if ( center != 0 )
-		_center.setPosition( center->getPosition( ) );
-	else
-		_center.setPosition( br.center( ) );
+    // Configure a virtual center node
+    _center.setPosition( center != 0 ? center->getPosition( ) : br.center( ) );
 
 	// Apply the spring force algorithm
+    qreal minimumModification = 5. * nodes.size( );
 	for ( int iter = 0; iter < runCount; iter++ )
 	{
-		double modification = 0.;
+        qreal modification = 0.;
 
 		// Compute new nodes positions using the spring embedder model
 		foreach ( Node* node, nodes )
 		{
 			Node::Set adjacentInNodes;
 			node->collectInNodesSet( adjacentInNodes );
-			adjacentInNodes.unite( groupRootNodes );
+            adjacentInNodes.unite( groupRootNodes );
 
 			Node::Set adjacentOutNodes;
 			node->collectOutNodesSet( adjacentOutNodes );
@@ -126,31 +121,25 @@ void	UndirectedGraph::layout( qan::Node::Set& groupRootNodes, qan::Node::Set& no
 			QPointF frep = computeRepulseForce( *node, adjacentOutNodes, nodes );
 			QPointF delta = ( frep + fspring ) / ( float )( nodes.size( ) + 1.f );
 
-			// Compute a global bounding rect in scene CS for node item and its direct childs (usually the properties widget and a shadow)
-			/*QRectF nodesBr = node->getGraphicsItem( )->sceneBoundingRect( );
-			QList< QGraphicsItem* > nodeChilds = node->getGraphicsItem( )->childItems( );
-			foreach ( QGraphicsItem* nodeChild, nodeChilds )
-				nodesBr = nodesBr.united( nodeChild->sceneBoundingRect( ) );*/
-
 			QPointF position = node->getPosition( ) + delta;
 			if ( br.contains( position ) )	// Clip generated position 
 				node->setPosition( position );
-				
+
 			modification += length2( delta );
 		}
 
 		// Apply modifications for a virtual center node connected to all root nodes
 		{
-			QPointF fspring = computeSpringForce( _center, groupRootNodes );
+            QPointF fspring = computeSpringForce( _center, groupRootNodes );
 			QPointF frep = computeRepulseForce( _center, groupRootNodes, nodes );
 
 			QPointF delta( 0., 0. );
 			delta = ( frep + fspring ) / ( float )( nodes.size( ) + 1.f );
-			_center.setPosition( _center.getPosition( ) + delta );
+            _center.setPosition( _center.getPosition( ) + delta );
 		}
 
 		// Stop iterating if node have converged to a fixed position
-		if ( modification < ( 5. * nodes.size( ) ) )
+        if ( modification < minimumModification )
 			break;
 
 		// Update progress bar
@@ -205,7 +194,6 @@ QPointF	UndirectedGraph::computeSpringForce( Node& u, Node::Set& adjacentNodes )
 		double size = 1.;
 		if ( l > 1.0 ) 
             size = 2.f * qLn( l );
-            //size = 2.f * log( l ); // FIXME v0.9.3 didn't compile on linux
 
 		uv *= size;
 		force += uv;

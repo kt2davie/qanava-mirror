@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2008-2014 Benoit AUTHEMAN
+	Copyright (C) 2008-2015 Benoit AUTHEMAN
 
     This file is part of Qanava.
 
@@ -16,7 +16,6 @@
     You should have received a copy of the GNU Lesser General Public License
     along with Qanava.  If not, see <http://www.gnu.org/licenses/>.
 */
-
 //-----------------------------------------------------------------------------
 // This file is a part of the Qanava software.
 //
@@ -27,6 +26,8 @@
 
 // QT headers
 #include <QQmlEngine>
+#include <QQmlContext>
+#include <QPainter>
 
 // Qanava headers
 #include "./qanQmlMenuBar.h"
@@ -39,13 +40,17 @@ QmlMenuBar::QmlMenuBar( QWidget* parent, QString importPath, QUrl qmlFile ) :
 {
     engine( )->addImportPath( importPath );
     engine( )->addImportPath( "qrc:/" );
-    setResizeMode( QQuickWidget::SizeViewToRootObject );
+    engine( )->rootContext()->setContextProperty( "qanMenuBar", this ); // Used to access updateMenuBarMask() from QML
 
+    //setResizeMode( QQuickWidget::SizeViewToRootObject );
+    setResizeMode( QQuickWidget::SizeRootObjectToView );
+    setMouseTracking( true );   // Turn on hover event mouse support
     setSource( qmlFile );
     setAttribute( Qt::WA_TranslucentBackground, true );
     setAttribute( Qt::WA_AlwaysStackOnTop, true );
-    setVisible( true );
+    //setAttribute( Qt::WA_NoMousePropagation, false );
     setClearColor( Qt::transparent );
+    setVisible( true );
 }
 //-----------------------------------------------------------------------------
 
@@ -99,6 +104,54 @@ void    QmlMenuBar::addMenuBarSeparator( QQuickItem* parentMenuElement )
     QVariant valueArgParentMenuElement = QVariant::fromValue( parentMenuElement );
     QMetaObject::invokeMethod( ( QObject* )qmlMenuBar, "addSeparator",
                                Q_ARG( QVariant, valueArgParentMenuElement ) );
+}
+
+void    QmlMenuBar::paintEvent( QPaintEvent* e )
+{
+    QQuickWidget::paintEvent( e );
+
+    /*
+    // Debug code to visualize widget mask
+    QPainter p( this );
+    p.setPen( Qt::green );
+
+    QRect g = geometry( );
+    QRect menuBr( QPoint(), g.size( ) );
+    p.drawRect( menuBr );
+
+    p.setPen( Qt::red );
+    p.setBrush( QBrush( Qt::lightGray ) );
+    p.drawConvexPolygon( _maskPolygon.toPolygon( ) );*/
+}
+
+void    QmlMenuBar::resetMask( qreal x, qreal y, qreal w, qreal h )
+{
+    QRectF br( x, y, w, h );
+    QPolygonF brPolygon; brPolygon << br.topLeft( ) << br.topRight( ) << br.bottomRight( ) << br.bottomLeft( );
+    _maskPolygon = brPolygon;
+    setMask( QRegion( brPolygon.toPolygon( ) ) );
+}
+
+void    QmlMenuBar::appendBrToMask( qreal x, qreal y, qreal w, qreal h )
+{
+    //qDebug( ) << "QmlMenuBar::appendBrToMask()" << x << " " << y << " " << w << " " << h;
+
+    QRectF br( x, y, w, h );
+    QPolygonF brPolygon; brPolygon << br.topLeft( ) << br.topRight( ) << br.bottomRight( ) << br.bottomLeft( );
+    _maskPolygon = _maskPolygon.united( brPolygon );
+    setMask( QRegion( _maskPolygon.toPolygon( ) ) );
+}
+
+void    QmlMenuBar::removeBrFromMask( qreal x, qreal y, qreal w, qreal h )
+{
+    //qDebug( ) << "QmlMenuBar::removeBrFromMask()" << x << " " << y << " " << w << " " << h;
+
+    QPolygonF brPolygon;
+    QRectF br( x, y, w, h );
+
+    brPolygon << br.topLeft( ) << br.topRight( ) << br.bottomRight( ) << br.bottomLeft( );
+    _maskPolygon = QPolygonF(_maskPolygon ).subtracted( brPolygon );
+    setMask( QRegion( _maskPolygon.toPolygon( ) ) );
 }
 //-----------------------------------------------------------------------------
 

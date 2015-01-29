@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2008-2014 Benoit AUTHEMAN
+	Copyright (C) 2008-2015 Benoit AUTHEMAN
 
     This file is part of Qanava.
 
@@ -27,9 +27,6 @@
 
 // QT headers
 #include <QGraphicsView>
-#include <QGraphicsLinearLayout>
-#include <QGraphicsGridLayout>
-#include <QLabel>
 #include <QScrollBar>
 #include <QApplication>
 #include <QDrag>
@@ -44,8 +41,8 @@ namespace qan { // ::qan
 namespace ui  { // ::qan::ui
 
 /* StyleNodeItem Object Management *///----------------------------------------
-StyleNodeItem::StyleNodeItem( qan::GraphScene& scene, qan::Node& node, QGraphicsItem* parent ) :
-    qan::NodeRectItem( scene, node, parent, false, false )
+StyleNodeItem::StyleNodeItem( qan::GraphScene& scene, qan::Node& node ) :
+    qan::NodeRectItem( scene, node, false, false )
 {
 	node.setGraphicsItem( this );
 	node.setGraphItem( this );
@@ -55,7 +52,7 @@ StyleNodeItem::StyleNodeItem( qan::GraphScene& scene, qan::Node& node, QGraphics
 
 
 /* Graphics Layout Management *///---------------------------------------------
-void	StyleNodeItem::setGeometry ( const QRectF & rect )
+/*void	StyleNodeItem::setGeometry ( const QRectF & rect )
 {
 	setPos( rect.topLeft( ) );
 }
@@ -64,7 +61,7 @@ QSizeF	StyleNodeItem::sizeHint( Qt::SizeHint which, const QSizeF & constraint ) 
 {
     Q_UNUSED( which ); Q_UNUSED( constraint );
 	return qan::NodeRectItem::boundingRect( ).size( );
-}
+}*/
 //-----------------------------------------------------------------------------
 
 
@@ -119,11 +116,12 @@ StyleBrowserWidget::StyleBrowserWidget( QGraphicsView& view, qan::GraphScene& sc
 	QGraphicsWidget( 0 ),
 	_view( view ),
 	_scene( scene ),
-	_styleManager( styleManager )
+    _styleManager( styleManager ),
+    _widthCache( -1. )
 {
-	connect( _view.verticalScrollBar( ), SIGNAL( valueChanged( int ) ), this, SLOT( viewViewportChanged( int ) ) );
-	connect( _view.horizontalScrollBar( ), SIGNAL( valueChanged( int ) ), this, SLOT( viewViewportChanged( int ) ) );
-	connect( &_view, SIGNAL( viewResized( QSize ) ), this, SLOT( viewResized( QSize ) ) );
+    connect( _view.verticalScrollBar( ), SIGNAL( valueChanged( int ) ), this, SLOT( viewViewportChanged( int ) ) );
+    connect( _view.horizontalScrollBar( ), SIGNAL( valueChanged( int ) ), this, SLOT( viewViewportChanged( int ) ) );
+    connect( &_view, SIGNAL( viewResized( QSize ) ), this, SLOT( viewResized( QSize ) ) );
 	connect( &styleManager, SIGNAL( styleModified( qan::Style* ) ), this, SLOT( styleManagerStyleModified( qan::Style* ) ) );
 	connect( &styleManager, SIGNAL( styleAdded( qan::Style* ) ), this, SLOT( styleManagerStyleAdded( qan::Style* ) ) );
 	connect( &styleManager, SIGNAL( styleRemoved( qan::Style* ) ), this, SLOT( styleManagerStyleRemoved( qan::Style* ) ) );
@@ -132,14 +130,14 @@ StyleBrowserWidget::StyleBrowserWidget( QGraphicsView& view, qan::GraphScene& sc
 	p.setColor( QPalette::Window, Qt::transparent );
 	setPalette( p );
 	
-	setFlag( QGraphicsItem::ItemIgnoresTransformations, true );
+    setFlag( QGraphicsItem::ItemIgnoresTransformations, true );
 	setVisible( true );
 	setPos( 0., 0. );
 	setZValue( 1100. );
 
 	resetStyleItems( );
 	resetStyleItemsLayout( );
-	viewViewportChanged( 0 );
+    setPos( _view.mapToScene( QPoint( 100, 0 ) ) );
 }
 
 StyleBrowserWidget::~StyleBrowserWidget( )
@@ -148,7 +146,7 @@ StyleBrowserWidget::~StyleBrowserWidget( )
 	foreach ( qan::NodeItem* styleNodeItem, _styleNodeItems )
 	{
 		_scene.removeItem( styleNodeItem );
-		delete styleNodeItem;
+        delete styleNodeItem;     // Node items will be destroyed by their associed layout
 	}
 	_styleNodeItems.clear( );
 	foreach ( qan::Node* styleNode, _styleNodes )
@@ -159,12 +157,13 @@ StyleBrowserWidget::~StyleBrowserWidget( )
 void	StyleBrowserWidget::resetStyleItems( )
 {
 	// Remove existing nodes
-	foreach ( qan::NodeItem* styleNodeItem, _styleNodeItems )
-	{
-		_scene.removeItem( styleNodeItem );
-		delete styleNodeItem;
-	}
-	_styleNodeItems.clear( );
+    foreach ( qan::NodeItem* styleNodeItem, _styleNodeItems )
+    {
+        _scene.removeItem( styleNodeItem );
+        delete styleNodeItem;
+    }
+    _styleNodeItems.clear( );
+
 	foreach ( qan::Node* styleNode, _styleNodes )
 	{
 		_styleManager.clearNodeStyle( *styleNode );
@@ -180,35 +179,47 @@ void	StyleBrowserWidget::resetStyleItems( )
 		_styleNodes.append( node );
 		_styleManager.styleNode( *node, style->getName( ) );
 
-		StyleNodeItem* styleItem = new StyleNodeItem( _scene, *node, this );
-		_styleNodeItems.append( styleItem );
-		node->setGraphicsItem( styleItem );
-		node->setGraphItem( styleItem );
-	}
+        // Create a rect item to display styles, without using qan::Scene
+        // to avoid adding "virtual" in graph topology
+        NodeItem* styleItem = new StyleNodeItem( _scene, *node );
+        _scene.addItem( styleItem );
+        styleItem->setParentItem( this );
+        _styleNodeItems.append( styleItem );
+        node->setGraphicsItem( styleItem );
+        node->setGraphItem( styleItem );
+        styleItem->updateItem( );   // Mandatory
+    }
 }
 
 void	StyleBrowserWidget::resetStyleItemsLayout( )
 {
-	// Compute column width
-	qreal maxItemWidth = 0.;
-	foreach ( StyleNodeItem* styleNodeItem, _styleNodeItems )
-		maxItemWidth = qMax( styleNodeItem->boundingRect( ).width( ), maxItemWidth );
+    _widthCache = _view.width( ); // Keep the viewport witdh in cache, layout will be valid until it change
 
-	int itemsByRow = ( _view.viewport( )->size( ).width( ) - 100.0 ) / maxItemWidth;		// 100.0 is a margin
-	if ( itemsByRow <= 0 )
-		return;
+    // Compute column width
+    qreal maxWidth = 0.;
+    qreal maxHeight = -1.;
+    foreach ( qan::NodeItem* styleNodeItem, _styleNodeItems )
+    {
+        maxWidth = qMax( styleNodeItem->boundingRect( ).width( ), maxWidth );
+        maxHeight = qMax( styleNodeItem->boundingRect( ).height( ), maxHeight );
+    }
 
-	int i = 0;
-	QGraphicsGridLayout* gridLayout = new QGraphicsGridLayout( );;
-	foreach ( StyleNodeItem* styleNodeItem, _styleNodeItems )
-	{
-		int c = i % itemsByRow;
-		int r = i / itemsByRow;
-		gridLayout->setColumnMinimumWidth( c, maxItemWidth );
-		gridLayout->addItem( styleNodeItem, r , c, Qt::AlignHCenter );
-		i++;
-	}
-	setLayout( gridLayout );	// Old layout is deleted automatically by QT
+    int itemsByRow = ( _view.width( )/*viewport( )->size( ).width( )*/ - 100.0 ) / maxWidth;		// 100.0 is a margin
+    if ( itemsByRow <= 0 )
+        return;
+
+    qreal margin = 7.;
+    int i = 0;
+    foreach ( qan::NodeItem* styleNodeItem, _styleNodeItems )
+    {
+        int c = i % itemsByRow;
+        int r = i / itemsByRow;
+
+        qreal x = margin + ( c * ( maxWidth + margin ) ) + ( ( maxWidth - styleNodeItem->boundingRect( ).width( )  ) / 2 );
+        qreal y = margin + ( r * ( maxHeight + margin ) ) + ( ( maxHeight - styleNodeItem->boundingRect( ).height( ) ) / 2 );
+        styleNodeItem->setPos( x, y );
+        i++;
+    }
 }
 //-----------------------------------------------------------------------------
 
@@ -217,8 +228,9 @@ void	StyleBrowserWidget::resetStyleItemsLayout( )
 void	StyleBrowserWidget::viewViewportChanged( int value )
 {
     Q_UNUSED( value );
-	resetStyleItemsLayout( );
-	setPos( _view.mapToScene( QPoint( 100, 0 ) ) );
+    if ( _widthCache < 0 || !qFuzzyCompare( 1.0 + _widthCache, 1.0 + _view.width( ) ) )
+        resetStyleItemsLayout( );       // Do not layout again if width has not been modified (ex: slot called because of a scroll bar move...=
+    setPos( _view.mapToScene( QPoint( 100, 0 ) ) );
 }
 
 void	StyleBrowserWidget::viewResized( QSize s )

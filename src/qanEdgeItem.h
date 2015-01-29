@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2008-2014 Benoit AUTHEMAN
+	Copyright (C) 2008-2015 Benoit AUTHEMAN
 
     This file is part of Qanava.
 
@@ -53,7 +53,7 @@ namespace qan { // ::qan
 		//@{
 	public:
 
-		EdgeItem( GraphScene& scene, Edge& edge, QGraphicsItem* parent );
+        EdgeItem( GraphScene& scene, Edge& edge );
 
 		virtual		~EdgeItem( );
 
@@ -136,9 +136,9 @@ namespace qan { // ::qan
 		{
 		public:
 
-			virtual	GraphItem*	create( GraphScene& scene, Edge& edge, QGraphicsItem* parent )
+            virtual	GraphItem*	create( GraphScene& scene, Edge& edge )
 			{ 
-				GraphItem* edgeItem = new EdgeItem( scene, edge, parent );
+                GraphItem* edgeItem = new EdgeItem( scene, edge );
 				edgeItem->updateItem( );
 				return edgeItem;
 			}
@@ -157,7 +157,7 @@ namespace qan { // ::qan
 		//@{
 	public:
 
-		HEdgeItem( GraphScene& scene, HEdge& edge, QGraphicsItem* parent );
+        HEdgeItem( GraphScene& scene, HEdge& edge );
 
 		virtual ~HEdgeItem( );
 
@@ -217,9 +217,9 @@ namespace qan { // ::qan
 		{
 		public:
 
-			virtual	GraphItem*	create( GraphScene& scene, Edge& edge, QGraphicsItem* parent ) 
+            virtual	GraphItem*	create( GraphScene& scene, Edge& edge )
 			{
-				GraphItem* hEdge = new HEdgeItem( scene, *qobject_cast< HEdge* >( &edge ), parent );
+                GraphItem* hEdge = new HEdgeItem( scene, *qobject_cast< HEdge* >( &edge ) );
 				hEdge->updateItem( );
 				return hEdge;
 			}
@@ -239,7 +239,7 @@ namespace qan { // ::qan
 		//@{
 	public:
 
-		OrthoEdgeItem( GraphScene& scene, Edge& edge, QGraphicsItem* parent ) : EdgeItem( scene, edge, parent ) { }
+        OrthoEdgeItem( GraphScene& scene, Edge& edge ) : EdgeItem( scene, edge ) { }
 
 		virtual ~OrthoEdgeItem( ) { }
 		//@}
@@ -267,8 +267,8 @@ namespace qan { // ::qan
 		{
 		public:
 
-			virtual	GraphItem*	create( GraphScene& scene, Edge& edge, QGraphicsItem* parent ) 
-				{ return new OrthoEdgeItem( scene, edge, parent ); }
+            virtual	GraphItem*	create( GraphScene& scene, Edge& edge )
+                { return new OrthoEdgeItem( scene, edge ); }
 
 			virtual	QString		getTargetClassName( ) { return QString( "qan::Edge" ); }
 		};	

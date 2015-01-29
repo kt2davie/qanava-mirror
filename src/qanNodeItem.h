@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2008-2014 Benoit AUTHEMAN
+    Copyright (C) 2008-2015 Benoit AUTHEMAN
 
     This file is part of Qanava.
 
@@ -22,7 +22,7 @@
 //
 // \file	qanNodeItem.h
 // \author	benoit@qanava.org
-// \date	2004 October 13
+// \date	2014 November 22
 //-----------------------------------------------------------------------------
 
 
@@ -34,7 +34,7 @@
 #include "./qanNode.h"
 #include "./qanGraphItem.h"
 #include "./qanEdgeItem.h"
-#include "./qanSimpleNodeItem.h"
+
 
 // QT headers
 #include <QGraphicsItem>
@@ -43,6 +43,8 @@
 #include <QGraphicsProxyWidget>
 #include <QGraphicsDropShadowEffect>
 #include <QGraphicsSceneDragDropEvent>
+#include <QGraphicsLayoutItem>
+#include <QGraphicsLinearLayout>
 
 // QT Solutions (qtpropertybrowser) headers
 #include "QtVariantProperty"
@@ -51,173 +53,186 @@
 
 //-----------------------------------------------------------------------------
 namespace qan { // ::qan
-	
-	//! Models an editable graphics label item (based on graphics text item).
-	class LabelEditorItem : public QGraphicsTextItem
-	{
-		Q_OBJECT
 
-		/*! \name LabelEditorItem Management *///------------------------------
-		//@{
-	public:
+    //! Models an editable graphics label item (based on graphics text item).
+    class LabelEditorItem : public QGraphicsTextItem, public QGraphicsLayoutItem
+    {
+        Q_OBJECT
+        Q_INTERFACES( QGraphicsLayoutItem )
 
-		LabelEditorItem( QString text, QString defaultText, QGraphicsItem* parent );
+        /*! \name LabelEditorItem Management *///------------------------------
+        //@{
+    public:
+        LabelEditorItem( QString text, QString defaultText,
+                         QGraphicsItem* parent, QGraphicsLayoutItem* parentLayout );
 
-		enum { Type = UserType + 42 };
+        enum { Type = UserType + 42 };
 
-		virtual	int		type( ) const { return Type; }
+        virtual	int		type( ) const { return Type; }
+    private:
+        Q_DISABLE_COPY( LabelEditorItem );
 
-	protected:
+    protected:
+        virtual void	keyPressEvent( QKeyEvent* e );
 
-		virtual void	keyPressEvent( QKeyEvent* e );
-		
-		virtual void	focusOutEvent( QFocusEvent* e );
+        virtual void	focusOutEvent( QFocusEvent* e );
 
-		virtual void	mousePressEvent( QGraphicsSceneMouseEvent* e );
-		
-		QString			_defaultText;
+        virtual void	mousePressEvent( QGraphicsSceneMouseEvent* e );
 
-	signals:
+        QString			_defaultText;
 
-		void			textModified( );
-		//@}
-		//---------------------------------------------------------------------
-	};
+    signals:
+        void			textModified( );
+        //@}
+        //---------------------------------------------------------------------
 
 
-    //! Model an abstract node item in a Qt graphics view, with built-in user defined shape support and label edition.
-	/*!
-		\nosubgrouping
-	*/
-    class NodeItem : public SimpleNodeItem
-	{
-		Q_OBJECT
+        /* Graphics layout item implementation *///----------------------------
+    public:
+        virtual void    updateGeometry( );
+        virtual void    setGeometry( const QRectF& geom );
 
-		/*! \name NodeItem Constructor / Destructor *///-----------------------
-		//@{
-	public:
+    protected:
+        virtual QSizeF  sizeHint( Qt::SizeHint which, const QSizeF & constraint = QSizeF( ) ) const;
+        //---------------------------------------------------------------------
+    };
 
-		NodeItem( GraphScene& scene, Node& node, QGraphicsItem* parent, bool isMovable = true, bool showPropertiesWidget = true );
 
-		virtual ~NodeItem( );
+    //! Model an abstract node item in a Qt graphics view, with built-in style and graphics layout support.
+    /*! FIXME: deprecated documentation.
 
-		enum { Type = UserType + 42 + 2 };
+    The following style options are supported:
+    <ul>
+    <li> <b>'backcolor':</b> Background color, when there is no background image defined.
+    <li> <b>'bordercolor':</b> Color of the item border.
+    <li> <b>'maximumwidth':</b> Maximum width of the item, content is cropped to fit this with limit.
+    <li> <b>'maximumheight':</b> Maximum height of the item, content is cropped to fit this height limit.
+    <li> <b>'fontsize':</b> Base size for the font used to display the item label.
+    <li> <b>'hasshadow':</b> Set this value to false to supress the node shadow.
+    </ul>
+        \nosubgrouping
+    */
+    class NodeItem : public GraphItem, public QGraphicsLayout
+    {
+        Q_OBJECT
+        Q_INTERFACES( QGraphicsLayout )
 
-		virtual int	type( ) const { return Type; }
+        /*! \name NodeItem Object Management *///------------------------------
+        //@{
+    public:
+
+        NodeItem( GraphScene& scene, Node& node, bool isMovable = true, bool showPropertiesWidget = true );
+
+        virtual ~NodeItem( );
 
     private:
-        Q_DISABLE_COPY( NodeItem );
-		//@}
-		//---------------------------------------------------------------------
+        Q_DISABLE_COPY( NodeItem )
+
+    public:
+        Node&	getNode( ) { return _node; }
+
+        enum { Type = UserType + 42 + 3 };
+        virtual int	type( ) const { return Type; }
+
+    protected:
+        Node&		_node;
+        GraphScene&	_scene;
+        //@}
+        //---------------------------------------------------------------------
 
 
-		/*! \name NodeItem Associed Graphics Item Management *///-------------
-		//@{
-	public slots:
+        /*! \name Graphics Item Management *///--------------------------------
+        //@{
+    public:
+        virtual QGraphicsItem*  getGraphicsItem( ) { return static_cast< QGraphicsItem* >( this ); }
 
-		virtual void				updateItem( );
-		//@}
-		//---------------------------------------------------------------------
+        virtual QRectF          boundingRect( ) const { return _br; }
+        virtual QPainterPath	shape( ) const;
 
+    public slots:
+        virtual void            updateItem( );
+        virtual void            updateItemStyle( );
 
-		/*! \name Item Layout Management *///----------------------------------
-		//@{
-	protected:
-
-		//! Indicate to a specialized class the ideal size of the item computed in updateItemLayout().
-		virtual	void			setLayoutRect( QRectF layoutBr ) = 0;
-
-		//! Layout this item left, pixmap, label and bottom item, and return the ideal item rect trought setLayoutRect().
-		void					updateItemLayout( );
-		
-		void					setLeftItem( QGraphicsProxyWidget* leftItem );
-
-		void					setPixmapItem( QGraphicsPixmapItem* pixmapItem );
-
-		void					setLabelItem( QString label );
-
-		void					setBottomItem( QGraphicsProxyWidget* leftItem );
-
-	protected:
-
-		QGraphicsPixmapItem*		_pixmapItem;
-
-		LabelEditorItem*			_labelItem;
-
-		QGraphicsProxyWidget*		_leftItem;
-
-		QGraphicsProxyWidget*		_bottomItem;
-
-	protected slots:
-			
-		void						labelTextModified( );
-		//@}
-		//---------------------------------------------------------------------
-	};
-
-	class NodeRectItem : public NodeItem
-	{
-		Q_OBJECT
-
-		/*! \name NodeRectItem Constructor / Destructor *///-----------------------
-		//@{
-	public:
-
-		NodeRectItem( GraphScene& scene, Node& node, QGraphicsItem* parent, bool isMovable = true, bool showPropertiesWidget = true );
-
-		virtual ~NodeRectItem( );
-		//@}
-		//---------------------------------------------------------------------
+    protected:
+        QRectF&                 getBr( ) { return _br; }
+        QRectF                  _br;
+        //@}
+        //---------------------------------------------------------------------
 
 
-		/*! \name NodeItem Associed Graphics Item Management *///-------------
-		//@{
-	public:
+        /*! \name Graphics Drawing Management *///-----------------------------
+        //@{
+    public:
 
-		virtual QRectF		boundingRect( ) const;
-		
-		QPainterPath		shape( ) const;
+        virtual void    paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0 );
 
-		virtual	void		setLayoutRect( QRectF layoutBr );
+    protected slots:
+        void            labelTextModified( );
 
-	protected:
+    protected:
+        LabelEditorItem*			getLabelItem( ) { return _labelItem; }
 
-		QGraphicsRectItem*	_rectItem;
-		//@}
-		//---------------------------------------------------------------------
+        LabelEditorItem*			_labelItem;
+        QGraphicsItem*              _dragOverItem;
+
+        QColor						_shadowColor;
+        QPointF						_shadowOffset;
+        QGraphicsDropShadowEffect*	_shadowEffect;
+        QPen                        _itemPen;
+        QBrush                      _itemBrush;
+        qreal                       _borderWidth;
+        //@}
+        //---------------------------------------------------------------------
 
 
-		/*! \name Style Drag and Drop Management *///--------------------------
-		//@{
+        /*! \name Mouse Move/Drag Management *///------------------------------
+        //@{
+    public:
+        void                setDraggable( bool isDraggable ) { _isDraggable = isDraggable; }
+        bool                isDraggable( ) const { return _isDraggable; }
+        void                setMovable( bool isMovable ) { _isMovable = isMovable; }
 
-	protected:
+    protected:
+        virtual QVariant	itemChange( QGraphicsItem::GraphicsItemChange change, const QVariant& value );
 
-		virtual void dragEnterEvent( QGraphicsSceneDragDropEvent* e );
+    signals:
+        void				itemMoved( QPointF pos, QPointF oldPos );
 
-		virtual void dragLeaveEvent( QGraphicsSceneDragDropEvent* e );
+    protected:
+        virtual	void		mouseMoveEvent( QGraphicsSceneMouseEvent* e );
+        virtual void		mousePressEvent( QGraphicsSceneMouseEvent* e );
+        virtual void		mouseReleaseEvent( QGraphicsSceneMouseEvent* e );
 
-		virtual void dropEvent( QGraphicsSceneDragDropEvent* e );
-		//@}
-		//---------------------------------------------------------------------
+        QPointF				_mousePos;
+        bool				_mousePressed;
 
-	public:
+        bool				_isMovable;
+        bool				_isDraggable;
 
-		//! Standard rectangular node factory for qan::Node objects
-		class Factory : public GraphItem::Factory
-		{
-		public:
+    private:
+        bool				_dragMove;
+        //@}
+        //---------------------------------------------------------------------
 
-			virtual	GraphItem*	create( GraphScene& scene, Node& node, QGraphicsItem* parent ) 
-			{ 
-				GraphItem* nodeItem = new NodeRectItem( scene, node, parent );
-				nodeItem->updateItem( );
-				return nodeItem;
-			}
 
-			virtual	QString		getTargetClassName( ) { return QString( "qan::Node" ); }
-		};
-	};
+        /* Graphics layout item implementation *///----------------------------
+    public:
+        virtual void        updateGeometry( );
+        virtual void        setGeometry( const QRectF& geom );
 
+        virtual int         count( ) const;
+        virtual QGraphicsLayoutItem*    itemAt( int i ) const;
+        virtual void        removeAt( int index );
+
+    protected:
+        virtual QSizeF      sizeHint( Qt::SizeHint which, const QSizeF & constraint = QSizeF( ) ) const;
+
+        void                setLayout( QGraphicsLayout* layout ) { _layout = layout; }
+        QGraphicsLayout*    getLayout( ) { return _layout; }
+
+        QGraphicsLayout*    _layout;
+        //---------------------------------------------------------------------
+    };
 } // ::qan
 //-----------------------------------------------------------------------------
 

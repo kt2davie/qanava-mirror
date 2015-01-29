@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2008-2014 Benoit AUTHEMAN
+	Copyright (C) 2008-2015 Benoit AUTHEMAN
 
     This file is part of Qanava.
 
@@ -31,7 +31,7 @@
 
 
 // Qanava headers
-#include "./qanNodeItem.h"
+#include "./qanNodeRectItem.h"
 #include "./qanEdgeItem.h"
 #include "./qanGraphModel.h"
 #include "./qanStyleManager.h"
@@ -55,226 +55,226 @@ namespace qan { // ::qan
 	class Grid;
 	class Layout;
 
-	//! Show a standard qan::Graph as a scene that could be displayed in a QGraphicsView.
-	/*!
-		\nosubgrouping
-	*/
-	class GraphScene : public QGraphicsScene, public GraphListener
-	{
-		Q_OBJECT
+        //! Show a standard qan::Graph as a scene that could be displayed in a QGraphicsView.
+        /*!
+                \nosubgrouping
+        */
+        class GraphScene : public QGraphicsScene, public GraphListener
+        {
+            Q_OBJECT
 
-		/*! \name GraphScene Object Management *///----------------------------
-		//@{
-	public:
+            /*! \name GraphScene Object Management *///----------------------------
+            //@{
+        public:
 
-		//! GraphScene constructor with optionnal settings for graph widget initialization.
-		GraphScene( StyleManager& _styleManager, QWidget* parent = 0, 
-					QColor backColor = QColor( 170, 171, 205 ), QSize size = QSize( 300, 150 ) );
+            //! GraphScene constructor with optionnal settings for graph widget initialization.
+            GraphScene( StyleManager& _styleManager, QWidget* parent = 0,
+                        QColor backColor = QColor( 170, 171, 205 ), QSize size = QSize( 300, 150 ) );
 
-		//! GraphScene virtual destructor.
-		virtual ~GraphScene( );
+            //! GraphScene virtual destructor.
+            virtual ~GraphScene( );
 
-	public:
+        public:
 
-		StyleManager&	getStyleManager( ) {  return _styleManager; }
+            StyleManager&	getStyleManager( ) {  return _styleManager; }
 
-	protected:
+        protected:
 
-		StyleManager&	_styleManager;
-		//@}
-		//---------------------------------------------------------------------
-
-
-
-		/*! \name Scene Management *///----------------------------------------
-		//@{
-	public:
-
-		//! Clear the scene from all its graphics elements (styles are not destroyed).
-		void			clear( );
-
-		//! FIXME v0.4.0
-		void			updatePositions( Node* except = 0 );
-		//@}
-		//---------------------------------------------------------------------
+            StyleManager&	_styleManager;
+            //@}
+            //---------------------------------------------------------------------
 
 
-		/*! \name Graph Topology Management *///-------------------------------
-		//@{
-	public:
 
-		virtual void	init( Node::List& rootNodes ) { insertNodesGraphItems( rootNodes ); }
+            /*! \name Scene Management *///----------------------------------------
+            //@{
+        public:
 
-		virtual void	edgeInserted( qan::Edge& edge );
+            //! Clear the scene from all its graphics elements (styles are not destroyed).
+            void			clear( );
 
-		virtual void	edgeModified( qan::Edge& edge );
-
-		virtual void	edgeRemoved( qan::Edge& edge );
-
-		virtual void	nodeInserted( qan::Node& node );
-
-		virtual void	nodeRemoved( qan::Node& node );
-
-		virtual void	nodeChanged( qan::Node& node );
-
-	public:
-
-		//! Create graph items for a set of given nodes and their sub-nodes.
-		void	insertNodesGraphItems( Node::List& rootNodes );
-
-	private:
-
-		//! Create graph item for a given node and all its sub nodes.
-		void	insertNodeGraphItem( qan::Node& node );
-
-		void	insertEdgeGraphItem( qan::Edge& edge );
-		//@}
-		//---------------------------------------------------------------------
+            //! FIXME v0.4.0
+            void			updatePositions( Node* except = 0 );
+            //@}
+            //---------------------------------------------------------------------
 
 
-		/*! \name Node Group Management *///-----------------------------------
-		//@{
-	public:
+            /*! \name Graph Topology Management *///-------------------------------
+            //@{
+        public:
 
-		//! Add a node group to this scene, ownership goes to scene.
-        /*! This method will automatically calls addDropTarget() with the given group
+            virtual void	init( Node::List& rootNodes ) { insertNodesGraphItems( rootNodes ); }
+
+            virtual void	edgeInserted( qan::Edge& edge );
+
+            virtual void	edgeModified( qan::Edge& edge );
+
+            virtual void	edgeRemoved( qan::Edge& edge );
+
+            virtual void	nodeInserted( qan::Node& node );
+
+            virtual void	nodeRemoved( qan::Node& node );
+
+            virtual void	nodeChanged( qan::Node& node );
+
+        public:
+
+            //! Create graph items for a set of given nodes and their sub-nodes.
+            void	insertNodesGraphItems( Node::List& rootNodes );
+
+        private:
+
+            //! Create graph item for a given node and all its sub nodes.
+            void	insertNodeGraphItem( qan::Node& node );
+
+            void	insertEdgeGraphItem( qan::Edge& edge );
+            //@}
+            //---------------------------------------------------------------------
+
+
+            /*! \name Node Group Management *///-----------------------------------
+            //@{
+        public:
+
+            //! Add a node group to this scene, ownership goes to scene.
+            /*! This method will automatically calls addDropTarget() with the given group
          *  if group getAcceptDrop() return true (ie if groups accepts Qanava node insertion via
          * drag and drop).
          * \param nodeGroup Node group that must be added to this graphics scene.
          */
-		virtual	void				addNodeGroup( qan::NodeGroup& nodeGroup );
+            virtual	void				addNodeGroup( qan::NodeGroup& nodeGroup );
 
-		//! Remove a node group from this scene, ownership goes back to the caller.
-		virtual void				removeNodeGroup( qan::NodeGroup& nodeGroup );
+            //! Remove a node group from this scene, ownership goes back to the caller.
+            virtual void				removeNodeGroup( qan::NodeGroup& nodeGroup );
 
-		QList< qan::NodeGroup* >&	getNodeGroups( ) { return _nodeGroups; }
+            QList< qan::NodeGroup* >&	getNodeGroups( ) { return _nodeGroups; }
 
-	signals:
+        signals:
 
-		void						nodeGroupAdded( qan::NodeGroup* nodeGroup );
+            void						nodeGroupAdded( qan::NodeGroup* nodeGroup );
 
-		void						nodeGroupRemoved( qan::NodeGroup* nodeGroup );
+            void						nodeGroupRemoved( qan::NodeGroup* nodeGroup );
 
-	protected:
+        protected:
 
-		QList< qan::NodeGroup* >	_nodeGroups;
-		//@}
-		//---------------------------------------------------------------------
-
-
-		/*! \name Item Drag and Drop Management *///---------------------------
-		//@{
-	public:
-
-		void						addDropTarget( QGraphicsItem* dropTarget ) { _dropTargets.append( dropTarget ); }
-
-		QList< QGraphicsItem* >		getDropTargets( ) { return _dropTargets; }
-
-        void						emitItemDragMove( qan::SimpleNodeItem* nodeItem, QGraphicsItem* target ) { emit itemDragMove( nodeItem, target ); }
-
-        void						emitItemDragLeave( qan::SimpleNodeItem* nodeItem, QGraphicsItem* target ) { emit itemDragLeave( nodeItem, target ); }
-
-        void						emitItemDropped( qan::SimpleNodeItem* nodeItem, QGraphicsItem* target ) { emit itemDropped( nodeItem, target ); }
-
-	signals:
-
-        void						itemDragMove( qan::SimpleNodeItem* nodeItem, QGraphicsItem* target );
-
-        void						itemDragLeave( qan::SimpleNodeItem* nodeItem, QGraphicsItem* target );
-
-        void						itemDropped( qan::SimpleNodeItem* nodeItem, QGraphicsItem* target );
-
-	protected:
-
-		QList< QGraphicsItem* >		_dropTargets;
-		//@}
-		//---------------------------------------------------------------------
+            QList< qan::NodeGroup* >	_nodeGroups;
+            //@}
+            //---------------------------------------------------------------------
 
 
-		/*! \name Graph Item Management *///-----------------------------------
-		//@{
-	public:
-	
-		//! Get a graph item associed to a node.
-		GraphItem*		getGraphItem( qan::Node& node ) const;
+            /*! \name Item Drag and Drop Management *///---------------------------
+            //@{
+        public:
 
-		//! Get a graph item associed to a node.
-		GraphItem*		getGraphItem( qan::Edge& node ) const;
+            void    addDropTarget( QGraphicsItem* dropTarget ) { _dropTargets.append( dropTarget ); }
 
-		//! Get the node at a selected scene position.
-        Node*			getNodeAt( QPointF scenePos  );
+            QList< QGraphicsItem* >		getDropTargets( ) { return _dropTargets; }
 
-	protected:
+            void    emitItemDragMove( qan::NodeItem* nodeItem, QGraphicsItem* target ) { emit itemDragMove( nodeItem, target ); }
 
-		//! Create a graphic item for a given node using registered graph item factories (and its associed graph item).
-		void			createGraphItem( Node& node );
+            void    emitItemDragLeave( qan::NodeItem* nodeItem, QGraphicsItem* target ) { emit itemDragLeave( nodeItem, target ); }
 
-		//! Create a graphic item for a given edge using registered graph item factories (and its associed graph item).
-		void			createGraphItem( Edge& edge );
+            void    emitItemDropped( qan::NodeItem* nodeItem, QGraphicsItem* target ) { emit itemDropped( nodeItem, target ); }
 
-		typedef	QMap< GraphItem*, QGraphicsItem* >	GraphItemGraphicItemMap;
+        signals:
 
-		typedef	QMap< Node*, GraphItem* >			NodeGraphItemMap;
+            void    itemDragMove( qan::NodeItem* nodeItem, QGraphicsItem* target );
 
-		typedef	QMap< Edge*, GraphItem* >			EdgeGraphItemMap;
+            void    itemDragLeave( qan::NodeItem* nodeItem, QGraphicsItem* target );
 
-		NodeGraphItemMap	_nodeGraphItemMap;
+            void    itemDropped( qan::NodeItem* nodeItem, QGraphicsItem* target );
 
-		EdgeGraphItemMap	_edgeGraphItemMap;
-		//---------------------------------------------------------------------
+        protected:
+
+            QList< QGraphicsItem* >		_dropTargets;
+            //@}
+            //---------------------------------------------------------------------
 
 
-		/*! \name Node Selection Management *///-------------------------------
-		//@{
-	public:
+            /*! \name Graph Item Management *///-----------------------------------
+            //@{
+        public:
 
-		void			emitShowItemPopup( qan::GraphItem* item, QPointF p ) { emit showItemPopup( item, p ); }
+            //! Get a graph item associed to a node.
+            GraphItem*		getGraphItem( qan::Node& node ) const;
 
-		void			emitHideItemPopup( qan::GraphItem* item ) { emit hideItemPopup( item ); }
+            //! Get a graph item associed to a node.
+            GraphItem*		getGraphItem( qan::Edge& node ) const;
 
-	signals:
+            //! Get the node at a selected scene position.
+            Node*			getNodeAt( QPointF scenePos  );
 
-		//! Signal emmitted when a node is double clicked with mouse position in scene coordinate and screen coordinate (screen coordinates can be used for popup menus).
-		void			nodeDoubleClicked( qan::Node* node, QPointF scenePos, QPoint screenPos );
+        protected:
 
-		//! Signal emmitted when a node is right clicked with mouse position in scene coordinate and screen coordinate.
-		void			nodeClicked( qan::Node* node, Qt::MouseButton button, QPointF scenePos, QPoint screenPos );
+            //! Create a graphic item for a given node using registered graph item factories (and its associed graph item).
+            void			createGraphItem( Node& node );
 
-		void			showItemPopup( qan::GraphItem* item, QPointF p );
+            //! Create a graphic item for a given edge using registered graph item factories (and its associed graph item).
+            void			createGraphItem( Edge& edge );
 
-		void			hideItemPopup( qan::GraphItem* item );
+            typedef	QMap< GraphItem*, QGraphicsItem* >	GraphItemGraphicItemMap;
 
-	private:
+            typedef	QMap< Node*, GraphItem* >		NodeGraphItemMap;
 
-		virtual	void	mouseDoubleClickEvent( QGraphicsSceneMouseEvent* mouseEvent );
+            typedef	QMap< Edge*, GraphItem* >		EdgeGraphItemMap;
 
-		virtual	void	mouseReleaseEvent( QGraphicsSceneMouseEvent* mouseEvent );
-		//---------------------------------------------------------------------
+            NodeGraphItemMap	_nodeGraphItemMap;
 
-
-		/*! \name Graph Item Factory Management *///---------------------------
-		//@{
-	public:
+            EdgeGraphItemMap	_edgeGraphItemMap;
+            //---------------------------------------------------------------------
 
 
-		//! Add a graph item factory (factory will be owned by this scene graph).
-		/*! Note: factory will be added first in the internal list of factory, so a proprietary factory inserted this way will
-		    override the standard edge and node factories. */
-		// TODO 0.4.0: Destroy the factory list in GraphScene dtor.
-		void						addGraphItemFactory( GraphItem::Factory*	factory ) { _graphItemFactories.prepend( factory ); }
+            /*! \name Node Selection Management *///-------------------------------
+            //@{
+        public:
 
-		//! Get a graph item factory for a given node or edge classname.
-		GraphItem::Factory*			getGraphItemFactory( QString className );
+            void			emitShowItemPopup( qan::GraphItem* item, QPointF p ) { emit showItemPopup( item, p ); }
 
-		//! Get a graph item factory list for a given node or edge classname.
-		GraphItem::Factory::List	getGraphItemFactories( QString className );
+            void			emitHideItemPopup( qan::GraphItem* item ) { emit hideItemPopup( item ); }
 
-	private:
+        signals:
 
-		GraphItem::Factory::List	_graphItemFactories;
-		//@}
-		//---------------------------------------------------------------------
-	};
+            //! Signal emmitted when a node is double clicked with mouse position in scene coordinate and screen coordinate (screen coordinates can be used for popup menus).
+            void			nodeDoubleClicked( qan::Node* node, QPointF scenePos, QPoint screenPos );
+
+            //! Signal emmitted when a node is right clicked with mouse position in scene coordinate and screen coordinate.
+            void			nodeClicked( qan::Node* node, Qt::MouseButton button, QPointF scenePos, QPoint screenPos );
+
+            void			showItemPopup( qan::GraphItem* item, QPointF p );
+
+            void			hideItemPopup( qan::GraphItem* item );
+
+        private:
+
+            virtual	void	mouseDoubleClickEvent( QGraphicsSceneMouseEvent* mouseEvent );
+
+            virtual	void	mouseReleaseEvent( QGraphicsSceneMouseEvent* mouseEvent );
+            //---------------------------------------------------------------------
+
+
+            /*! \name Graph Item Factory Management *///---------------------------
+            //@{
+        public:
+
+
+            //! Add a graph item factory (factory will be owned by this scene graph).
+            /*! Note: factory will be added first in the internal list of factory, so a proprietary factory inserted this way will
+                    override the standard edge and node factories. */
+            // TODO 0.4.0: Destroy the factory list in GraphScene dtor.
+            void						addGraphItemFactory( GraphItem::Factory*	factory ) { _graphItemFactories.prepend( factory ); }
+
+            //! Get a graph item factory for a given node or edge classname.
+            GraphItem::Factory*			getGraphItemFactory( QString className );
+
+            //! Get a graph item factory list for a given node or edge classname.
+            GraphItem::Factory::List	getGraphItemFactories( QString className );
+
+        private:
+
+            GraphItem::Factory::List	_graphItemFactories;
+            //@}
+            //---------------------------------------------------------------------
+        };
 } // ::qan
 //-----------------------------------------------------------------------------
 

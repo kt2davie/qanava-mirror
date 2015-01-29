@@ -2,9 +2,47 @@
 import QtQuick 2.0
 import "qrc:/QanMenuBar/qan/MenuBar"
 
-// Define a QanMenu stylesheet with default properties
 QanMenuBar {
+
+    QanMenuStyle {
+        id: myStyle
+
+        property bool debug: false;
+        property bool expandedAtStartup : false;
+        property real menuOpacity : 1.0
+        property color textColor : "#232323"
+        property bool showShadows : true
+
+        property QtObject element : QtObject {
+            id : elementStyle
+            property int height: 70;
+
+            property color hilightGradColor : "#4f4ae1"
+            property color checkedGradColor : "#f971ee"
+            property color hilightCheckedGradColor : "#ff50f1"
+        }
+
+        property color separatorColor : "black"
+
+        property QtObject menu : QtObject {
+            property QtObject border : QtObject {
+                property int width: 0;
+                property color color: "transparent";
+                property int radius: 0;
+            }
+
+            property Gradient gradient : Gradient {
+                GradientStop { position: 0.0; color: "transparent" }
+                GradientStop { position: 1.0; color: "transparent" }
+            }
+        }
+    }
+
     id: myMenuBar
+    style : myStyle
+    //style.expandedAtStartup : true
+    //style.debug: true
+    anchors.fill: parent    // Mandatory
 
     // FIXME: uncomment for a pure declarative menu definition example
    /* QanMenuElement {

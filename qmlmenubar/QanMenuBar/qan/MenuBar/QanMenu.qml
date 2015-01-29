@@ -40,8 +40,8 @@ Rectangle {
 
     x: parent.x + parent.width
     y: parent.height / 5
-    width: 70
-    height: ( elementCount * style.element.height + separatorCount * 10 > 80 ? elementCount * style.element.height + separatorCount * 10 : 80);
+    width: 80
+    height: ( elementCount * style.element.height + separatorCount * 10 > 80 ? elementCount * style.element.height + separatorCount * 10 : 80 );
 
     // Public properties //------------
 
@@ -51,9 +51,13 @@ Rectangle {
     border.color: style.menu.border.color
     gradient: style.menu.gradient
     visible: false
+    opacity: 1.
 
-    // Menu desired user height
-    property real   menuHeight: ( elementCount * style.element.height + separatorCount * 10 > 80 ? elementCount * style.element.height + separatorCount * 10 : 80)
+    // Used internally to generate a mask for an associed QQuickWidget, and cache values
+    property real   menuX: x
+    property real   menuY: y
+    property real   menuWidth: width
+    property real   menuHeight: ( elementCount * style.element.height + separatorCount * 10 > 80 ? elementCount * style.element.height + separatorCount * 10 : 80 )
 
     // Set to true if the menu is not a root menu
     property bool   root: false
@@ -80,63 +84,67 @@ Rectangle {
         hoverEnabled: true
         propagateComposedEvents: true
         onEntered: {
-
+            if ( style.debug )
+                console.log( "QanMenu::MouseArea::onEntered(): " + menu + " / " + menu.label );
+            console.log( "QanMenu::MouseArea::onEntered(): " + menu.x + " " + menu.y + " " + menu.width + " " + menu.height );
         }
 
         onExited: {
+            style.expandedAtStartup = false;    // A menu shown at startup behave like a normal menu after it has been hovered,
+                                                // so manually unset the expanded at startup flag
             if ( style.debug )
                 console.log( "QanMenu::MouseArea::onExited(): " + menu + " / " + menu.label );
-            if ( root ) {   // For root menu, release all menu elements
+            if ( menu.root ) {   // For root menu, release all menu elements
                 for ( var c = 0; c < menuLayout.children.length; c++ )
                     if ( menuLayout.children[ c ].state !== "CHECKED" )
                         menuLayout.children[ c ].state = "RELEASED" ;
+                menu.state = "ENVELOPED";
             }
         }
-    }
 
-    Image {
-        id: menuHandler
-        source: "arrow-right.svg"
-        fillMode: Image.Stretch
-        antialiasing: true
-        anchors.right: parent.right
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.rightMargin: 2
-        visible: false
-        z: menu.z + 1.
+        Image {
+            id: menuHandler
+            source: "arrow-right.svg"
+            fillMode: Image.Stretch
+            antialiasing: true
+            anchors.right: parent.right
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.rightMargin: 2
+            visible: false
+            z: menu.z + 1.
 
-        MouseArea {
-            id: menuHandlerMouseArea
-            opacity: 1
+            MouseArea {
+                id: menuHandlerMouseArea
+                opacity: 1
+                anchors.fill: parent
+                z: menuHandler.z + 1.
+                hoverEnabled: true
+                propagateComposedEvents: true
+                onEntered: {
+                    if ( style.debug )
+                        console.log( "QanMenu:menuHandlerMouseArea::onEntered()" );
+                    if ( menu.state != "ACTIVATED" )
+                        menu.state = "ACTIVATED"
+                }
+            }
+        }
+
+        // Layout must be a child of mouse area to prevent an exited() signal to be cast
+        // when a child elemnt is entered
+        ColumnLayout {
+            id: menuLayout
             anchors.fill: parent
-            z: menuHandler.z + 1.
-            hoverEnabled: true
-            propagateComposedEvents: true
-            onEntered: {
-                if ( style.debug )
-                    console.log( "QanMenu:menuHandlerMouseArea::onEntered()" );
-                menu.state = "ACTIVATED"
-            }
+            anchors.margins: 7  // Must not be zero or mouse area onExited don't works
+            z: menuMouseArea.z + 1.
+            transformOrigin: Item.Center
+            spacing: 5
         }
-    }
-
-    ColumnLayout {
-        id: menuLayout
-        anchors.fill: parent
-        anchors.margins: 7  // Must not be zero or mouse area onExited don't works
-        z: menuMouseArea.z + 1.
-        transformOrigin: Item.Center
-        spacing: 5
     }
 
     states: [
         State {
             name: "ACTIVATED"
-            PropertyChanges { target: menu; width : 80; height: menuHeight; visible: true; opacity : 1.0 }
-            StateChangeScript {
-                script: {
-                }
-            }
+            PropertyChanges { target: menu; width : 80; height: menuHeight; visible: true; color: "transparent"; opacity : 1.0 }
         },
         State {
             name: "RELEASED"
@@ -158,7 +166,7 @@ Rectangle {
         },
         State {
             name: "ENVELOPED"
-            PropertyChanges { target: menu; radius: 5; height: 80; width : menuHandler.width; visible : true; opacity : 0.1 }
+            PropertyChanges { target: menu; radius: 5; height: 80; width : menuHandler.width; visible : true; color: "lightgray"; opacity : 0.3 }
             PropertyChanges { target: menuLayout; width : 0; visible : false; opacity : 0. }
             PropertyChanges { target: menuHandler; width: 25; height: 25 ; visible : true; opacity : 1 }
         }
@@ -168,24 +176,69 @@ Rectangle {
         Transition {
             from: "ACTIVATED"
             to: "RELEASED"
-            NumberAnimation { target: menu; properties: "opacity"; duration: 500 }
+            SequentialAnimation {
+                ScriptAction {
+                    script: {
+                        var sceneX = mapXtoScene( menu );
+                        var sceneY = mapYtoScene( menu );
+                        qanMenuBar.removeBrFromMask( sceneX, sceneY - 5, menu.width, menu.height + 10 );
+                    }
+                }
+                NumberAnimation { target: menu; properties: "opacity"; duration: 500 }
+            }
         },
         Transition {
             from: "RELEASED"
             to: "ACTIVATED"
-            NumberAnimation { target: menu; properties: "opacity, width, height"; duration: 300 }
+            SequentialAnimation {
+                NumberAnimation { target: menu; properties: "opacity, width, height"; duration: 300 }
+                ScriptAction {
+                    script: {
+                        var sceneX = mapXtoScene( menu );
+                        var sceneY = mapYtoScene( menu );
+                        if ( style.debug )
+                            console.log( "RELEASED->ACTIVATED (scene) for " + menu.label + " : " + sceneX + " " + sceneY + " " + menu.width + " " + menu.height );
+                        qanMenuBar.appendBrToMask( sceneX, sceneY - 5., menu.width, menu.menuHeight + 10 );
+                    }
+                }
+            }
         },
         Transition {
             from: "ENVELOPED"
             to: "ACTIVATED"
-            NumberAnimation { target: menu; properties: "radius, opacity, width, height"; duration: 300 }
+            SequentialAnimation {
+                NumberAnimation { target: menu; properties: "radius, opacity, width, height"; duration: 300 }
+                ScriptAction {
+                    script: {
+                        var r = menu.mapToItem( null, menu.x, menu.y, menu.width, menu.menuHeight );
+                        if ( style.debug )
+                            console.log( "ENVELOPED->ACTIVATED (scene) for " + menu.label + " : " + r.x + " " + r.y + " " + r.width + " " + r.height );
+                        qanMenuBar.resetMask( r.x, r.y - 5., r.width + 5., r.height + 10. );    // Add a 5 pixel margin to catch exited signals
+                    }
+                }
+            }
         },
         Transition {
             from: "ACTIVATED"
             to: "ENVELOPED"
-            NumberAnimation { target: menu; properties: "radius, opacity, width, height"; duration: 500 }
+            SequentialAnimation {
+                NumberAnimation { target: menu; properties: "radius, opacity, width, height"; duration: 500 }
+                ScriptAction {
+                    script: { qanMenuBar.resetMask( menuHandler.x, menuHandler.y, menuHandler.width, menuHandler.height ); }
+                }
+            }
         }
     ]
+
+    function mapXtoScene( item )
+    {
+        return ( item.parent !== null ? item.x + mapXtoScene( item.parent ) : item.x );
+    }
+
+    function mapYtoScene( item )
+    {
+        return ( item.parent !== null ? item.y + mapYtoScene( item.parent ) : item.y );
+    }
 
     function releaseAllMenuElement( except )
     {

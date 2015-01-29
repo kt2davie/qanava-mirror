@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2008-2014 Benoit AUTHEMAN
+	Copyright (C) 2008-2015 Benoit AUTHEMAN
 
     This file is part of Qanava.
 
@@ -35,7 +35,7 @@
 #include <QGraphicsLinearLayout>
 
 // Qanava headers
-#include "./qanNodeItem.h"
+#include "./qanNodeRectItem.h"
 #include "./qanStyleManager.h"
 
 
@@ -167,11 +167,11 @@ namespace qan { // ::qan
 
 	protected slots:
 		
-        virtual void	itemDragMove( qan::SimpleNodeItem* item, QGraphicsItem* target );
+        virtual void	itemDragMove( qan::NodeItem* item, QGraphicsItem* target );
 
-        virtual void	itemDragLeave( qan::SimpleNodeItem* item, QGraphicsItem* target );
+        virtual void	itemDragLeave( qan::NodeItem* item, QGraphicsItem* target );
 
-        virtual void	itemDropped( qan::SimpleNodeItem* item, QGraphicsItem* target );
+        virtual void	itemDropped( qan::NodeItem* item, QGraphicsItem* target );
 		//@}
 		//---------------------------------------------------------------------
 

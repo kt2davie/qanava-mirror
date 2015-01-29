@@ -32,22 +32,25 @@ import QtQuick 2.0
 // Define a QanMenu stylesheet with default properties
 QtObject {
 
-    property bool debug: false;
-
-    property color textColor : "white"
+    property bool   debug: false;
+    property bool   expandedAtStartup : false;
+    property real   menuOpacity : 0.8
+    property color  textColor : "white"
+    property bool   showShadows : true
 
     property QtObject element : QtObject {
         id : elementStyle
         property int height: 70;
 
         property color hilightGradColor : "#4f4ae1"
-        property color checkedGradColor : "#f16080"
-        property color hilightCheckedGradColor : "#f15050"
+        property color checkedGradColor : "#f971ee"
+        property color hilightCheckedGradColor : "#ff50f1"
     }
 
     property color separatorColor : "white"
 
     property QtObject menu : QtObject {
+        id: menuStyle
         property QtObject border : QtObject {
             property int width: 1;
             property color color: "black";

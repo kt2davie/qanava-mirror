@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2008-2014 Benoit AUTHEMAN
+	Copyright (C) 2008-2015 Benoit AUTHEMAN
 
     This file is part of Qanava.
 
@@ -77,7 +77,7 @@ StyleEditorWidget::StyleEditorWidget( QWidget* parent, qan::Graph& graph ) :
 	QVBoxLayout* vbox = new QVBoxLayout( this );
 	vbox->setMargin( 1 );
 
-	QHBoxLayout* hbox = new QHBoxLayout( this );
+    QHBoxLayout* hbox = new QHBoxLayout( );
 	hbox->setMargin( 1 );
 	hbox->addWidget( _styles );
 	hbox->addWidget( _duplicateStyle );

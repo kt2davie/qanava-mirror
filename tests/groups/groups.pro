@@ -1,7 +1,7 @@
 TEMPLATE	= app
 TARGET		= test-groups
 FORMS		= qanMainWindow.ui
-CONFIG		+= qt warn_on debug
+CONFIG		+= qt warn_on
 DEFINES		+= QANAVA  
 LANGUAGE	= C++
 QT		+= widgets core gui

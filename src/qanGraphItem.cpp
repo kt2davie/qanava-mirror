@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2008-2014 Benoit AUTHEMAN
+	Copyright (C) 2008-2015 Benoit AUTHEMAN
 
     This file is part of Qanava.
 
@@ -39,7 +39,7 @@ namespace qan { // ::qan
 
 /* GraphItem Properties Management *///----------------------------------------
 PropertiesWidget::PropertiesWidget( GraphScene& scene, qan::Properties& properties, QGraphicsItem * parent ) :
-	QGraphicsWidget( parent ),
+    QGraphicsWidget( parent ),
     _propertiesEditorWidget( 0 ),
 	_properties( properties ),
 	_hasHover( false )
@@ -100,8 +100,8 @@ void	PropertiesWidget::hoverLeaveEvent( QGraphicsSceneHoverEvent* e )
 
 
 /* GraphItem Constructor / Destructor *///-------------------------------------
-GraphItem::GraphItem( GraphScene& scene, QGraphicsItem* parent ) :
-	QGraphicsObject( parent ),
+GraphItem::GraphItem( GraphScene& scene ) :
+    QGraphicsObject( 0 ),
 	_scene( scene ), 
 	_styleManager( scene.getStyleManager( ) ),
 	_propertiesWidget( 0 ),
@@ -118,8 +118,9 @@ GraphItem::GraphItem( GraphScene& scene, QGraphicsItem* parent ) :
 
 GraphItem::~GraphItem( )
 {
-	if ( getGraphicsItem( ) != 0 )
-		delete getGraphicsItem( );
+    // FIXME v0.9.3
+//	if ( getGraphicsItem( ) != 0 )
+//		delete getGraphicsItem( );
 }
 		
 QPointF	GraphItem::getAnchor( qan::Edge& edge )
@@ -258,14 +259,14 @@ void	GraphItem::delayedHoverLeaveEvent( )
 
 
 //-----------------------------------------------------------------------------
-GraphItem*	GraphItem::Factory::create( qan::GraphScene& scene, qan::Node& node, QGraphicsItem* parent )
+GraphItem*	GraphItem::Factory::create( qan::GraphScene& scene, qan::Node& node )
 {
-    Q_UNUSED( scene ); Q_UNUSED( node ); Q_UNUSED( parent ); return 0;
+    Q_UNUSED( scene ); Q_UNUSED( node ); return 0;
 }
 
-GraphItem*	GraphItem::Factory::create( qan::GraphScene& scene, qan::Edge& edge, QGraphicsItem* parent )
+GraphItem*	GraphItem::Factory::create( qan::GraphScene& scene, qan::Edge& edge )
 {
-    Q_UNUSED( scene ); Q_UNUSED( edge ); Q_UNUSED( parent ); return 0;
+    Q_UNUSED( scene ); Q_UNUSED( edge ); return 0;
 }
 //-----------------------------------------------------------------------------
 

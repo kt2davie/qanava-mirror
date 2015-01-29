@@ -29,6 +29,7 @@ import QtQuick 2.2
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
 import QtQuick.Window 2.1
+import QtGraphicalEffects 1.0
 
 Rectangle {
     id: menuElement
@@ -38,6 +39,7 @@ Rectangle {
     // Menu bar style sheet (initialized by QanMenuBar)
     property QanMenuStyle style
     color: "transparent"
+    opacity: 1.
 
     anchors.margins: 5
     Layout.alignment: Qt.AlignCenter
@@ -69,12 +71,12 @@ Rectangle {
     states: [
         State {
             name: "CHECKED"
-            PropertyChanges { target: hiligther; opacity : 0.9; }
+            PropertyChanges { target: hiligther; opacity : 0.7; }
             PropertyChanges { target: menuElement; hilightGradColor : style.element.checkedGradColor ; scale : 1.1 }
         },
         State {
             name: "ACTIVATED"
-            PropertyChanges { target: hiligther; opacity : 0.8 }
+            PropertyChanges { target: hiligther; opacity : 0.7 }
             PropertyChanges { target: menuElement; scale : 1.1 }
             StateChangeScript {
                 script: {
@@ -135,12 +137,7 @@ Rectangle {
         Layout.maximumHeight: Number.POSITIVE_INFINITY
 
         spacing: 1
-        Image {
-            id: menuElementImage
-            source: menuElement.source
-            fillMode: Image.PreserveAspectFit
-            antialiasing: true
-
+        Rectangle { // Add a transparent content rectangle, or drop sadow graphics effect fon't works
             Layout.alignment: Qt.AlignCenter
             Layout.fillWidth : true
             Layout.fillHeight : true
@@ -153,12 +150,56 @@ Rectangle {
 
             Layout.maximumWidth: Number.POSITIVE_INFINITY
             Layout.maximumHeight: Number.POSITIVE_INFINITY
+
+            color: "transparent"
+            Image {
+                id: menuElementImage
+                anchors.fill: parent
+                source: menuElement.source
+                fillMode: Image.PreserveAspectFit
+                antialiasing: true
+                smooth: true
+            }
+            DropShadow {
+                anchors.fill: menuElementImage
+                visible: style.showShadows
+                horizontalOffset: 2
+                verticalOffset: 2
+                radius: 4.0
+                samples: 16
+                color: "#80000000"
+                source: menuElementImage
+                fast: true
+            }
         }
-        Text {
-            id: menuElementLabel
-            text : menuElement.label
+
+        Rectangle { // Add a transparent content rectangle, or drop sadow graphics effect fon't works
             Layout.alignment: Qt.AlignCenter
-            color: menuElement.style.textColor
+            Layout.preferredWidth: menuElementLabel.contentWidth
+            Layout.preferredHeight: menuElementLabel.contentHeight
+            Layout.minimumWidth: 6
+            Layout.minimumHeight: 5
+
+            color: "transparent"
+
+            Text {
+                id: menuElementLabel
+                anchors.fill: parent
+                smooth: true
+                text : menuElement.label
+                color: menuElement.style.textColor
+            }
+            DropShadow {
+                anchors.fill: menuElementLabel
+                visible: style.showShadows
+                horizontalOffset: 2
+                verticalOffset: 2
+                radius: 4.0
+                samples: 16
+                color: "#80000000"
+                source: menuElementLabel
+                fast: true
+            }
         }
     }
 
@@ -194,19 +235,19 @@ Rectangle {
 
         // Hilight rectangle fill gradient
         gradient: Gradient {
-                    GradientStop {
-                        position: 0.00;
-                        color: "#00a3b5ff";
-                    }
-                    GradientStop {
-                        position: 0.50;
-                        color: hilightGradColor;
-                    }
-                    GradientStop {
-                        position: 1.00;
-                        color: "#00ccc7ff";
-                    }
-                }
+            GradientStop {
+                position: 0.00;
+                color: "#00000000";
+            }
+            GradientStop {
+                position: 0.50;
+                color: hilightGradColor;
+            }
+            GradientStop {
+                position: 1.00;
+                color: "#00000000";
+            }
+        }
 
         border.width: 0
         enabled: true
@@ -219,6 +260,9 @@ Rectangle {
             anchors.fill: parent
             hoverEnabled: true
             onEntered: {
+                if ( style.debug )
+                    console.log( "QanMenuElement::MouseArea::onEntered(): " + menuElement.label );
+
                 if ( menuElement.state !== "CHECKED" )
                     menuElement.state = "ACTIVATED";
                 if ( menuElement.state === "CHECKED" )
@@ -227,6 +271,8 @@ Rectangle {
                     parentMenu.releaseAllMenuElement( menuElement );
             }
             onExited: {
+                if ( style.debug )
+                    console.log( "QanMenuElement::MouseArea::onExited(): " + menuElement.label );
                 if ( menuElement.state === "CHECKED" )
                     menuElement.hilightGradColor = style.element.checkedGradColor;
                 // Do not force the RELEASED mode since child and parent menus are "leaders" for releasing menu elements

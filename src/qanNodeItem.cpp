@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2008-2014 Benoit AUTHEMAN
+    Copyright (C) 2008-2015 Benoit AUTHEMAN
 
     This file is part of Qanava.
 
@@ -22,15 +22,8 @@
 //
 // \file	qanNodeItem.cpp
 // \author	benoit@qanava.org
-// \date	2004 October 13
+// \date	2014 November 22
 //-----------------------------------------------------------------------------
-
-
-// Qanava headers
-#include "./qanNodeItem.h"
-#include "./qanStyleManager.h"
-#include "./qanGraphScene.h"
-
 
 // QT headers
 #include <QFont>
@@ -39,84 +32,171 @@
 #include <QGraphicsTextItem>
 #include <QGraphicsPixmapItem>
 #include <QGraphicsScene>
-#include <QStyleOptionGraphicsItem>
 #include <QGraphicsTextItem>
 #include <QTextEdit>
-#include <QHBoxLayout>
-#include <QMainWindow>
-#include <QGraphicsLinearLayout>
-#include <QGraphicsGridLayout>
-#include <QCheckBox>
-#include <QProgressBar>
-#include <QPushButton>
 #include <QTransform>
 #include <QMimeData>
+#include <QGraphicsLayout>
 
+// Qanava headers
+#include "./qanNodeItem.h"
+#include "./qanStyleManager.h"
+#include "./qanGraphScene.h"
 
 namespace qan {	// ::qan
 
 /* LabelEditorItem Management *///---------------------------------------------
-LabelEditorItem::LabelEditorItem( QString text, QString defaultText, QGraphicsItem* parent ) : 
-	QGraphicsTextItem( text, parent ),
-	_defaultText( defaultText )
-{ 
+LabelEditorItem::LabelEditorItem( QString text, QString defaultText, QGraphicsItem* parent, QGraphicsLayoutItem* parentLayout ) :
+    QGraphicsTextItem( text, parent ),
+    QGraphicsLayoutItem( parentLayout ),
+    _defaultText( defaultText )
+{
     setFlag( QGraphicsItem::ItemIsMovable, false );
     setTextInteractionFlags( Qt::NoTextInteraction );	// Text interaction will be activated only in qan::GraphScene when item is double clicked
     setAcceptHoverEvents( true );
 
     QFont nameFont; nameFont.setPointSize( 16 );
-	setFont( nameFont );
-	setDefaultTextColor( QColor( 50, 50, 50, 200 ) );
+    setFont( nameFont );
+    setDefaultTextColor( QColor( 40, 40, 40, 200 ) );
+
+    // Graphics layout item initialisation
+    setGraphicsItem( this );
+    setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
 }
+
+/*void	LabelEditorItem::paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget )
+{
+    QGraphicsTextItem::paint( painter, option, widget );
+    painter->setPen( Qt::red );
+    painter->drawRect( boundingRect( ) );
+}*/
 
 void	LabelEditorItem::keyPressEvent( QKeyEvent* e )
 {
-	if ( e->matches( QKeySequence::Paste ) )
-	{
-		e->accept( );
-		clearFocus( );
-		return;
-	}
-	if ( e->key( ) == Qt::Key_Enter || e->key( ) == Qt::Key_Return )
-	{
-		emit textModified( );
-		e->accept( );
-		clearFocus( );
-		return;
-	}
+    if ( e->matches( QKeySequence::Paste ) )
+    {
+        e->accept( );
+        clearFocus( );
+    }
+    if ( e->key( ) == Qt::Key_Enter || e->key( ) == Qt::Key_Return )
+    {
+        emit textModified( );
+        e->accept( );
+        clearFocus( );
+    }
 
-	QGraphicsTextItem::keyPressEvent( e );
+    QGraphicsTextItem::keyPressEvent( e );
+
+    prepareGeometryChange( );
+    adjustSize( );
+    setPreferredSize( boundingRect( ).size( ) );
+    setMinimumSize( boundingRect( ).size( ) );
+    if ( parentLayoutItem( ) != 0 )
+        parentLayoutItem( )->updateGeometry( );
 }
 
 void	LabelEditorItem::focusOutEvent( QFocusEvent* e )
 {
-	if ( e->lostFocus( ) )
-	{
-		if ( toPlainText( ).isEmpty( ) || toPlainText( ).isNull( ) )
-			setPlainText( _defaultText );
-		emit textModified( );
-		setTextInteractionFlags( Qt::NoTextInteraction );
-	}
-	QGraphicsTextItem::focusOutEvent( e );
+    if ( e->lostFocus( ) )
+    {
+        if ( toPlainText( ).isEmpty( ) || toPlainText( ).isNull( ) )
+            setPlainText( _defaultText );
+        emit textModified( );
+        setTextInteractionFlags( Qt::NoTextInteraction );
+    }
+    QGraphicsTextItem::focusOutEvent( e );
 }
 
 void	LabelEditorItem::mousePressEvent( QGraphicsSceneMouseEvent* e )
 {
-	QGraphicsTextItem::mousePressEvent( e );
+    QGraphicsTextItem::mousePressEvent( e );
 }
 //-----------------------------------------------------------------------------
 
 
-
-/* NodeItem Constructor/Destructor *///----------------------------------------
-NodeItem::NodeItem( GraphScene& scene, Node& node, QGraphicsItem* parent, bool isMovable, bool showPropertiesWidget ) :
-    SimpleNodeItem( scene, node, parent, isMovable, showPropertiesWidget ),
-    _pixmapItem( 0 ),
-    _labelItem( 0 ),
-    _leftItem( 0 ),
-    _bottomItem( 0 )
+/* Graphics layout item implementation *///------------------------------------
+void LabelEditorItem::updateGeometry( )
 {
-    setLabelItem( getNode( ).getLabel( ) );
+    // Force parent layout update to take into account this item new geometry
+    // Note Qt 5.4.0: Should have been done automatically by Qt in base method, strange...
+    if ( parentLayoutItem( ) != 0 && parentLayoutItem( )->isLayout( ) )
+    {
+        QGraphicsLayout* gl = static_cast< QGraphicsLayout* >(  parentLayoutItem( ) );
+        gl->invalidate( ); // Do not call activate(), it cause flickering...
+    }
+    QGraphicsLayoutItem::updateGeometry( );
+}
+
+void LabelEditorItem::setGeometry( const QRectF& geom )
+{
+    prepareGeometryChange( );
+    QGraphicsLayoutItem::setGeometry( geom );
+
+    setPos( geom.topLeft( ) );
+    adjustSize( );
+}
+
+QSizeF LabelEditorItem::sizeHint( Qt::SizeHint which, const QSizeF& constraint ) const
+{
+    switch ( which )
+    {
+    case Qt::MinimumSize:
+        return QSizeF( 10., 10. );
+        break;
+    case Qt::PreferredSize:
+        return boundingRect( ).size( );
+        break;
+    case Qt::MaximumSize:
+        return QSizeF( 1000, 1000 );
+        break;
+    case Qt::MinimumDescent:
+        break;
+    default:
+        break;
+    }
+    return constraint;
+}
+//-----------------------------------------------------------------------------
+
+
+/* NodeItem Object Management *///---------------------------------------------
+NodeItem::NodeItem( GraphScene& scene, Node& node, bool isMovable, bool showPropertiesWidget ) :
+    GraphItem( scene ), QGraphicsLayout( 0 ),
+	_node( node ),
+	_scene( scene ),
+    _br( QRectF( ) ),
+    _labelItem( 0 ),
+    _dragOverItem( 0 ),
+    _shadowColor( ),
+	_shadowOffset( QPointF( 4., 4. ) ),
+	_shadowEffect( 0 ),
+    _itemPen( QPen( Qt::black ) ),
+    _itemBrush( Qt::NoBrush ),
+    _borderWidth( 1.0 ),
+    _mousePos( -1. , -1. ),
+    _mousePressed( false ),
+	_isMovable( isMovable ),
+	_isDraggable( true ),
+	_dragMove( false ),
+    _layout( 0 )
+{
+    setFlag( QGraphicsItem::ItemSendsGeometryChanges, true );
+    setFlag( QGraphicsItem::ItemSendsScenePositionChanges, true );  // Catch position changes from node child of a qan::NodeGroup
+    setFlag( QGraphicsItem::ItemContainsChildrenInShape, true );    // Speed up drawing and collision detection
+    setFlag( QGraphicsItem::ItemIsSelectable, false );
+    setAcceptDrops( false );
+    setAcceptHoverEvents( false );
+    setZValue( 2.0 );
+
+    _labelItem = new LabelEditorItem( getNode( ).getLabel( ), "<< label >>", this, _layout );
+    _labelItem->setZValue( zValue( ) + 2. );
+    _labelItem->setPos( QPointF( 0., 0. ) );
+
+    setGraphicsItem( this );
+    setMinimumSize( QSizeF( 18., 18. ) );
+
+    if ( showPropertiesWidget )
+        activatePropertiesPopup( node.getProperties( ), 500, true );
 }
 
 NodeItem::~NodeItem( ) { }
@@ -124,23 +204,88 @@ NodeItem::~NodeItem( ) { }
 
 
 /* NodeItem Associed Graphics Item Management *///-----------------------------
+QPainterPath	NodeItem::shape( ) const
+{
+	QPainterPath qpp;
+	qpp.addRect( boundingRect( ) );
+	return qpp;
+}
+
 void	NodeItem::updateItem( )
 {
-    SimpleNodeItem::updateItem( );
+	qan::Style* style = _styleManager.getStyle( getNode( ) );
+	if ( style == 0 )
+	{
+		style = _styleManager.getTargetStyle( "qan::Node" );
+		if ( style != 0 )
+			_styleManager.styleNode( _node, style->getName( ) );
+	}
+	QColor backColor = QColor( 255, 255, 255 );
+	if ( style != 0 && style->has( "Back Color" ) )
+	{
+		backColor = style->getColor( "Back Color" );
+        if ( backColor == Qt::white )
+            backColor = QColor( 225, 225, 225 );
+        QRectF br = boundingRect( );
+        QLinearGradient gradient( br.topLeft( ), br.bottomRight( ) );
+        gradient.setColorAt( 0., Qt::white );
+        gradient.setColorAt( 1., backColor );
+        //_itemBrush.setStyle( Qt::SolidPattern );
+        //_itemBrush.setColor( backColor );
+        _itemBrush = QBrush( gradient );
+	}
+	if ( style != 0 && style->has( "No Background" ) && style->get( "No Background" ).toBool( ) )
+        _itemBrush.setStyle( Qt::NoBrush );
 
-    qan::Style* style = _styleManager.getStyle( getNode( ) );
-    if ( style == 0 )
+	QColor borderColor = QColor( 0, 0, 0 );
+	Qt::PenStyle borderStyle = Qt::SolidLine;
+	float borderWidth = 1.0; 
+	if ( style != 0 && style->has( "Border Color" ) )
+		borderColor = style->getColor( "Border Color" );
+	if ( style != 0 && style->has( "Border Style" ) )
+		borderStyle = ( Qt::PenStyle )( style->get( "Border Style" ).toInt( ) + 1 );	// +1 since 0 is noline and does not appears in style selection dialog
+	if ( style != 0 && style->has( "Border Width" ) )
+		borderWidth = style->get( "Border Width" ).toFloat( );
+    _itemPen.setColor( borderColor );
+    _itemPen.setStyle( borderStyle );
+    _itemPen.setJoinStyle( Qt::RoundJoin );
+    _itemPen.setWidthF( borderWidth );
+
+    if ( style != 0 && style->has( "Border Width" ) )
+        _borderWidth = style->get( "Border Width" ).toFloat( );
+
+    bool hasShadow = false;
+    if ( style != 0 && style->has( "Has Shadow" ) )
+        hasShadow = style->get( "Has Shadow" ).toBool( );
+    if ( hasShadow )
     {
-        style = _styleManager.getTargetStyle( "qan::Node" );
-        if ( style != 0 )
-            _styleManager.styleNode( _node, style->getName( ) );
+        if ( style->has( "Shadow Color" ) )
+            _shadowColor = style->getColor( "Shadow Color" );
+        else
+            _shadowColor = QColor( 105, 105, 105 );
+        _shadowOffset = QPointF( 4., 4. );
+        if ( style->has( "Shadow Offset" ) )
+        {
+            QSizeF shadowOffset = style->get( "Shadow Offset" ).toSizeF( );
+            _shadowOffset = QPointF( shadowOffset.width( ), shadowOffset.height( ) );
+        }
+
+        if ( _shadowEffect == 0 )
+            _shadowEffect = new QGraphicsDropShadowEffect( this );
+        if ( _shadowEffect != 0 )
+        {
+            _shadowEffect->setColor( _shadowColor );
+            _shadowEffect->setOffset( _shadowOffset );
+            _shadowEffect->setBlurRadius( 2.0 );
+            _shadowEffect->setEnabled( true );
+            setGraphicsEffect( _shadowEffect );
+        }
     }
-
-    if ( _bottomItem != 0 )	// Set bottom item widget back color
+    else
     {
-        QPalette p = _bottomItem->palette( );
-        p.setColor( QPalette::Window, Qt::transparent );
-        _bottomItem->setPalette( p );
+        if ( _shadowEffect != 0 )
+            _shadowEffect->setEnabled( false );
+        _shadowColor = QColor( ); // Invalid color since there is no shadow
     }
 
     // Compute the _label size once it is laid out as rich text html
@@ -149,202 +294,214 @@ void	NodeItem::updateItem( )
         if ( style != 0 && style->has( "Font" ) )
             font = style->get( "Font" ).value< QFont >( );
 
-        if ( _labelItem == 0 )
-            _labelItem = new LabelEditorItem( getNode( ).getLabel( ), "<< label >>", this );
-        _labelItem->setParentItem( this );
-        _labelItem->setHtml( getNode( ).getLabel( ) );
-        _labelItem->setFont( font );
+        if ( _labelItem != 0 )
+        {
+            _labelItem->setHtml( getNode( ).getLabel( ) );
+            _labelItem->setFont( font );
+            _labelItem->setPreferredSize( _labelItem->boundingRect( ).size( ) );    // Call mandatory for Qt 5.4
+            _labelItem->setMinimumSize( _labelItem->boundingRect( ).size( ) );    // Call mandatory for Qt 5.4
+            _labelItem->adjustSize( );
+            prepareGeometryChange( );
+            _br.setSize( _layout->preferredSize( ) );
+            // FIXME: call setGeometry( ) ?
+        }
     }
 
-    // Update node geometry and content
-    updateItemLayout( );
+    // Update edges
+    foreach ( Edge* edge, _node.getOutEdges( ) )
+        edge->getGraphItem( )->updateItem( );
+    foreach ( Edge* edge, _node.getInEdges( ) )
+        edge->getGraphItem( )->updateItem( );
 
-    /*
-        // Check for item maximum dimension (if specified)
-        QSizeF maxSize( -1., -1. );
-        if ( style != 0 && style->has( "Maximum Size" ) )
-            maxSize = style->get( "Maximum Size" ).toSizeF( );
+    updateGeometry( );
+}
 
-        // Compute the item height according to the _label size once formatted and displayed
-        ( _labelItem != 0 )
-        {
-            // Do not resize the item larger than its maximum allowed size
-            double textLayoutWidth = _labelItem->boundingRect( ).width( ) + 2.;
-            double textLayoutHeight = _labelItem->boundingRect( ).height( ) + 2.;
-            _dimension.setX( maxSize.width( ) > 0. ? qMin( textLayoutWidth, maxSize.width( ) ) : textLayoutWidth );
-            _dimension.setY( maxSize.height( ) > 0. ? qMin( textLayoutHeight, maxSize.height( ) ) : textLayoutHeight );
-        }
-    */
+void	NodeItem::updateItemStyle( )
+{
+	updateItem( );
 }
 //-----------------------------------------------------------------------------
 
 
-/* Item Layout Management *///-------------------------------------------------
-void	NodeItem::updateItemLayout( )
+/* NodeItem Drawing Management *///--------------------------------------------
+void	NodeItem::paint( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget )
 {
-	// Compute item "ideal" dimension
-	QSizeF margin( 2., 2. );
-	QSizeF spacing( 2., 2. );
+    Q_UNUSED( painter ); Q_UNUSED( option ); Q_UNUSED( widget );
 
-	// Layout left, pixmap and text top items horizontally
-	QList< QGraphicsItem* > items; 
-	if ( _leftItem != 0 )
-		items.append( _leftItem ); 
-	if ( _pixmapItem != 0 )
-		items.append( _pixmapItem ); 
-	if ( _labelItem != 0 )
-		items.append( _labelItem );
-	QSizeF size( 0., 0. );
-	size.rwidth( ) += margin.width( );
-	qreal height = margin.height( );
-	foreach ( QGraphicsItem* item, items )
-	{
-		QRectF itemBr = item->boundingRect( );
-		//if ( item->flags( ) & QGraphicsItem::ItemIgnoresTransformations )
-		//	itemBr = item->deviceTransform( scene( )->views( ).first( )->viewportTransform( ) ).mapRect( item->boundingRect( ) );
-		item->setPos( size.width( ), margin.height( ) );
-		size.rwidth( ) += itemBr.width( );
-		if ( item != items.last( ) ) 
-			size.rwidth( ) += spacing.width( );	// Always add spacing between item, except after the last one
-		height = qMax( height, itemBr.height( ) + margin.height( ) );
-	}
-	size.rwidth( ) += margin.width( );	// Add right margin
-	size.rheight( ) = height + ( _bottomItem == 0 ? margin.height( ) : spacing.height( ) );	// If their is a botom item, add spacing, otherwise, add a bottom margin
-
-	// Layout left, pixmap and text top items vertically
-	foreach ( QGraphicsItem* item, items )
-	{
-		QRectF itemBr = item->boundingRect( );
-		//if ( item->flags( ) & QGraphicsItem::ItemIgnoresTransformations )
-		//	itemBr = item->deviceTransform( scene( )->views( ).first( )->viewportTransform( ) ).mapRect( item->boundingRect( ) );
-
-		qreal itemTop = ( size.height( ) - itemBr.height( ) ) / 2.;
-		item->setPos( item->pos( ).x( ), itemTop );
-	}
-
-	// Layout bottom item horizontally and vertically
-	if ( _bottomItem != 0 )
-	{
-		_bottomItem->setGeometry( QRectF(	margin.width( ), size.height( ), 
-											size.width( ) - 2. * margin.width( ), _bottomItem->preferredHeight( ) / 3. ) );
-
-		QRectF itemBr = _bottomItem->boundingRect( );
-		if ( _bottomItem->flags( ) & QGraphicsItem::ItemIgnoresTransformations )
-			itemBr = _bottomItem->deviceTransform( scene( )->views( ).first( )->viewportTransform( ) ).mapRect( _bottomItem->boundingRect( ) );
-
-		// setGeometry could fail, take the existing bottom item size into account...
-		size.rwidth( ) = qMax( size.width( ), itemBr.width( ) + 2 * margin.width( ) );
-		size.rheight( ) += itemBr.height( ) + margin.height( );
-	}
-	_dimension = QPointF( size.width( ), size.height( ) );
-	
-	// Set the ideal rect for this node item 
-	setLayoutRect( QRectF( 0., 0., _dimension.x( ), _dimension.y( ) ) );
-	getNode( ).setDimension( _dimension );
-}
-
-void	NodeItem::setLeftItem( QGraphicsProxyWidget* leftItem )
-{
-	_leftItem = leftItem;
-}
-
-void	NodeItem::setPixmapItem( QGraphicsPixmapItem* pixmapItem )
-{
-	_pixmapItem = pixmapItem;
-}
-
-void	NodeItem::setLabelItem( QString label )
-{
-	if ( _labelItem == 0 )
-		_labelItem = new LabelEditorItem( label, QString( "<< label >>" ), this );
-	if ( _labelItem != 0 )
-		_labelItem->setPlainText( label );
-}
-
-void	NodeItem::setBottomItem( QGraphicsProxyWidget* bottomItem )
-{
-	_bottomItem = bottomItem;
+	if ( !_shadowColor.isValid( ) && _shadowEffect != 0 )
+		_shadowEffect->setEnabled( false );
+    painter->setPen( Qt::red );
+    painter->drawRect( boundingRect( ) );
 }
 
 void	NodeItem::labelTextModified( )
 {
-	getNode( ).setLabel( _labelItem->toPlainText( ) );
-	updateItem( );
-}
-//-----------------------------------------------------------------------------
-
-
-/* NodeRectItem Constructor / Destructor *///----------------------------------
-NodeRectItem::NodeRectItem( GraphScene& scene, Node& node, QGraphicsItem* parent, bool isMovable, bool showPropertiesWidget ) :
-	NodeItem( scene, node, parent, isMovable, showPropertiesWidget )
-{
-	setAcceptDrops( true );
-    setAcceptHoverEvents( true );   // FIXME v1.0: verify that hover event is necessary for drag and drop support
-
-	_rectItem = new QGraphicsRectItem( getGraphicsItem( ) );
-	_rectItem->setParentItem( getGraphicsItem( ) );
-	_rectItem->setRect( QRectF( node.getPosition( ), QSizeF( _dimension.x( ), _dimension.y( ) ) ) );
-	_rectItem->setZValue( zValue( ) - 10. );
-	if ( showPropertiesWidget )
-		_rectItem->setAcceptHoverEvents( true );
-	setShapeItem( _rectItem );
-
-	updateItem( );
+    getNode( ).setLabel( _labelItem->toPlainText( ) );
+    updateItem( );
 }
 
-NodeRectItem::~NodeRectItem( )
+/* Mouse Move/Drag Management *///---------------------------------------------
+QVariant	NodeItem::itemChange( GraphicsItemChange change, const QVariant& value )
 {
-
-}
-//-----------------------------------------------------------------------------
-
-
-/* NodeRectItem Associed Graphics Item Management *///------------------------
-void	NodeRectItem::setLayoutRect( QRectF layoutBr )
-{
-	if ( _rectItem != 0 )
-		_rectItem->setRect( layoutBr );
-}
-
-QRectF	NodeRectItem::boundingRect( ) const
-{
-	return _rectItem->boundingRect( );
-}
-
-QPainterPath	NodeRectItem::shape( ) const
-{
-	return NodeItem::shape( );
-}
-//-----------------------------------------------------------------------------
-
-
-/* Style Drag and Drop Management *///-----------------------------------------
-void	NodeRectItem::dragEnterEvent( QGraphicsSceneDragDropEvent* e )
-{
-	if ( e->mimeData( )->hasFormat( "holographe/style" ) )
+	if ( change == QGraphicsItem::ItemPositionHasChanged || change == QGraphicsItem::ItemScenePositionHasChanged )
 	{
-		e->setAccepted( true );
+		//if ( !qFuzzyCompare( ( _node.getPosition( ) - pos( ) ).manhattanLength( ), 0. ) )
+		{
+			_node.setPosition( pos( ) );
+			foreach ( Edge* edge, _node.getOutEdges( ) )
+				edge->getGraphItem( )->updateItem( );
+			foreach ( Edge* edge, _node.getInEdges( ) )
+				edge->getGraphItem( )->updateItem( );
+		}
+	}
+	return 	QGraphicsItem::itemChange( change, value );
+}
+
+void	NodeItem::mouseMoveEvent( QGraphicsSceneMouseEvent* e )
+{
+	if ( _mousePressed && _isMovable )
+	{
+		QPointF oldPos	= scenePos( );
+		QPointF d		=  e->scenePos( ) - _mousePos;
+		if ( !qFuzzyCompare( 1. + d.manhattanLength( ), 1. ) )
+		{
+			hidePropertiesPopup( );
+			moveBy( d.x( ), d.y( ) );
+            emit itemMoved( scenePos( ), oldPos );
+			getNode( ).setPosition( pos( ) );
+			_mousePos = e->scenePos( );
+
+			if ( isDraggable( ) )
+			{
+				// Detect collision with a drag target item in scene
+				bool dragOverItem = false;
+				foreach ( QGraphicsItem* dropTarget, _scene.getDropTargets( ) )
+					if ( dropTarget->sceneBoundingRect( ).contains( sceneBoundingRect( ) ) )
+					{
+						_scene.emitItemDragMove( this, dropTarget );
+						dragOverItem = true;
+						_dragOverItem = dropTarget;
+					}
+				// If we were previously dragging over an item and there is no longer collision, send a drag leave signal to that item
+				if ( dragOverItem == false && _dragOverItem != 0 )
+				{
+					_scene.emitItemDragLeave( this, _dragOverItem );
+					_dragOverItem = 0;
+				}
+			}
+		}
+		e->accept( );
 	}
 	else
-        e->setAccepted( false );
+		QGraphicsItem::mouseMoveEvent( e );
 }
 
-void	NodeRectItem::dragLeaveEvent( QGraphicsSceneDragDropEvent* e )
+void	NodeItem::mousePressEvent( QGraphicsSceneMouseEvent* e )
 {
-    Q_UNUSED( e );
-}
-
-void	NodeRectItem::dropEvent( QGraphicsSceneDragDropEvent* e )
-{
-	if ( e->mimeData( )->hasFormat( "holographe/style" ) )
+	if ( _isMovable && e->button( ) == Qt::LeftButton )
 	{
-		QString styleName = QString( e->mimeData( )->data( "holographe/style" ) );
-		getScene( ).getStyleManager( ).styleNode( getNode( ), styleName );
+		_mousePressed = true;
+		_mousePos = e->scenePos( );
+		update( );
+		e->accept( );
 	}
-	update( );
+	else
+		QGraphicsItem::mousePressEvent( e );
 }
-//---------------------------------------------------------------------
 
+void	NodeItem::mouseReleaseEvent( QGraphicsSceneMouseEvent* e )
+{
+	if ( isDraggable( ) && _dragOverItem != 0 )
+	{
+		_scene.emitItemDropped( this, _dragOverItem );
+		_dragOverItem = 0;
+	}
+	_mousePressed = false;
+	update( );
+	QGraphicsItem::mouseReleaseEvent( e );
+}
+//-----------------------------------------------------------------------------
+
+
+/* Graphics layout item implementation *///------------------------------------
+void NodeItem::updateGeometry( )
+{
+    QGraphicsLayout::updateGeometry( );
+
+    if ( _layout != 0 )     // Update geometry has probably been called by child layout, so modify geometry according to child layout
+    {
+        prepareGeometryChange( );
+        _br.setSize( _layout->preferredSize( ) );
+    }
+}
+
+void NodeItem::setGeometry( const QRectF& geom )
+{
+    QGraphicsLayout::setGeometry( geom );
+
+    // Update sublayout
+    if ( _layout != 0 )
+    {
+        // Let sublayout compute an "ideal" geometry, then set it to this group
+        /*if ( parentLayoutItem( ) != 0 &&  parentLayoutItem( )->isLayout( ) )
+            _layout->setGeometry( geom );   // When there is a super layout, take the given position into account
+        else                                // Necessary when a node item is added in a layout contained ino a graphics widget (eg style browser), graphics item hierarcy is no longer taken into account
+            _layout->setGeometry( QRectF( QPointF( 0., 0. ), geom.size( ) ) );  // If no super layout is specified, use this node position, since layout item will be child items
+        */
+        qreal left, top, right, bottom;
+        getContentsMargins( &left, &top, &right, &bottom );
+        QSizeF s( geom.size( ) );
+        s.rwidth( ) -= left + right;
+        s.rheight( ) -= top + bottom;
+        _layout->setGeometry( QRectF( QPointF( left, top ), s ) );  // If no super layout is specified, use this node position, since layout item will be child items
+        prepareGeometryChange( );
+        QSizeF layoutPrefSize( _layout->preferredSize( ) );
+        _br = QRectF( QPointF( 0., 0. ), layoutPrefSize ); // (usefull to avoid resizing smaller than the sub layout content...)
+    }
+    setPos( geom.topLeft( ) );
+}
+
+int	NodeItem::count( ) const
+{
+    return 1;
+}
+
+QGraphicsLayoutItem*	NodeItem::itemAt( int i ) const
+{
+    return ( _layout != 0  && i == 0 ? _layout : 0 );
+}
+
+void	NodeItem::removeAt( int index )
+{
+    Q_UNUSED( index );
+}
+
+QSizeF NodeItem::sizeHint( Qt::SizeHint which, const QSizeF& constraint ) const
+{
+    switch ( which )
+     {
+     case Qt::MinimumSize:
+        return ( _layout != 0 ? _layout->minimumSize( ) : QSizeF( ) );
+        break;
+     case Qt::PreferredSize:
+        {
+            QSizeF layoutPrefSize;
+            if ( _layout != 0 )
+                layoutPrefSize = _layout->preferredSize( );
+            return layoutPrefSize;
+        }
+         break;
+     case Qt::MaximumSize:
+         return QSizeF( 1000, 1000 );
+         break;
+     case Qt::MinimumDescent:
+         break;
+     default:
+         break;
+     }
+     return constraint;
+}
+//-----------------------------------------------------------------------------
 
 } // ::qan
 

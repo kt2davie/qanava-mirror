@@ -1,5 +1,5 @@
 /*
-	Copyright (C) 2008-2014 Benoit AUTHEMAN
+	Copyright (C) 2008-2015 Benoit AUTHEMAN
 
     This file is part of Qanava.
 
@@ -36,8 +36,8 @@
 
 using namespace qan;
 
-CustomNodeItem::CustomNodeItem( qan::GraphScene& scene, CustomNode& node, QGraphicsItem* parent ) :
-    qan::SimpleNodeItem( scene, node, parent, true, false ),
+CustomNodeItem::CustomNodeItem( qan::GraphScene& scene, CustomNode& node ) :
+    qan::NodeItem( scene, node, true, false ),
     _node( node )
 {
     QGraphicsPixmapItem* pixmapItem = scene.addPixmap( QPixmap( node.getPixmapName( ) ) );
@@ -48,7 +48,7 @@ CustomNodeItem::CustomNodeItem( qan::GraphScene& scene, CustomNode& node, QGraph
     QGraphicsEllipseItem* pixmapBack = scene.addEllipse( pixmapItem->boundingRect( ) );
     pixmapBack->setParentItem( this );
     pixmapBack->setZValue( zValue( ) - 3. );
-    setShapeItem( pixmapBack );
+    pixmapBack->setPos( QPointF( 0., 0. ) );
 
     QGraphicsEllipseItem* pixmapBorder = scene.addEllipse( pixmapItem->boundingRect( ) );
     pixmapBorder->setParentItem( this );
@@ -56,13 +56,15 @@ CustomNodeItem::CustomNodeItem( qan::GraphScene& scene, CustomNode& node, QGraph
     pixmapBorder->setBrush( Qt::NoBrush );
     pixmapBorder->setPen( QPen( QColor( 50, 50, 50 ), 2.0 ) );
 
-    _dimension = QPointF( pixmapBorder->boundingRect( ).width( ), pixmapBorder->boundingRect( ).height( ) );
+    // FIXME
+    Q_ASSERT( false );
+    //_dimension = QPointF( pixmapBorder->boundingRect( ).width( ), pixmapBorder->boundingRect( ).height( ) );
     updateItem( );
 }
 
 void	CustomNodeItem::updateItem( )
 {
-    SimpleNodeItem::updateItem( );
+    NodeItem::updateItem( );
     foreach ( Edge* edge, _node.getOutEdges( ) )
     {
         GraphItem* graphItem = getScene( ).getGraphItem( *edge );
@@ -84,12 +86,12 @@ QPainterPath    CustomNodeItem::shape( ) const
     return path;
 }
 
-qan::GraphItem*	CustomNodeItem::Factory::create( qan::GraphScene& scene, qan::Node& node, QGraphicsItem* parent )
+qan::GraphItem*	CustomNodeItem::Factory::create( qan::GraphScene& scene, qan::Node& node )
 {
     if ( QString( node.metaObject( )->className( ) ) == "CustomNode" )
     {
         CustomNode* customNode = static_cast< CustomNode* >( &node );
-        return new CustomNodeItem( scene, *customNode, parent );
+        return new CustomNodeItem( scene, *customNode );
     }
     return 0;
 }
